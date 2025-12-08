@@ -20,12 +20,6 @@ public class DB(DbContextOptions options) : DbContext(options)
     public DbSet<Payment> Payments { get; set; }
     public DbSet<PickupRecord> PickupRecord { get; set; }
     public DbSet<ReturnRecord> ReturnRecord { get; set; }
-    public DbSet<Review> Reviews { get; set; }
-    public DbSet<FuelLog> FuelLogs { get; set; }
-    public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; }
-    public DbSet<InsuranceClaim> InsuranceClaims { get; set; }
-    public DbSet<LoyaltyTransaction> LoyaltyTransactions { get; set; }
-    public DbSet<Reward> Rewards { get; set; }
 }
 
 
@@ -70,11 +64,7 @@ public class Customer : User
     [MaxLength(100)]
     public string PhotoURL { get; set; }
 
-    // Loyalty points stored directly
-    public int LoyaltyPoints { get; set; } = 0;
-
     public List<Rental> Rentals { get; set; } = [];
-    public List<LoyaltyTransaction> Transactions { get; set; } = [];
 }
 
 
@@ -113,8 +103,6 @@ public class Vehicle
     public bool Available { get; set; }
 
     public List<Rental> Rentals { get; set; } = [];
-    public List<FuelLog> FuelLogs { get; set; } = [];
-    public List<MaintenanceRecord> MaintenanceRecords { get; set; } = [];
 }
 
 
@@ -296,110 +284,4 @@ public class ReturnRecord
     public string? OdometerPhotoPath { get; set; }
     public string? FuelPhotoPath { get; set; }
     public string? DamagePhotoPath { get; set; }  // extra for damage evidence
-}
-
-
-
-// 8. REVIEW --------------------------------------------------------
-
-public class Review
-{
-    [Key, MaxLength(8)]
-    public string ReviewId { get; set; }
-
-    public string RentalId { get; set; }
-    public Rental Rental { get; set; }
-
-    public string CustomerReview { get; set; }
-    public string StaffReply { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-}
-
-
-
-// 9. FUEL LOG ------------------------------------------------------
-
-public class FuelLog
-{
-    [Key, MaxLength(8)]
-    public string FuelLogId { get; set; }
-
-    public string VehicleId { get; set; }
-    public Vehicle Vehicle { get; set; }
-
-    public DateTime Date { get; set; }
-
-    [Precision(6, 2)]
-    public decimal Liters { get; set; }
-
-    [Precision(6, 2)]
-    public decimal Cost { get; set; }
-}
-
-
-
-// 10. MAINTENANCE RECORD ------------------------------------------
-
-public class MaintenanceRecord
-{
-    [Key, MaxLength(8)]
-    public string MaintenanceRecordId { get; set; }
-
-    public string VehicleId { get; set; }
-    public Vehicle Vehicle { get; set; }
-
-    public string Description { get; set; }
-    public DateTime Date { get; set; }
-
-    [Precision(8, 2)]
-    public decimal Cost { get; set; }
-}
-
-
-
-// 11. INSURANCE CLAIM ---------------------------------------------
-
-public class InsuranceClaim
-{
-    [Key, MaxLength(8)]
-    public string InsuranceClaimId { get; set; }
-
-    public string VehicleId { get; set; }
-    public Vehicle Vehicle { get; set; }
-
-    public string Description { get; set; }
-    public DateTime Date { get; set; }
-
-    public string Status { get; set; }
-}
-
-
-
-// 12. LOYALTY TRANSACTION ------------------------------------------
-
-public class LoyaltyTransaction
-{
-    [Key, MaxLength(8)]
-    public string TransactionId { get; set; }
-
-    public string CustomerId { get; set; }
-    public Customer Customer { get; set; }
-
-    public DateTime Date { get; set; }
-
-    public int PointsChanged { get; set; }  // +20, -50
-    public string Description { get; set; }
-}
-
-public class Reward
-{
-    [Key, MaxLength(8)]
-    public string RewardId { get; set; }
-
-    [MaxLength(50)]
-    public string RewardName { get; set; }
-    public int RewardAmount { get; set; }
-    public int RewardPoint { get; set; }
-
 }

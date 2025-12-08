@@ -1,6 +1,16 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+global using Assignment.Models;
+global using Assignment;
 
-app.MapGet("/", () => "Hello World!");
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllersWithViews();
+builder.Services.AddSqlServer<DB>($@"
+    Data Source=(LocalDB)\MSSQLLocalDB;
+    AttachDbFilename={builder.Environment.ContentRootPath}\DB.mdf;
+");
+
+var app = builder.Build();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.MapDefaultControllerRoute();
 
 app.Run();
