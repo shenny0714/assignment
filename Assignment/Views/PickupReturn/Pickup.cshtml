@@ -1,0 +1,80 @@
+﻿@model Assignment.ViewModels.PickupViewModel
+
+@{
+    ViewBag.Title = "Pickup Vehicle";
+}
+
+<link rel="stylesheet" href="~/css/pickup.css" />
+
+<h2>Pickup Vehicle</h2>
+
+<div class="pickup-container">
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+        <input type="hidden" asp-for="RentalId" />
+        <input type="hidden" asp-for="StaffId" />
+
+
+        <!-- Display Data -->
+        <div class="section-box">
+            <h3>Rental Information</h3>
+            <p><strong>Rental ID:</strong> @Model.RentalId</p>
+            <p><strong>Customer:</strong> @Model.CustomerName</p>
+            <p><strong>Vehicle:</strong> @Model.PlateNumber (@Model.ModelName)</p>
+            <p><strong>Handled By Staff:</strong> @Model.StaffName</p>
+        </div>
+
+        <!-- Pickup Inputs -->
+        <div class="section-box">
+            <h3>Pickup Details</h3>
+
+            <label>Pickup Date Time</label>
+            <input asp-for="PickupDateTime" type="datetime-local" />
+
+            <label>Driving Licence</label>
+            <input asp-for="CustomerDrivingLicense" />
+
+            <label>Odometer Reading</label>
+            <input asp-for="OdometerPickup" type="number" />
+
+            <label>Fuel Level</label>
+            <input asp-for="FuelLevelPickup" />
+
+            <label>Body Condition</label>
+            <input asp-for="BodyCondition" />
+
+            <label>Interior Condition</label>
+            <input asp-for="InteriorCondition" />
+
+            <label>Tyre Condition</label>
+            <input asp-for="TyreCondition" />
+
+            <label>Lights Condition</label>
+            <input asp-for="LightsCondition" />
+
+            <label>Remarks</label>
+            <textarea asp-for="Remarks"></textarea>
+        </div>
+
+        <!-- Photo Upload -->
+        <div class="section-box">
+            <h3>Photos</h3>
+
+            <label>Exterior Photo</label>
+            <input asp-for="ExteriorPhoto" type="file" />
+
+            <label>Interior Photo</label>
+            <input asp-for="InteriorPhoto" type="file" />
+
+            <label>Odometer Photo</label>
+            <input asp-for="OdometerPhoto" type="file" />
+
+            <label>Fuel Photo</label>
+            <input asp-for="FuelPhoto" type="file" />
+        </div>
+
+        <button type="submit" class="btn-save">Submit Pickup Record</button>
+
+    </form>
+</div>

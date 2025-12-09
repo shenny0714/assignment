@@ -981,6 +981,22 @@
           "buildTransitive/Mono.TextTemplating.targets": {}
         }
       },
+      "SixLabors.ImageSharp/3.1.12": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "build/SixLabors.ImageSharp.props": {}
+        }
+      },
       "System.ClientModel/1.0.0": {
         "type": "package",
         "dependencies": {
@@ -3516,6 +3532,22 @@
         "readme.md"
       ]
     },
+    "SixLabors.ImageSharp/3.1.12": {
+      "sha512": "iAg6zifihXEFS/t7fiHhZBGAdCp3FavsF4i2ZIDp0JfeYeDVzvmlbY1CNhhIKimaIzrzSi5M/NBFcWvZT2rB/A==",
+      "type": "package",
+      "path": "sixlabors.imagesharp/3.1.12",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "build/SixLabors.ImageSharp.props",
+        "lib/net6.0/SixLabors.ImageSharp.dll",
+        "lib/net6.0/SixLabors.ImageSharp.xml",
+        "sixlabors.imagesharp.128.png",
+        "sixlabors.imagesharp.3.1.12.nupkg.sha512",
+        "sixlabors.imagesharp.nuspec"
+      ]
+    },
     "System.ClientModel/1.0.0": {
       "sha512": "I3CVkvxeqFYjIVEP59DnjbeoGNfo/+SZrCLpRz2v/g0gpCHaEMPtWSY0s9k/7jR1rAsLNg2z2u1JRB76tPjnIw==",
       "type": "package",
@@ -4706,7 +4738,8 @@
   "projectFileDependencyGroups": {
     "net9.0": [
       "Microsoft.EntityFrameworkCore.SqlServer >= 9.0.10",
-      "Microsoft.EntityFrameworkCore.Tools >= 9.0.10"
+      "Microsoft.EntityFrameworkCore.Tools >= 9.0.10",
+      "SixLabors.ImageSharp >= 3.1.12"
     ]
   },
   "packageFolders": {
@@ -4769,6 +4802,10 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[9.0.10, )"
+          },
+          "SixLabors.ImageSharp": {
+            "target": "Package",
+            "version": "[3.1.12, )"
           }
         },
         "imports": [
