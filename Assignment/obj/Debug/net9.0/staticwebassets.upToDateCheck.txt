@@ -1,2 +1,7 @@
 wwwroot\css\app.css
+wwwroot\PickupReturn\02b7fa0e34b54c658d5fcf767e8250db.jpg
+wwwroot\PickupReturn\2da4f4ebd96b488088ce4470d85967fe.jpg
+wwwroot\PickupReturn\565ef433f98b4b9fb2ef26b2cdfe5dcc.jpg
+wwwroot\PickupReturn\d8d4e5e68bef418683031ec99c1452e9.jpg
+wwwroot\PickupReturn\f3224fac8a954e239fe454da8c9fffdb.jpg
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\app.css

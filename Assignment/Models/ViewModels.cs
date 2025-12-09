@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace Assignment.ViewModels;
@@ -30,7 +30,7 @@ public class PickupViewModel
 
     [Required]
     [Display(Name = "Driving Licence")]
-    public string CustomerDrivingLicense { get; set; }
+    public IFormFile CustomerDrivingLicense { get; set; }
 
     public string VehicleId { get; set; }
     public string PlateNumber { get; set; }
@@ -72,17 +72,17 @@ public class PickupViewModel
     // ───────────────────────────────────────────
     // Photo Uploads (Form Only)
     // ───────────────────────────────────────────
-    public IFormFile? ExteriorPhoto { get; set; }
-    public IFormFile? InteriorPhoto { get; set; }
-    public IFormFile? OdometerPhoto { get; set; }
-    public IFormFile? FuelPhoto { get; set; }
+    public IFormFile ExteriorPhoto { get; set; }
+    public IFormFile InteriorPhoto { get; set; }
+    public IFormFile OdometerPhoto { get; set; }
+    public IFormFile FuelPhoto { get; set; }
 
     // ───────────────────────────────────────────
     // DB Saved Photo Paths (for display)
     // ───────────────────────────────────────────
-    public string? ExteriorPhotoPath { get; set; }
-    public string? InteriorPhotoPath { get; set; }
-    public string? OdometerPhotoPath { get; set; }
-    public string? FuelPhotoPath { get; set; }
+    public string ExteriorPhotoPath { get; set; }
+    public string InteriorPhotoPath { get; set; }
+    public string OdometerPhotoPath { get; set; }
+    public string FuelPhotoPath { get; set; }
 }
 

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Assignment.Models;
 
@@ -172,10 +173,6 @@ public class Rental
     public int ModelId { get; set; }
     public CarModel Model { get; set; }
 
-    // VehicleId is null until pickup
-    public string? VehicleId { get; set; }
-    public Vehicle Vehicle { get; set; }
-
     public DateTime RentalDate { get; set; }
     public DateTime? ReturnDate { get; set; }
 
@@ -228,6 +225,10 @@ public class PickupRecord
     public DateTime PickupDateTime { get; set; }
 
     public string CustomerDrivingLisence { get; set; }
+    public string VehicleId { get; set; } 
+    public Vehicle Vehicle { get; set; }
+
+    [Range(0,100000)]
     public int OdometerPickup { get; set; }
     public string FuelLevelPickup { get; set; }
 
@@ -241,10 +242,10 @@ public class PickupRecord
     public string StaffId { get; set; }
     public Staff Staff { get; set; }
 
-    public string? ExteriorPhotoPath { get; set; }
-    public string? InteriorPhotoPath { get; set; }
-    public string? OdometerPhotoPath { get; set; }
-    public string? FuelPhotoPath { get; set; }
+    public string ExteriorPhotoPath { get; set; }
+    public string InteriorPhotoPath { get; set; }
+    public string OdometerPhotoPath { get; set; }
+    public string FuelPhotoPath { get; set; }
 }
 
 //
@@ -262,6 +263,7 @@ public class ReturnRecord
 
     public DateTime ReturnDateTime { get; set; }
 
+    [Range(0, 100000)]
     public int OdometerReturn { get; set; }
     public string FuelLevelReturn { get; set; }
 
@@ -289,9 +291,9 @@ public class ReturnRecord
     public string StaffId { get; set; }
     public Staff Staff { get; set; }
 
-    public string? ExteriorPhotoPath { get; set; }
-    public string? InteriorPhotoPath { get; set; }
-    public string? OdometerPhotoPath { get; set; }
-    public string? FuelPhotoPath { get; set; }
+    public string ExteriorPhotoPath { get; set; }
+    public string InteriorPhotoPath { get; set; }
+    public string OdometerPhotoPath { get; set; }
+    public string FuelPhotoPath { get; set; }
     public string? DamagePhotoPath { get; set; }
 }
