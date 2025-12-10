@@ -1,47 +1,102 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title</title>
-    <link rel="shortcut icon" href="/images/favicon.png">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
-    <link rel="stylesheet" href="/css/pager.css">
-    <link rel="stylesheet" href="/css/app.css" asp-append-version="true">
-    @RenderSection("head", false)
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Car Rental</title>
+
+    <link rel="stylesheet" href="~/css/app.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 </head>
 <body>
-    <div class="info">@Html.Raw(TempData["Info"])</div>
+    <div class="container-1">
 
-    <header>
-        <h1><a href="/">Photo Upload</a></h1>
-    </header>
+        <div class="navbar">
+            <div class="container-2" style="display:flex; justify-content:space-between; align-items:center;">
+                <a href="/" class="logo-area" style="text-decoration:none; color:inherit;">
+                    <div class="text-accent">
+                        <span class="material-symbols-outlined" style="font-size: 24px; color: #007BFF;">directions_car</span>
+                    </div>
+                    <h2>Title</h2>
+                </a>
 
-    <nav>
-        <b>Home</b>
-        <a href="/Home/Index">Index</a>
-        <a href="/Home/Browse">Browse</a>
-        <b>Product</b>
-        <a href="/Product/Index">Index</a>
-        <a href="/Product/Insert">Insert</a>
-        <div></div>
-    </nav>
+                <div style="display:flex; align-items:center; gap: 1.5rem;">
+                    <nav class="nav-links">
+                        <a href="/">Home</a>
+                        <a href="/Cars">Cars</a>
+                        <a href="/About">About</a>
+                        <a href="/Contact">Contact</a>
+                    </nav>
+                    <div style="display:flex; gap: 0.5rem;">
+                        <button id="theme-toggle" class="btn-theme-toggle" title="Toggle Dark Mode">
+                            <span class="material-symbols-outlined">dark_mode</span>
+                        </button>
+                        <button class="btn-login">Login</button>
 
-    <main>
-        <h1>@ViewBag.Title</h1>
-        @RenderBody()
-    </main>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <footer>
-        Developed by <b>BAE SUZY</b> &middot;
-        Copyrighted &copy; @DateTime.Today.Year
-    </footer>
+        <main style="display:flex; flex-direction:column; align-items:center; flex-grow: 1;">
+            @RenderBody()
+        </main>
 
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/jquery.unobtrusive-ajax.min.js"></script>
-    <script src="/js/jquery.validate.min.js"></script>
-    <script src="/js/jquery.validate.unobtrusive.min.js"></script>
-    <script src="/js/app.js" asp-append-version="true"></script>
-    @RenderSection("foot", false)
+        <footer class="footer-main">
+            <div class="container-2">
+                <div class="footer-grid">
+                    <div>
+                        <h3 style="font-weight:bold; margin-bottom:1rem;">Title</h3>
+                        <p style="font-size:0.875rem; color:#4b5563;">Your journey, our priority. Rent premium cars effortlessly.</p>
+                    </div>
+                    <div class="footer-links">
+                        <h3 style="font-weight:bold; margin-bottom:1rem;">Quick Links</h3>
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Cars</a></li>
+                            <li><a href="#">About Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links">
+                        <h3 style="font-weight:bold; margin-bottom:1rem;">Support</h3>
+                        <ul>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Terms</a></li>
+                            <li><a href="#">Privacy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links">
+                        <h3 style="font-weight:bold; margin-bottom:1rem;">Contact</h3>
+                        <ul>
+                            <li>77, Lorong Lembah Permai 3, 11200 Tanjung Bungah, Pulau Pinang</li>
+                            <li>012-456 7890</li>
+                            <li>support@gmail.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="border-top:1px solid var(--border-color); margin-top:2rem; padding-top:1.5rem; text-align:center; font-size:0.875rem; color:var(--text-muted);">
+                    <p>© 2025 Title. All Rights Reserved.</p>
+
+                    <div class="social-links" style="margin-top: 1rem; display: flex; justify-content: center; gap: 1rem;">
+                        <a class="btn-social" href="#!" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a class="btn-social" href="#!" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a class="btn-social" href="#!" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="~/js/app.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

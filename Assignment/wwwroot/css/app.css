@@ -1,4 +1,398 @@
-﻿
+﻿/* --- Color Definitions --- */
+:root {
+    /* Light Mode Colors (Default) */
+    --bg-body: #f7f7f7;
+    --text-main: #212529;
+    --text-muted: #4b5563;
+    --bg-card: #ffffff;
+    --bg-navbar: rgba(247, 247, 247, 0.9);
+    --border-color: #e5e7eb;
+    --accent-color: #007BFF;
+    --input-bg: #ffffff;
+}
+
+body.dark-mode {
+    /* Dark Mode Colors */
+    --bg-body: #121212;
+    --text-main: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --bg-card: #1e1e1e;
+    --bg-navbar: rgba(18, 18, 18, 0.9);
+    --border-color: #333333;
+    --accent-color: #3b82f6;
+    --input-bg: #2c2c2c;
+}
+
+/* Global Settings */
+body {
+    background-color: var(--bg-body);
+    font-family: 'Lexend', sans-serif;
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* --- Layout Containers --- */
+.container-1 {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.container-2 {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 1rem;
+}
+
+/* --- Components --- */
+
+/* Navigation Bar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    background-color: var(--bg-navbar);
+    backdrop-filter: blur(4px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.3s;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: bold;
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: var(--text-main);
+}
+
+.nav-links {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+    }
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+    .nav-links a:hover {
+        color: var(--accent-color);
+    }
+
+/* Buttons */
+.btn-login {
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-main);
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    .btn-login:hover {
+        background-color: var(--border-color);
+    }
+
+.btn-register, .btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+    .btn-primary:hover, .btn-register:hover {
+        opacity: 0.9;
+    }
+
+/* Theme Toggle Button */
+.btn-theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .btn-theme-toggle:hover {
+        background-color: var(--border-color);
+    }
+
+/*Section */
+.section-1 {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url('../images/homebackground.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 0.75rem;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    margin-top: 1.25rem;
+    padding: 2rem;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+}
+
+/* Booking Widget */
+.widget-box {
+    background-color: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    margin-top: -5rem;
+    margin-bottom: 4rem;
+    position: relative;
+    z-index: 10;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+    .form-grid {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: end;
+    }
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    box-sizing: border-box;
+}
+
+/* --- Section 1 Content Helpers --- */
+.content-1 {
+    max-width: 600px;
+}
+
+.title-1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+}
+
+.subtitle-1 {
+    font-size: 1.125rem;
+    font-weight: normal;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.btn-1 {
+    font-size: 1.125rem;
+    padding: 0.75rem 2.5rem;
+}
+
+.btn-search {
+    height: 46px;
+    border-radius: 0.5rem;
+    width: 100%;
+}
+
+/* --- Car Card Specifics --- */
+.car-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+.price-suffix {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-weight: normal;
+}
+
+.btn-rent {
+    font-size: 0.875rem;
+    padding: 0.5rem 1.25rem;
+}
+
+/* Featured Cars Section */
+.section-header {
+    text-align: center;
+    font-size: 1.875rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    color: var(--text-main);
+}
+
+.car-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 640px) {
+    .car-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .car-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.car-card {
+    background-color: var(--bg-card);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+}
+
+.car-img {
+    width: 100%;
+    height: 12rem;
+    object-fit: cover;
+}
+
+.car-details {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.car-features {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.price-row {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price-tag {
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+/* Footer */
+.footer-main {
+    background-color: var(--bg-card);
+    margin-top: 4rem;
+    border-top: 1px solid var(--border-color);
+    padding: 2.5rem 0;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .footer-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: var(--text-muted);
+}
+
+    .footer-links a:hover {
+        color: var(--accent-color);
+    }
+
+/* --- Social Media Buttons --- */
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    /* LIGHT MODE SETTINGS */
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #d1d5db;
+}
+
+    .btn-social:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+/* DARK MODE SETTINGS */
+body.dark-mode .btn-social {
+    background-color: #000000;
+    color: #ffffff;
+    border: 1px solid #333333;
+}
 /*Temp Info*/
 
 .info {
