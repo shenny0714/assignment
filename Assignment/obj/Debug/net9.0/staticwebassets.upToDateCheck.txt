@@ -29,6 +29,16 @@ wwwroot\PickupReturn\3d239048a6c74fd3ac0771ab21b3261b.jpg
 wwwroot\PickupReturn\d77d188bcd554a29b808e331950e3cd2.jpg
 wwwroot\PickupReturn\e4541e9e93d74550bf58558ec9e6b0a2.jpg
 wwwroot\images\loader.gif
+wwwroot\PickupReturn\022671fecf5e49f793ef5d01c47f33b0.jpg
+wwwroot\PickupReturn\39b9845d07e84f4e97dad1e7e1fefc04.jpg
+wwwroot\PickupReturn\3c3d69f5b73b47b790924c73e17a1f26.jpg
+wwwroot\PickupReturn\735943c30a6c4e1b9e866b324943386f.jpg
+wwwroot\PickupReturn\f875f72ab0be4063950472f4b98602ab.jpg
+wwwroot\PickupReturn\60777b7b31be4a20835cd5add1756258.jpg
+wwwroot\PickupReturn\63a8a2e004e44f489ddc4757bf487249.jpg
+wwwroot\PickupReturn\98df162954a54e77912a56a445cd1722.jpg
+wwwroot\PickupReturn\da990890c9814bf5af8bb7539e1a2494.jpg
+wwwroot\PickupReturn\f711ac1ca8da440cb288ddb1ddaf1fab.jpg
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\app.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\js\jquery.validate.unobtrusive.min.js
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\js\jquery.validate.min.js

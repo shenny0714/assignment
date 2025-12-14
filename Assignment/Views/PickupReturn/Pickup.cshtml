@@ -38,7 +38,7 @@
             <h3>Pickup Details</h3>
 
             <label asp-for="PickupDateTime">Pickup Date Time</label>
-            <input asp-for="PickupDateTime" autofocus type="datetime-local" step="any">
+            <input asp-for="PickupDateTime" autofocus type="datetime-local" step="any" >
             <span asp-validation-for="PickupDateTime"></span>
 
             <label asp-for="VehicleId">Vehicle</label>
@@ -52,7 +52,7 @@
             <span asp-validation-for="CustomerDrivingLicense"></span>
 
             <label asp-for="OdometerPickup">Odometer Reading</label>
-            <input asp-for="OdometerPickup" type="number" />
+            <input asp-for="OdometerPickup" type="number" min="0"/>
             <span asp-validation-for="OdometerPickup"></span>
 
             <label asp-for="FuelLevelPickup">Fuel Level</label>

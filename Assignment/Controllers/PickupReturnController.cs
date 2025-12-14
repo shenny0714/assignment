@@ -26,61 +26,89 @@ public class PickupReturnController : Controller
     public IActionResult Index()
     {
         var today = DateTime.Today;
+        var now = DateTime.Now;
 
-        // Today's Pickups (booked, not yet picked up)
-        var pickups = _db.Rentals
-            .Where(r => r.Status == "Booked" && r.RentalDate.Date == today)
-            .Select(r => new {
-                r.RentalId,
-                CustomerName = r.Customer.Name,
-                VehiclePlate = "",
-                
-            })
-            .ToList();
-
-        // Today's Returns (picked-up but not returned)
-        var returns = _db.Rentals
-            .Where(r => r.Status == "Pickup" && _db.PickupRecord
-                    .Any(p => p.RentalId == r.RentalId && r.ReturnDate == today))
-            .Select(r => new {
-                r.RentalId,
-                CustomerName = r.Customer.Name,
-                VehiclePlate = _db.PickupRecord
-                                  .Where(p => p.RentalId == r.RentalId)
-                                  .Select(p => p.Vehicle.PlateNumber)
-                                  .FirstOrDefault(),
-                PickupDate = r.PickupDate,
-            })
-            .ToList();
-
-        // Late Returns
-        var lateReturns = _db.Rentals
+        // STEP 1: Load rentals (Pickup or Pickup-eligible)
+        var rentals = _db.Rentals
             .Include(r => r.Customer)
+            .Include(r => r.Model)
             .Include(r => r.PickupRecord)
-            .ThenInclude(p => p.Vehicle)
-        .Where(r => r.Status == "Pickup"
-             && r.PickupRecord != null
-             && r.ReturnRecord == null
-             && r.ReturnDate < today)
-        .Select(r => new
-        {
-            r.RentalId,
-            CustomerName = r.Customer.Name,
-            VehiclePlate = r.PickupRecord.Vehicle.PlateNumber,
-            PickupDate = r.PickupRecord.PickupDateTime, 
-            DaysLate = EF.Functions.DateDiffDay(r.ReturnDate, today)
-        })
-        .ToList();
+                .ThenInclude(p => p.Vehicle)
+            .Where(r => r.Status == "Pickup" || r.Status == "Booked")
+            .ToList(); // evaluate in memory for date/time logic
 
+        // =========================
+        // PICKUPS (today only, after 12 PM)
+        // =========================
+        var pickups = rentals
+            .Where(r =>
+                r.Status == "Booked" &&
+                r.PickupDate == today &&                     // only today
+                now.TimeOfDay >= new TimeSpan(12, 0, 0)      // after 12 PM
+            )
+            .Select(r => new
+            {
+                r.RentalId,
+                CustomerName = r.Customer.Name,
+                CarModel = r.Model.ModelName,
+                VehiclePlate = r.PickupRecord?.Vehicle.PlateNumber ?? "Not Assigned",
+                AvailableCount = _db.Vehicles
+                    .Where(v => v.ModelId == r.ModelId && v.Available)
+                    .Count(v => !_db.PickupRecord
+                        .Where(p => p.Rental.Status != "Cancelled" &&
+                                    p.Rental.PickupDate <= r.PickupDate &&
+                                    p.Rental.ReturnDate >= r.PickupDate)
+                        .Select(p => p.VehicleId)
+                        .Contains(v.VehicleId))
+            })
+            .ToList();
 
+        // =========================
+        // RETURNS (due today)
+        // =========================
+        var returns = rentals
+            .Where(r => r.Status == "Pickup" && r.ReturnDate == today)
+            .Select(r => new
+            {
+                r.RentalId,
+                CustomerName = r.Customer.Name,
+                VehiclePlate = r.PickupRecord?.Vehicle.PlateNumber ?? "Not Assigned",
+                PickupDate = r.PickupRecord?.PickupDateTime
+            })
+            .ToList();
 
+        // =========================
+        // LATE RETURNS
+        // =========================
+        var lateDue = rentals
+            .Where(r =>
+                r.Status == "Pickup" &&
+                r.ReturnRecord == null &&
+                (
+                    r.ReturnDate < today ||                           // past returns → late
+                    (r.ReturnDate == today && now.TimeOfDay > new TimeSpan(12, 0, 0)) // today after 12 PM → late
+                )
+            )
+            .Select(r => new
+            {
+                r.RentalId,
+                CustomerName = r.Customer.Name,
+                VehiclePlate = r.PickupRecord?.Vehicle.PlateNumber ?? "Not Assigned",
+                PickupDate = r.PickupRecord?.PickupDateTime,
+                DaysLate = (now.Date - r.ReturnDate).Days
+            })
+            .ToList();
 
+        // =========================
+        // PASS TO VIEW
+        // =========================
         ViewBag.Pickups = pickups;
         ViewBag.Returns = returns;
-        ViewBag.LateReturns = lateReturns;
+        ViewBag.LateDue = lateDue;
 
         return View();
     }
+
 
     // Generate next PickupId
     private string NextPickupId()
@@ -93,16 +121,6 @@ public class PickupReturnController : Controller
     // GET: Pickup page
     public IActionResult Pickup(string rentalId)
     {
-        bool isValid = _db.Rentals
-                          .Any(r => r.RentalId == rentalId
-                           && r.Status == "Booked"
-                           && !_db.PickupRecord.Any(p => p.RentalId == rentalId));
-
-        if (!isValid)
-        {
-            return BadRequest("Invalid RentalId. Rental must exist, be booked, and not yet picked up.");
-        }
-
 
         var rental = _db.Rentals
                        .Include(r => r.Customer)
@@ -111,12 +129,35 @@ public class PickupReturnController : Controller
                        .FirstOrDefault(r => r.RentalId == rentalId);
 
         if (rental == null)
+            return NotFound("Rental not found");
+
+        if (rental.Status != "Booked")
+            return BadRequest($"Rental status is '{rental.Status}', cannot pickup");
+
+        if (_db.PickupRecord.Any(p => p.RentalId == rentalId))
+            return BadRequest("Pickup already processed");
+
+
+        if (rental == null)
             return NotFound("Rental not found.");
 
         // get available vehicles
+
+        var sessionDate = rental.PickupDate.Date;
+
+        var occupiedVehicleIds = _db.PickupRecord
+            .Where(p => p.Rental.Status != "Cancelled"
+                        && p.Rental.PickupDate <= sessionDate
+                        && p.Rental.ReturnDate >= sessionDate)
+            .Select(p => p.VehicleId)
+            .ToList();
+
+        // Get available vehicles of this model
         var availableVehicles = _db.Vehicles
-                                  .Where(v => v.ModelId == rental.ModelId && v.Available)
-                                  .ToList();
+            .Where(v => v.ModelId == rental.ModelId
+                        && v.Available
+                        && !occupiedVehicleIds.Contains(v.VehicleId));
+            
         ViewBag.VehicleList = new SelectList(availableVehicles, "VehicleId", "PlateNumber");
 
         ViewBag.FuelList = new[] { "Full", "Half", "Low" };
@@ -151,7 +192,7 @@ public class PickupReturnController : Controller
 
         if (!isValid)
         {
-            return BadRequest("Invalid RentalId. Rental must exist, be booked, and not yet picked up.");
+            return RedirectToAction("Index");
         }
 
         var v = _db.Vehicles.Find(vm.VehicleId);
@@ -242,12 +283,7 @@ public class PickupReturnController : Controller
 
 
 
-        if (ModelState.IsValid("RentalId") && ModelState.IsValid("VehicleId") && ModelState.IsValid("PickupDateTime") && 
-            ModelState.IsValid("CustomerDrivingLicense") && ModelState.IsValid("OdometerPickup") && ModelState.IsValid("FuelLevelPickup") && 
-            ModelState.IsValid("BodyCondition") && ModelState.IsValid("InteriorCondition") && ModelState.IsValid("TyreCondition") &&
-            ModelState.IsValid("LightsCondition") && ModelState.IsValid("StaffId") && ModelState.IsValid("ExteriorPhoto") &&
-            ModelState.IsValid("InteriorPhoto") && ModelState.IsValid("OdometerPhoto") && ModelState.IsValid("FuelPhoto")
-            )
+        if (ModelState.IsValid)
         {
             var record = new PickupRecord
             {
@@ -270,12 +306,7 @@ public class PickupReturnController : Controller
                 FuelPhotoPath = _hp.SavePhoto(vm.FuelPhoto, "PickupReturn")
             };
             _db.PickupRecord.Add(record);
-
-            // Set vehicle availability to false
-            var vehicle = _db.Vehicles.FirstOrDefault(v => v.VehicleId == vm.VehicleId);
-            if (vehicle != null) vehicle.Available = false;
-
-            // change rental status
+            
             var rent = _db.Rentals.Find(vm.RentalId);
             if (rent != null) rent.Status = "Pickup";
 
@@ -335,14 +366,14 @@ public class PickupReturnController : Controller
             .FirstOrDefault(r => r.RentalId == rentalId);
 
         if (rental == null)
-            return NotFound("Rental not found.");
+            return RedirectToAction("Index");
 
         var pickup = _db.PickupRecord
             .Include(p => p.Vehicle)
             .FirstOrDefault(p => p.RentalId == rentalId);
 
         if (pickup == null)
-            return NotFound("Pickup record not found.");
+            return RedirectToAction("Index");
 
         // Load vehicle details
         var vehicle = pickup.Vehicle;
@@ -383,13 +414,17 @@ public class PickupReturnController : Controller
            .Include(p => p.Vehicle)
            .FirstOrDefault(p => p.RentalId == vm.RentalId);
 
+        if (pickup == null)
+        {
+            return RedirectToAction("Index");
+        }
         var vehicle = pickup.Vehicle;
 
-        var s = _db.Staffs.Find(vm.StaffId);
+            var s = _db.Staffs.Find(vm.StaffId);
         if (s == null)
-            ModelState.AddModelError("StaffId", "Invalid Staff ID");
+            return RedirectToAction("Index");
 
-       // validate return date - only allow today
+        // validate return date - only allow today
         if (ModelState.IsValid("ReturnDateTime"))
         {
             if (vm.ReturnDateTime.Date != DateTime.Today)
@@ -439,7 +474,7 @@ public class PickupReturnController : Controller
         }
 
         // save return record
-        if (true)
+        if (ModelState.IsValid)
         {
             var rec = new ReturnRecord
             {
@@ -490,7 +525,8 @@ public class PickupReturnController : Controller
             if (rental != null) rental.Status = "Returned";
 
             _db.SaveChanges();
-            TempData["Info"] = "Return record saved successfully.";
+            return RedirectToAction("Index", TempData["Info"] = "Return record saved successfully.");
+            
 
         }
 

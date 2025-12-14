@@ -55,7 +55,7 @@ public class RentalHistoryController : Controller
         // User.IsInRole("Customer")
         if (true)
         {
-            string id = "CU0001";
+            string id = "C001";
             q = q.Where(r => r.Customer.CustomerId == id);
         }
 
@@ -161,7 +161,7 @@ public class RentalHistoryController : Controller
         {
             // check iflogin user id == rental customer id?
             //  User.FindFirst("CustomerId")?.Value
-            var customerId = "CU0001";
+            var customerId = "C001";
             if (rental.CustomerId != customerId)
                 return RedirectToAction("Index");
         }

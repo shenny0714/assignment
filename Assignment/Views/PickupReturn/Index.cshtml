@@ -15,7 +15,7 @@
         <button class="nav-link" id="return-tab" data-bs-toggle="tab" data-bs-target="#return" type="button" role="tab" aria-controls="return" aria-selected="false">Return</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="late-tab" data-bs-toggle="tab" data-bs-target="#late" type="button" role="tab" aria-controls="late" aria-selected="false">Late Returns</button>
+        <button class="nav-link" id="late-tab" data-bs-toggle="tab" data-bs-target="#late" type="button" role="tab" aria-controls="late" aria-selected="false">Late Due</button>
     </li>
 </ul>
 
@@ -27,6 +27,8 @@
                 <tr>
                     <th>Rental ID</th>
                     <th>Customer</th>
+                    <th>Preferal Car Model</th>
+                    <th>Available Car Qty</th>
                     <th>Vehicle</th>
                     <th>Action</th>
                 </tr>
@@ -38,6 +40,8 @@
                     <tr>
                         <td>@p.RentalId</td>
                         <td>@p.CustomerName</td>
+                        <td>@p.CarModel</td>
+                        <td>@p.AvailableCount</td>
                         <td>@p.VehiclePlate</td>
                         <td>
                             <a asp-action="Pickup" asp-route-rentalId="@p.RentalId" class="btn btn-sm btn-primary">Process Pickup</a>
@@ -92,7 +96,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var l in ViewBag.LateReturns)
+                @foreach (var l in ViewBag.LateDue)
                 {
                     <tr>
                         <td>@l.RentalId</td>
