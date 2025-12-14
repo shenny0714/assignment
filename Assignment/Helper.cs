@@ -12,19 +12,26 @@ public class Helper(IWebHostEnvironment en)
 
     public string ValidatePhoto(IFormFile f)
     {
-        var reType = new Regex(@"^image\/(jpeg|png)$", RegexOptions.IgnoreCase);
-        var reName = new Regex(@"^.+\.(jpeg|jpg|png)$", RegexOptions.IgnoreCase);
-
-        if (!reType.IsMatch(f.ContentType) || !reName.IsMatch(f.FileName))
+        try
         {
-            return "Only JPG and PNG photo is allowed.";
-        }
-        else if (f.Length > 1 * 1024 * 1024)
-        {
-            return "Photo size cannot more than 1MB.";
-        }
+            var reType = new Regex(@"^image\/(jpeg|png)$", RegexOptions.IgnoreCase);
+            var reName = new Regex(@"^.+\.(jpeg|jpg|png)$", RegexOptions.IgnoreCase);
 
-        return "";
+            if (!reType.IsMatch(f.ContentType) || !reName.IsMatch(f.FileName))
+            {
+                return "Only JPG and PNG photo is allowed.";
+            }
+            else if (f.Length > 1 * 1024 * 1024)
+            {
+                return "Photo size cannot more than 1MB.";
+            }
+
+            return "";
+        }
+        catch (Exception err)
+        {
+            return err.Message;
+        }
     }
 
     public string SavePhoto(IFormFile f, string folder)
@@ -54,4 +61,5 @@ public class Helper(IWebHostEnvironment en)
         var path = Path.Combine(en.WebRootPath, folder, file);
         File.Delete(path);
     }
+
 }

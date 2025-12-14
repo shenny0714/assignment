@@ -1,0 +1,175 @@
+﻿@model Assignment.Models.Rental
+
+@{
+    ViewData["Title"] = "Rental Details";
+
+    bool isStaff = ViewBag.IsStaff ?? false;
+    var status = Model.Status?.ToLower();
+}
+
+
+<h2>Rental Details</h2>
+
+<div class="card mb-3">
+    <div class="card-header">Rental Information</div>
+    <div class="card-body">
+        <p><strong>Rental ID:</strong> @Model.RentalId</p>
+        <p><strong>Car Model:</strong> @(Model.Model?.ModelName ?? "-")</p>
+        <p><strong>Expected Pickup Date Date:</strong> @Model.PickupDate.ToString("yyyy-MM-dd")</p>
+        <p><strong>Expected Return:</strong> @(Model.ReturnDate.ToString("yyyy-MM-dd") ?? "-")</p>
+
+        <p>
+            <strong>Status:</strong>
+            <span class="badge bg-secondary">@Model.Status</span>
+        </p>
+
+        <p><strong>Deposit:</strong> @Model.DepositAmount.ToString("C")</p>
+        <p><strong>Total Price:</strong> @Model.TotalPrice.ToString("C")</p>
+
+        <!-- Customer cancel (only before pickup) -->
+        @if (!isStaff && status == "booked")
+        {
+            <form asp-action="Cancel"
+                    asp-controller="RentalHistory"
+                    method="post"
+                    class="cancel-form">
+                <input type="hidden" name="id" value="@Model.RentalId" />
+                <button type="submit" class="btn btn-danger mt-2">
+                    Cancel Booking
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+
+@if (Model.PickupRecord != null)
+{
+    <div class="card mb-3">
+        <div class="card-header">Pickup Details</div>
+        <div class="card-body">
+            <p>
+                <strong>Pickup Date:</strong>
+                @Model.PickupRecord.PickupDateTime.ToString("yyyy-MM-dd HH:mm")
+            </p>
+            @if (isStaff)
+            {
+                <p>
+                    <strong>Customer License:</strong> 
+                    @Model.PickupRecord.CustomerDrivingLisence
+                </p>
+
+                <p>
+                    <strong>Vehicle ID:</strong>
+                    @Model.PickupRecord.VehicleId
+                </p>
+            }
+            <p>
+                <strong>Vehicle Plate:</strong>
+                @(Model.PickupRecord.Vehicle?.PlateNumber ?? "-")
+            </p>
+
+            <p>
+                <strong>Odometer:</strong>
+                @Model.PickupRecord.OdometerPickup km
+            </p>
+
+            <p>
+                <strong>Fuel Level:</strong>
+                @Model.PickupRecord.FuelLevelPickup
+            </p>
+
+            <ul>
+                <li>Body: @Model.PickupRecord.BodyCondition</li>
+                <li>Interior: @Model.PickupRecord.InteriorCondition</li>
+                <li>Tyres: @Model.PickupRecord.TyreCondition</li>
+                <li>Lights: @Model.PickupRecord.LightsCondition</li>
+            </ul>
+
+            @if (!string.IsNullOrEmpty(Model.PickupRecord.Remarks))
+            {
+                <p><strong>Remarks:</strong> @Model.PickupRecord.Remarks</p>
+            }
+
+            <!-- STAFF ONLY -->
+            @if (isStaff)
+            {
+                <hr />
+                <p><strong>Handled By:</strong> @Model.PickupRecord.Staff?.Name</p>
+            }
+        </div>
+    </div>
+}
+
+
+@if (Model.ReturnRecord != null)
+{
+    <div class="card mb-3">
+        <div class="card-header">Return Details</div>
+        <div class="card-body">
+            <p>
+                <strong>Return Date:</strong>
+                @Model.ReturnRecord.ReturnDateTime.ToString("yyyy-MM-dd HH:mm")
+            </p>
+
+            <p>
+                <strong>Fuel Level:</strong>
+                @Model.ReturnRecord.FuelLevelReturn
+            </p>
+
+            <p>
+                <strong>Damage:</strong>
+                @(Model.ReturnRecord.HasDamage ? "Yes" : "No")
+            </p>
+
+            @if (Model.ReturnRecord.HasDamage)
+            {
+                <p>
+                    <strong>Damage Description:</strong>
+                    @Model.ReturnRecord.DamageDescription
+                </p>
+                <p>
+                    <strong>Damage Cost:</strong>
+                    @Model.ReturnRecord.DamageCost?.ToString("C")
+                </p>
+            }
+
+            <hr />
+
+            <p><strong>Late Fee:</strong> @(Model.ReturnRecord.LateFee?.ToString("C") ?? "0")</p>
+            <p><strong>Fuel Charge:</strong> @(Model.ReturnRecord.FuelCharge?.ToString("C") ?? "0")</p>
+            <p><strong>Cleaning Fee:</strong> @(Model.ReturnRecord.CleaningFee?.ToString("C") ?? "0")</p>
+
+            <h5>
+                Total Charges:
+                @Model.ReturnRecord.TotalReturnCost?.ToString("C")
+            </h5>
+
+            <!-- STAFF ONLY -->
+            @if (isStaff)
+            {
+                <hr />
+                <p><strong>Handled By:</strong> @Model.ReturnRecord.Staff?.Name</p>
+                <p><strong>Staff ID:</strong> @Model.ReturnRecord.StaffId</p>
+            }
+        </div>
+    </div>
+}
+
+@section foot {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".cancel-form").forEach(form => {
+                form.addEventListener("submit", function (e) {
+                    const confirmed = confirm(
+                        "Cancel this booking?\nDeposit refund depends on policy."
+                    );
+
+                    if (!confirmed) {
+                        e.preventDefault(); // stop submit
+                    }
+                });
+            });
+        });
+    </script>
+}

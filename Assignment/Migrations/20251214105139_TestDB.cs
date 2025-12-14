@@ -6,17 +6,30 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Assignment.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDB : Migration
+    public partial class TestDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Brands",
+                columns: table => new
+                {
+                    BrandId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BrandName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Brands", x => x.BrandId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
                     CustomerId = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
-                    PhotoURL = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PhotoURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HashPassword = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -56,21 +69,27 @@ namespace Assignment.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Vehicles",
+                name: "CarModels",
                 columns: table => new
                 {
-                    VehicleId = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
-                    PlateNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Brand = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Model = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CategoryId = table.Column<string>(type: "nvarchar(8)", nullable: false),
-                    Available = table.Column<bool>(type: "bit", nullable: false)
+                    ModelId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BrandId = table.Column<int>(type: "int", nullable: false),
+                    ModelName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(6,2)", precision: 6, scale: 2, nullable: false),
+                    CategoryId = table.Column<string>(type: "nvarchar(8)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vehicles", x => x.VehicleId);
+                    table.PrimaryKey("PK_CarModels", x => x.ModelId);
                     table.ForeignKey(
-                        name: "FK_Vehicles_VehicleCategories_CategoryId",
+                        name: "FK_CarModels_Brands_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brands",
+                        principalColumn: "BrandId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CarModels_VehicleCategories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "VehicleCategories",
                         principalColumn: "CategoryId",
@@ -83,17 +102,25 @@ namespace Assignment.Migrations
                 {
                     RentalId = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     CustomerId = table.Column<string>(type: "nvarchar(8)", nullable: false),
-                    VehicleId = table.Column<string>(type: "nvarchar(8)", nullable: false),
+                    ModelId = table.Column<int>(type: "int", nullable: false),
                     RentalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ReturnDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PickupDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReturnDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DepositAmount = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    IsDepositRefunded = table.Column<bool>(type: "bit", nullable: false),
                     StaffId = table.Column<string>(type: "nvarchar(8)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Rentals", x => x.RentalId);
+                    table.ForeignKey(
+                        name: "FK_Rentals_CarModels_ModelId",
+                        column: x => x.ModelId,
+                        principalTable: "CarModels",
+                        principalColumn: "ModelId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Rentals_Customers_CustomerId",
                         column: x => x.CustomerId,
@@ -105,11 +132,25 @@ namespace Assignment.Migrations
                         column: x => x.StaffId,
                         principalTable: "Staffs",
                         principalColumn: "StaffId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Vehicles",
+                columns: table => new
+                {
+                    VehicleId = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    PlateNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ModelId = table.Column<int>(type: "int", nullable: false),
+                    Available = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vehicles", x => x.VehicleId);
                     table.ForeignKey(
-                        name: "FK_Rentals_Vehicles_VehicleId",
-                        column: x => x.VehicleId,
-                        principalTable: "Vehicles",
-                        principalColumn: "VehicleId",
+                        name: "FK_Vehicles_CarModels_ModelId",
+                        column: x => x.ModelId,
+                        principalTable: "CarModels",
+                        principalColumn: "ModelId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -120,6 +161,8 @@ namespace Assignment.Migrations
                     PaymentId = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     RentalId = table.Column<string>(type: "nvarchar(8)", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
+                    PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -134,44 +177,6 @@ namespace Assignment.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PickupRecord",
-                columns: table => new
-                {
-                    PickupId = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
-                    RentalId = table.Column<string>(type: "nvarchar(8)", nullable: false),
-                    PickupDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CustomerDrivingLisence = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OdometerPickup = table.Column<int>(type: "int", nullable: false),
-                    FuelLevelPickup = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    BodyCondition = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    InteriorCondition = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    TyreCondition = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    LightsCondition = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    Remarks = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    StaffId = table.Column<string>(type: "nvarchar(8)", nullable: false),
-                    ExteriorPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    InteriorPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OdometerPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FuelPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PickupRecord", x => x.PickupId);
-                    table.ForeignKey(
-                        name: "FK_PickupRecord_Rentals_RentalId",
-                        column: x => x.RentalId,
-                        principalTable: "Rentals",
-                        principalColumn: "RentalId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PickupRecord_Staffs_StaffId",
-                        column: x => x.StaffId,
-                        principalTable: "Staffs",
-                        principalColumn: "StaffId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ReturnRecord",
                 columns: table => new
                 {
@@ -179,27 +184,27 @@ namespace Assignment.Migrations
                     RentalId = table.Column<string>(type: "nvarchar(8)", nullable: false),
                     ReturnDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OdometerReturn = table.Column<int>(type: "int", nullable: false),
-                    FuelLevelReturn = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    BodyCondition = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    InteriorCondition = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    TyreCondition = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    LightsCondition = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    CleanlinessCondition = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
+                    FuelLevelReturn = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BodyCondition = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InteriorCondition = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TyreCondition = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LightsCondition = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CleanlinessCondition = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HasDamage = table.Column<bool>(type: "bit", nullable: false),
-                    DamageDescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    DamageDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DamageCost = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: true),
                     FuelCharge = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: true),
                     LateReturnDay = table.Column<int>(type: "int", nullable: true),
                     LateFee = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: true),
                     CleaningFee = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: true),
-                    ExtraCharges = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: true),
+                    ExtraCharges = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     TotalReturnCost = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: true),
-                    Remarks = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StaffId = table.Column<string>(type: "nvarchar(8)", nullable: false),
-                    ExteriorPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    InteriorPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OdometerPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FuelPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExteriorPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InteriorPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OdometerPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FuelPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DamagePhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -219,6 +224,61 @@ namespace Assignment.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PickupRecord",
+                columns: table => new
+                {
+                    PickupId = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    RentalId = table.Column<string>(type: "nvarchar(8)", nullable: false),
+                    PickupDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CustomerDrivingLisence = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VehicleId = table.Column<string>(type: "nvarchar(8)", nullable: false),
+                    OdometerPickup = table.Column<int>(type: "int", nullable: false),
+                    FuelLevelPickup = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BodyCondition = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InteriorCondition = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TyreCondition = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LightsCondition = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StaffId = table.Column<string>(type: "nvarchar(8)", nullable: false),
+                    ExteriorPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InteriorPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OdometerPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FuelPhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PickupRecord", x => x.PickupId);
+                    table.ForeignKey(
+                        name: "FK_PickupRecord_Rentals_RentalId",
+                        column: x => x.RentalId,
+                        principalTable: "Rentals",
+                        principalColumn: "RentalId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PickupRecord_Staffs_StaffId",
+                        column: x => x.StaffId,
+                        principalTable: "Staffs",
+                        principalColumn: "StaffId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PickupRecord_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
+                        principalColumn: "VehicleId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CarModels_BrandId",
+                table: "CarModels",
+                column: "BrandId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CarModels_CategoryId",
+                table: "CarModels",
+                column: "CategoryId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_RentalId",
                 table: "Payments",
@@ -237,19 +297,24 @@ namespace Assignment.Migrations
                 column: "StaffId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PickupRecord_VehicleId",
+                table: "PickupRecord",
+                column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Rentals_CustomerId",
                 table: "Rentals",
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Rentals_ModelId",
+                table: "Rentals",
+                column: "ModelId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Rentals_StaffId",
                 table: "Rentals",
                 column: "StaffId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Rentals_VehicleId",
-                table: "Rentals",
-                column: "VehicleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReturnRecord_RentalId",
@@ -263,9 +328,9 @@ namespace Assignment.Migrations
                 column: "StaffId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicles_CategoryId",
+                name: "IX_Vehicles_ModelId",
                 table: "Vehicles",
-                column: "CategoryId");
+                column: "ModelId");
         }
 
         /// <inheritdoc />
@@ -281,7 +346,13 @@ namespace Assignment.Migrations
                 name: "ReturnRecord");
 
             migrationBuilder.DropTable(
+                name: "Vehicles");
+
+            migrationBuilder.DropTable(
                 name: "Rentals");
+
+            migrationBuilder.DropTable(
+                name: "CarModels");
 
             migrationBuilder.DropTable(
                 name: "Customers");
@@ -290,7 +361,7 @@ namespace Assignment.Migrations
                 name: "Staffs");
 
             migrationBuilder.DropTable(
-                name: "Vehicles");
+                name: "Brands");
 
             migrationBuilder.DropTable(
                 name: "VehicleCategories");

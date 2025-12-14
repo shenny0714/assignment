@@ -145,6 +145,8 @@ C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\Assignment.Ass
 C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\Assignment.AssemblyInfo.cs
 C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\Assignment.csproj.CoreCompileInputs.cache
 C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\Assignment.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\Assignment.RazorAssemblyInfo.cache
+C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\Assignment.RazorAssemblyInfo.cs
 C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\Assignment.sourcelink.json
 C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\rjimswa.dswa.cache.json
 C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
@@ -161,6 +163,10 @@ C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\refint\Assignm
 C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\Assignment.pdb
 C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\Assignment.genruntimeconfig.cache
 C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\ref\Assignment.dll
-C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\Assignment.RazorAssemblyInfo.cache
-C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\Assignment.RazorAssemblyInfo.cs
-C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\compressed\z099wgqt93-r2jgu8jajk.gz
+C:\Users\USER\source\repos\Assignment\Assignment\bin\Debug\net9.0\libman.json
+C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\compressed\jp9tm088aj-o1o13a6vjx.gz
+C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\compressed\pyb9o09pnt-8ve2wm9mbw.gz
+C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\compressed\2q7544574j-ag7o75518u.gz
+C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\compressed\132joj0sj3-48y08845bh.gz
+C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\compressed\dv1qps2toc-qt1j8nw5k0.gz
+C:\Users\USER\source\repos\Assignment\Assignment\obj\Debug\net9.0\compressed\z099wgqt93-pytsalyn8a.gz

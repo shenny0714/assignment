@@ -1,0 +1,136 @@
+﻿
+
+@model IEnumerable<Assignment.Models.Rental>
+
+@{
+    ViewData["Title"] = "Rental History";
+    var active = (ViewBag.ActiveTab ?? "All").ToString();
+    bool isAdmin = false;
+    // ViewBag.IsAdmin ??
+    // change after security added
+}
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<h2>Rental History</h2>
+
+<form asp-action="Index"
+      asp-controller="RentalHistory"
+      data-ajax="true"
+      data-ajax-update="#target"
+      data-ajax-loading="#loader">
+    <input type="hidden" name="tab" value="@active" />
+    @Html.TextBox("search", "", new { type = "search", id = "search", autofocus = "" })
+    <button>Search</button>
+
+    <img src="/images/loader.gif" id="loader" style="display: none">
+</form>
+
+
+<form data-ajax="true"
+      data-ajax-update="#target"
+      data-ajax-loading="#loader"
+      method="get" 
+      class="mb-3 row g-2">
+    <input type="hidden" name="tab" id="tabInput" value="@active" />
+    <div class="col">
+        <label>Pickup From:</label>
+        <input type="date" name="pickupFrom" class="form-control" />
+    </div>
+    <div class="col">
+        <label>Pickup To:</label>
+        <input type="date" name="pickupTo" class="form-control" />
+    </div>
+    <div class="col">
+        <label>Return From:</label>
+        <input type="date" name="returnFrom" class="form-control" />
+    </div>
+    <div class="col">
+        <label>Return To:</label>
+        <input type="date" name="returnTo" class="form-control" />
+    </div>
+    <div class="col align-self-end">
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+</form>
+
+
+@{
+    var tabs = new List<(string Key, string Label)>
+    {
+        ("All", "All"),
+        ("Booked", "Booked"),
+        ("Pickup", "Pickup"),
+        ("Returned", "Returned"),
+        ("LateDue", "Late Due"),
+        ("LateReturned", "Late Returned"),
+        ("Cancelled","Cancelled"),
+        ("Expired","Expired")
+    };
+}
+
+<ul class="nav nav-tabs mb-3">
+    @foreach (var tabItem in tabs)
+    {
+        // Determine if this tab is active
+        bool isActive = active == tabItem.Key;
+
+        // special handling for "LateDue" and "LateReturned"
+        if ((tabItem.Key == "LateDue" && active == "LateDue") ||
+        (tabItem.Key == "LateReturned" && active == "LateReturned"))
+        {
+            isActive = true;
+        }
+
+        <li class="nav-item">
+            <a class="nav-link @(isActive ? "active" : "")"
+               data-ajax="true"
+               data-ajax-update="#target"
+               data-ajax-loading="#loader"
+               href="@Url.Action("Index", "RentalHistory", new { tab = tabItem.Key })">
+                @tabItem.Label
+            </a>
+        </li>
+    }
+</ul>
+
+
+<div id="target">
+    <partial name="_RentalHistory" model="Model" />
+</div>
+
+@section foot {
+    <script>
+        let timer = null;
+
+        $('#search').on('input', e => {
+            clearTimeout(timer);
+            timer = setTimeout(() => $(e.target.form).submit(), 500);
+        });
+
+        // handle tab click
+        document.querySelectorAll('.nav-link[data-ajax="true"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // remove active from all tab
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                // add active to clicked tab
+                this.classList.add('active');
+
+                // Get the tab key from href query
+                const tab = new URL(this.href).searchParams.get('tab');
+
+                // update hidden input
+                document.querySelectorAll('input[name="tab"]').forEach(inp => inp.value = tab);
+
+                $.get(this.href, function(data) {
+                    $('#target').html(data);
+                });
+            });
+        });
+    </script>
+}
+
+

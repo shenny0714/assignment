@@ -10,11 +10,14 @@
 
 <div class="pickup-container">
 
-<form asp-action="Pickup" asp-controller="PickupReturn" method="post" enctype="multipart/form-data">
+
+    <form asp-action="Pickup" asp-controller="PickupReturn" asp-route-rentalId="@Model.RentalId" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly"></div>
 
         <input type="hidden" asp-for="RentalId" />
         <input type="hidden" asp-for="StaffId" />
+        <input type="hidden" asp-for="ModelName" />
+        <input type="hidden" asp-for="CustomerName" />
 
 
         <!-- Display Data -->
@@ -22,6 +25,7 @@
 
         <div class="section-box">
             <h3>Rental Information</h3>
+            
             <p><strong>Rental ID:</strong> @Model.RentalId</p>
             <p><strong>Customer:</strong> @Model.CustomerName</p>
             <p><strong>Model:</strong> @Model.ModelName</p>
@@ -43,33 +47,55 @@
             </select>
             <span asp-validation-for="VehicleId"></span>
 
-            <label asp-for="CustomerDrivingLicense">Driving Licence</label>
-            <input asp-for="CustomerDrivingLicense" type="file"/>
+            <label asp-for="CustomerDrivingLicense">Driving License</label>
+            <input asp-for="CustomerDrivingLicense" type="file" accept="image/jpeg,image/png" />
             <span asp-validation-for="CustomerDrivingLicense"></span>
 
             <label asp-for="OdometerPickup">Odometer Reading</label>
             <input asp-for="OdometerPickup" type="number" />
-            <span asp-validation-for="CustomerDrivingLicense"></span>
+            <span asp-validation-for="OdometerPickup"></span>
 
             <label asp-for="FuelLevelPickup">Fuel Level</label>
-            <input asp-for="FuelLevelPickup" />
+            <select asp-for="FuelLevelPickup" asp-items="@(new SelectList(ViewBag.FuelList))" class="form-control">
+                <option value="">-- Select Fuel Level Pickup --</option>
+            </select>
             <span asp-validation-for="FuelLevelPickup"></span>
 
             <label asp-for="BodyCondition">Body Condition</label>
-            <input asp-for="BodyCondition" />
+            <select asp-for="BodyCondition" class="form-control">
+                <option value="">-- Select Condition --</option>
+                <option value="OK">OK</option>
+                <option value="Not OK">Not OK</option>
+            </select>
             <span asp-validation-for="BodyCondition"></span>
 
+
             <label asp-for="InteriorCondition">Interior Condition</label>
-            <input asp-for="InteriorCondition" />
+            <select asp-for="InteriorCondition" class="form-control">
+                <option value="">-- Select Condition --</option>
+                <option value="OK">OK</option>
+                <option value="Not OK">Not OK</option>
+            </select>
             <span asp-validation-for="InteriorCondition"></span>
 
+
             <label asp-for="TyreCondition">Tyre Condition</label>
-            <input asp-for="TyreCondition" />
+            <select asp-for="TyreCondition" class="form-control">
+                <option value="">-- Select Condition --</option>
+                <option value="OK">OK</option>
+                <option value="Not OK">Not OK</option>
+            </select>
             <span asp-validation-for="TyreCondition"></span>
 
+
             <label asp-for="LightsCondition">Lights Condition</label>
-            <input asp-for="LightsCondition" />
+            <select asp-for="LightsCondition" class="form-control">
+                <option value="">-- Select Condition --</option>
+                <option value="OK">OK</option>
+                <option value="Not OK">Not OK</option>
+            </select>
             <span asp-validation-for="LightsCondition"></span>
+
 
             <label asp-for="Remarks">Remarks</label>
             <textarea asp-for="Remarks"></textarea>
@@ -80,23 +106,24 @@
             <h3>Photos</h3>
 
             <label>Exterior Photo</label>
-            <input asp-for="ExteriorPhoto" type="file" />
-            <span asp-validation-for="CustomerDrivingLicense"></span>
+            <input asp-for="ExteriorPhoto" type="file" accept="image/jpeg,image/png" />
+            <span asp-validation-for="ExteriorPhoto"></span>
 
             <label>Interior Photo</label>
-            <input asp-for="InteriorPhoto" type="file" />
-            <span asp-validation-for="CustomerDrivingLicense"></span>
+            <input asp-for="InteriorPhoto" type="file" accept="image/jpeg,image/png" />
+            <span asp-validation-for="InteriorPhoto"></span>
 
             <label>Odometer Photo</label>
-            <input asp-for="OdometerPhoto" type="file" />
-            <span asp-validation-for="CustomerDrivingLicense"></span>
+            <input asp-for="OdometerPhoto" type="file" accept="image/jpeg,image/png" />
+            <span asp-validation-for="OdometerPhoto"></span>
 
             <label>Fuel Photo</label>
-            <input asp-for="FuelPhoto" type="file" />
-            <span asp-validation-for="CustomerDrivingLicense"></span>
+            <input asp-for="FuelPhoto" type="file" accept="image/jpeg,image/png" />
+            <span asp-validation-for="FuelPhoto"></span>
         </div>
 
         <button type="submit" class="btn-save">Submit Pickup Record</button>
 
     </form>
 </div>
+

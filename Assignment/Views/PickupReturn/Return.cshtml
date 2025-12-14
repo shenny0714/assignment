@@ -1,0 +1,160 @@
+﻿@model Assignment.ViewModels.ReturnRecordVM
+
+<form asp-action="Return" asp-controller="PickupReturn" asp-route-rentalId="@Model.RentalId" method="post" enctype="multipart/form-data">
+
+    <h3>Vehicle Return Form</h3>
+
+    <div class="section-box">
+        <h3>Rental Information</h3>
+
+        <p><strong>Rental ID:</strong> @Model.RentalId</p>
+        <p><strong>Customer:</strong> @Model.CustomerName</p>
+        <p><strong>Model:</strong> @Model.ModelName</p>
+        <p><strong>Plate Number:</strong> @Model.PlateNumber</p>
+        <p><strong>Pickup Date:</strong> @(Model.PickupDateTime.ToString("yyyy-MM-dd"))</p>
+
+    </div>
+
+    <label asp-for="ReturnDateTime">Pickup Date Time</label>
+    <input asp-for="ReturnDateTime" autofocus type="datetime-local" step="any">
+    <span asp-validation-for="ReturnDateTime"></span>
+
+    <div>
+        <label asp-for="OdometerReturn"></label>
+        <input asp-for="OdometerReturn" class="form-control" />
+        <span asp-validation-for="OdometerReturn"></span>
+    </div>
+
+    <div>
+        <label asp-for="FuelLevelReturn">Fuel Level</label>
+        <select asp-for="FuelLevelReturn" asp-items="@(new SelectList(ViewBag.FuelList))" class="form-control">
+            <option value="">-- Select Fuel Level --</option>
+        </select>
+        <span asp-validation-for="FuelLevelReturn"></span>
+    </div>
+
+    <hr />
+
+    <h4>Vehicle Condition</h4>
+
+    <div>
+        <label asp-for="BodyCondition">Body</label>
+        <select asp-for="BodyCondition" class="form-control">
+            <option value="">-- Select Condition--</option>
+            <option>OK</option>
+            <option>Not OK</option>
+        </select>
+        <span asp-validation-for="BodyCondition"></span>
+    </div>
+
+    <div>
+        <label asp-for="InteriorCondition">Interior</label>
+        <select asp-for="InteriorCondition" class="form-control">
+            <option value="">-- Select Condition--</option>
+            <option>OK</option>
+            <option>Not OK</option>
+        </select>
+        <span asp-validation-for="InteriorCondition"></span>
+    </div>
+
+    <div>
+        <label asp-for="TyreCondition">Tyre</label>
+        <select asp-for="TyreCondition" class="form-control">
+            <option value="">-- Select Condition--</option>
+            <option>OK</option>
+            <option>Not OK</option>
+        </select>
+        <span asp-validation-for="TyreCondition"></span>
+    </div>
+
+    <div>
+        <label asp-for="LightsCondition">Lights</label>
+        <select asp-for="LightsCondition" class="form-control">
+            <option value="">-- Select Condition--</option>
+            <option>OK</option>
+            <option>Not OK</option>
+        </select>
+        <span asp-validation-for="LightsCondition"></span>
+    </div>
+
+    <div>
+        <label asp-for="CleanlinessCondition">Cleanliness</label>
+        <select asp-for="CleanlinessCondition" class="form-control">
+            <option value="">-- Select Condition--</option>
+            <option>Clean</option>
+            <option>Dirty</option>
+        </select>
+        <span asp-validation-for="CleanlinessCondition"></span>
+    </div>
+
+    <hr />
+
+    <h4>Damage Report</h4>
+
+    <div>
+        <label asp-for="HasDamage">Has Damage?</label>
+        <input asp-for="HasDamage" type="checkbox" />
+    </div>
+
+    <div>
+        <label asp-for="DamageDescription"></label>
+        <textarea asp-for="DamageDescription" class="form-control"></textarea>
+        <span asp-validation-for="DamageDescription"></span>
+    </div>
+
+    <div>
+        <label asp-for="DamageCost"></label>
+        <input asp-for="DamageCost" type="number" step="0.01" />
+        <span asp-validation-for="DamageCost"></span>
+    </div>
+
+    <div>
+        <label>Damage Photo (optional)</label>
+        <input asp-for="DamagePhoto" type="file" />
+        <span asp-validation-for="DamagePhoto"></span>
+    </div>
+
+    <hr />
+
+    <h4>Required Photos</h4>
+
+    <div>
+        <label>Exterior Photo</label>
+        <input asp-for="ExteriorPhoto" type="file" />
+        <span asp-validation-for="ExteriorPhoto"></span>
+    </div>
+
+    <div>
+        <label>Interior Photo</label>
+        <input asp-for="InteriorPhoto" type="file" />
+        <span asp-validation-for="InteriorPhoto"></span>
+    </div>
+
+    <div>
+        <label>Odometer Photo</label>
+        <input asp-for="OdometerPhoto" type="file" />
+        <span asp-validation-for="OdometerPhoto"></span>
+    </div>
+
+    <div>
+        <label>Fuel Level Photo</label>
+        <input asp-for="FuelPhoto" type="file" />
+        <span asp-validation-for="FuelPhoto"></span>
+    </div>
+
+    <hr />
+
+    <div>
+        <label asp-for="Remarks"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks"></span>
+    </div>
+
+    <input type="hidden" asp-for="StaffId" />
+    <input type="hidden" asp-for="RentalId" />
+    <input type="hidden" asp-for="ReturnId" />
+
+    <button type="submit" class="btn btn-primary">Submit Return</button>
+</form>
+
+@*odometer value client side validatio havent do*@

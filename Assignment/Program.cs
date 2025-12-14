@@ -9,6 +9,7 @@ builder.Services.AddSqlServer<DB>($@"
 ");
 
 builder.Services.AddScoped<Helper>();
+builder.Services.AddHostedService<Assignment.Services.RentalStatusUpdater>();
 
 var app = builder.Build();
 app.UseHttpsRedirection();

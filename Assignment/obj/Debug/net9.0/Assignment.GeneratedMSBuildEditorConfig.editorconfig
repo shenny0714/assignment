@@ -28,8 +28,28 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
+[C:/Users/USER/source/repos/Assignment/Assignment/Views/PickupReturn/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGlja3VwUmV0dXJuXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/USER/source/repos/Assignment/Assignment/Views/PickupReturn/Pickup.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGlja3VwUmV0dXJuXFBpY2t1cC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/USER/source/repos/Assignment/Assignment/Views/PickupReturn/Return.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGlja3VwUmV0dXJuXFJldHVybi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/USER/source/repos/Assignment/Assignment/Views/RentalHistory/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVudGFsSGlzdG9yeVxEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/USER/source/repos/Assignment/Assignment/Views/RentalHistory/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVudGFsSGlzdG9yeVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/USER/source/repos/Assignment/Assignment/Views/RentalHistory/_RentalHistory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVudGFsSGlzdG9yeVxfUmVudGFsSGlzdG9yeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/USER/source/repos/Assignment/Assignment/Views/Shared/_Layout.cshtml]

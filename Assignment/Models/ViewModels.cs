@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 
+
+
 namespace Assignment.ViewModels;
 
 public class PickupViewModel
@@ -13,76 +15,178 @@ public class PickupViewModel
     // ───────────────────────────────────────────
     // Basic Pickup Info 
     // ───────────────────────────────────────────
-    [MaxLength(8)]
+    [Required]
+    [StringLength(8)]
     public string PickupId { get; set; }
-
     [Required]
-    [MaxLength(8)]
+    [StringLength(8)]
+    [RegularExpression(@"RN\d{4}", ErrorMessage = "Invalid {0}.")]
     public string RentalId { get; set; }
-
     [Required]
-    public DateTime PickupDateTime { get; set; } = DateTime.Now;
+    public DateTime PickupDateTime { get; set; } = DateTime.Today;
 
     // ───────────────────────────────────────────
     // Customer & Vehicle Info (for display in form)
     // ───────────────────────────────────────────
     public string CustomerName { get; set; }
-
     [Required]
-    [Display(Name = "Driving Licence")]
-    public IFormFile CustomerDrivingLicense { get; set; }
 
-    public string VehicleId { get; set; }
-    public string PlateNumber { get; set; }
     public string ModelName { get; set; }
 
     // ───────────────────────────────────────────
     // Pickup Details
     // ───────────────────────────────────────────
 
-    [Required]
-    [Range(0, int.MaxValue)]
-    public int OdometerPickup { get; set; }
+    [Display(Name = "Driving Licence")]
+    public IFormFile CustomerDrivingLicense { get; set; }
 
-    [Required, MaxLength(20)]
+    [Required]
+    [RegularExpression(@"VH\d{4}", ErrorMessage = "Invalid {0}.")]
+    public string VehicleId { get; set; }
+    
+    [Required]
+
+    [Range(1, int.MaxValue, ErrorMessage = "Odometer must be positive.")]
+    public int OdometerPickup { get; set; }
+    [Required]
+    [StringLength(20)]
     [Display(Name = "Fuel Level (Full / Half / Low)")]
     public string FuelLevelPickup { get; set; }
-
-    [Required, MaxLength(6)]
+    [Required]
+    [StringLength(6)]
     public string BodyCondition { get; set; }
-
-    [Required, MaxLength(6)]
+    [Required]
+    [StringLength(6)]
     public string InteriorCondition { get; set; }
 
-    [Required, MaxLength(6)]
+    [Required]
+    [StringLength(6)]
     public string TyreCondition { get; set; }
 
-    [Required, MaxLength(6)]
+    [Required]
+    [StringLength(6)]
     public string LightsCondition { get; set; }
-
-    [MaxLength(100)]
+    [StringLength(100)]
     public string? Remarks { get; set; }
 
     // ───────────────────────────────────────────
     // Staff Handling Pickup
     // ───────────────────────────────────────────
-    public string StaffId { get; set; }
-    public string StaffName { get; set; }
+    [RegularExpression(@"STF\d{4}", ErrorMessage = "Invalid {0}.")]
+    public string? StaffId { get; set; }
+    public string? StaffName { get; set; }
 
     // ───────────────────────────────────────────
     // Photo Uploads (Form Only)
     // ───────────────────────────────────────────
+    [Required]
     public IFormFile ExteriorPhoto { get; set; }
+    [Required]
     public IFormFile InteriorPhoto { get; set; }
+    [Required]
     public IFormFile OdometerPhoto { get; set; }
+    [Required]
     public IFormFile FuelPhoto { get; set; }
 
     // ───────────────────────────────────────────
     // DB Saved Photo Paths (for display)
     // ───────────────────────────────────────────
-    public string ExteriorPhotoPath { get; set; }
-    public string InteriorPhotoPath { get; set; }
-    public string OdometerPhotoPath { get; set; }
-    public string FuelPhotoPath { get; set; }
+    public string? ExteriorPhotoPath { get; set; }
+    public string? InteriorPhotoPath { get; set; }
+    public string? OdometerPhotoPath { get; set; }
+    public string? FuelPhotoPath { get; set; }
 }
 
+public class ReturnRecordVM
+{
+    [Required]
+    [MaxLength(8)]
+    public string ReturnId { get; set; }
+
+    [Required]
+    [MaxLength(8)]
+    [RegularExpression(@"VH\d{4}", ErrorMessage = "Invalid {0}.")]
+    public string RentalId { get; set; }
+
+    // ───────────────────────────────────────────
+    // Customer & Vehicle Info (for display in form)
+    // ───────────────────────────────────────────
+    public string CustomerName { get; set; }
+    public string ModelName { get; set; }
+    public string PlateNumber { get; set; }
+    public DateTime PickupDateTime { get; set; }
+
+    // Display return date/time
+    [Required]
+    public DateTime ReturnDateTime { get; set; } = DateTime.Now;
+
+    // -----------------------------
+    // VEHICLE CONDITION
+    // -----------------------------
+    [Range(1, 100000, ErrorMessage = "Odometer must be between 0 and 100000.")]
+    public int OdometerReturn { get; set; }
+
+    [Required]
+    public string FuelLevelReturn { get; set; }
+
+    [Required]
+    public string BodyCondition { get; set; }
+
+    [Required]
+    public string InteriorCondition { get; set; }
+
+    [Required]
+    public string TyreCondition { get; set; }
+
+    [Required]
+    public string LightsCondition { get; set; }
+
+    [Required]
+    public string CleanlinessCondition { get; set; }
+
+    // -----------------------------
+    // DAMAGE DETAILS
+    // -----------------------------
+    public bool HasDamage { get; set; }
+
+    public string? DamageDescription { get; set; }
+
+    [Range(1, 999999, ErrorMessage = "Damage cost must be a positive number.")]
+    public decimal? DamageCost { get; set; }
+
+    // -----------------------------
+    // EXTRA CHARGES
+    // -----------------------------
+    public decimal? FuelCharge { get; set; }
+    public int? LateReturnDay { get; set; }
+    public decimal? LateFee { get; set; }
+    public decimal? CleaningFee { get; set; }
+    public decimal? ExtraCharges { get; set; }
+    public decimal? TotalReturnCost { get; set; }
+
+    public string? Remarks { get; set; }
+
+    // -----------------------------
+    // STAFF
+    // -----------------------------
+    [Required]
+    [RegularExpression(@"STF\d{4}", ErrorMessage = "Invalid {0}.")]
+    public string StaffId { get; set; }
+
+    // -----------------------------
+    // PHOTO UPLOADS
+    // -----------------------------
+    [Required]
+    public IFormFile ExteriorPhoto { get; set; }
+
+    [Required]
+    public IFormFile InteriorPhoto { get; set; }
+
+    [Required]
+    public IFormFile OdometerPhoto { get; set; }
+
+    [Required]
+    public IFormFile FuelPhoto { get; set; }
+
+    public IFormFile? DamagePhoto { get; set; }
+}

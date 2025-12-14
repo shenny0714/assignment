@@ -37,7 +37,7 @@ namespace Assignment.Migrations
 
                     b.HasKey("BrandId");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("Assignment.Models.CarModel", b =>
@@ -52,6 +52,7 @@ namespace Assignment.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CategoryId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(8)");
 
                     b.Property<string>("ModelName")
@@ -59,13 +60,17 @@ namespace Assignment.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<decimal>("Price")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
                     b.HasKey("ModelId");
 
                     b.HasIndex("BrandId");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CarModels", (string)null);
+                    b.ToTable("CarModels");
                 });
 
             modelBuilder.Entity("Assignment.Models.Customer", b =>
@@ -99,7 +104,7 @@ namespace Assignment.Migrations
 
                     b.HasKey("CustomerId");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("Assignment.Models.Payment", b =>
@@ -115,16 +120,24 @@ namespace Assignment.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PaymentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RentalId")
                         .IsRequired()
                         .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PaymentId");
 
                     b.HasIndex("RentalId")
                         .IsUnique();
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Assignment.Models.PickupRecord", b =>
@@ -191,6 +204,7 @@ namespace Assignment.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VehicleId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(8)");
 
                     b.HasKey("PickupId");
@@ -202,7 +216,7 @@ namespace Assignment.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("PickupRecord", (string)null);
+                    b.ToTable("PickupRecord");
                 });
 
             modelBuilder.Entity("Assignment.Models.Rental", b =>
@@ -219,13 +233,19 @@ namespace Assignment.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<bool>("IsDepositRefunded")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ModelId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("PickupDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("RentalDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ReturnDate")
+                    b.Property<DateTime>("ReturnDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("StaffId")
@@ -240,9 +260,6 @@ namespace Assignment.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<string>("VehicleId")
-                        .HasColumnType("nvarchar(8)");
-
                     b.HasKey("RentalId");
 
                     b.HasIndex("CustomerId");
@@ -251,9 +268,7 @@ namespace Assignment.Migrations
 
                     b.HasIndex("StaffId");
 
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("Rentals", (string)null);
+                    b.ToTable("Rentals");
                 });
 
             modelBuilder.Entity("Assignment.Models.ReturnRecord", b =>
@@ -267,14 +282,16 @@ namespace Assignment.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("CleaningFee")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("CleanlinessCondition")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("DamageCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("DamageDescription")
                         .HasColumnType("nvarchar(max)");
@@ -290,7 +307,8 @@ namespace Assignment.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("FuelCharge")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("FuelLevelReturn")
                         .IsRequired()
@@ -312,7 +330,8 @@ namespace Assignment.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("LateFee")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int?>("LateReturnDay")
                         .HasColumnType("int");
@@ -329,7 +348,6 @@ namespace Assignment.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Remarks")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RentalId")
@@ -344,7 +362,8 @@ namespace Assignment.Migrations
                         .HasColumnType("nvarchar(8)");
 
                     b.Property<decimal?>("TotalReturnCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("TyreCondition")
                         .IsRequired()
@@ -357,7 +376,7 @@ namespace Assignment.Migrations
 
                     b.HasIndex("StaffId");
 
-                    b.ToTable("ReturnRecord", (string)null);
+                    b.ToTable("ReturnRecord");
                 });
 
             modelBuilder.Entity("Assignment.Models.Staff", b =>
@@ -392,7 +411,7 @@ namespace Assignment.Migrations
 
                     b.HasKey("StaffId");
 
-                    b.ToTable("Staffs", (string)null);
+                    b.ToTable("Staffs");
                 });
 
             modelBuilder.Entity("Assignment.Models.Vehicle", b =>
@@ -416,7 +435,7 @@ namespace Assignment.Migrations
 
                     b.HasIndex("ModelId");
 
-                    b.ToTable("Vehicles", (string)null);
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("Assignment.Models.VehicleCategory", b =>
@@ -432,7 +451,7 @@ namespace Assignment.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("VehicleCategories", (string)null);
+                    b.ToTable("VehicleCategories");
                 });
 
             modelBuilder.Entity("Assignment.Models.CarModel", b =>
@@ -445,7 +464,9 @@ namespace Assignment.Migrations
 
                     b.HasOne("Assignment.Models.VehicleCategory", "Category")
                         .WithMany("CarModels")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Brand");
 
@@ -479,7 +500,9 @@ namespace Assignment.Migrations
 
                     b.HasOne("Assignment.Models.Vehicle", "Vehicle")
                         .WithMany()
-                        .HasForeignKey("VehicleId");
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Rental");
 
@@ -505,10 +528,6 @@ namespace Assignment.Migrations
                     b.HasOne("Assignment.Models.Staff", null)
                         .WithMany("RentalsHandled")
                         .HasForeignKey("StaffId");
-
-                    b.HasOne("Assignment.Models.Vehicle", null)
-                        .WithMany("Rentals")
-                        .HasForeignKey("VehicleId");
 
                     b.Navigation("Customer");
 
@@ -575,11 +594,6 @@ namespace Assignment.Migrations
             modelBuilder.Entity("Assignment.Models.Staff", b =>
                 {
                     b.Navigation("RentalsHandled");
-                });
-
-            modelBuilder.Entity("Assignment.Models.Vehicle", b =>
-                {
-                    b.Navigation("Rentals");
                 });
 
             modelBuilder.Entity("Assignment.Models.VehicleCategory", b =>

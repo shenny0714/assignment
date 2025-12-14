@@ -1,0 +1,140 @@
+﻿@{
+    ViewBag.Title = "Pickup & Return Management";
+    Layout = "_Layout";
+}
+
+<h2>Pickup & Return Management</h2>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<ul class="nav nav-tabs" id="pickupReturnTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="pickup-tab" data-bs-toggle="tab" data-bs-target="#pickup" type="button" role="tab" aria-controls="pickup" aria-selected="true">Pickup</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="return-tab" data-bs-toggle="tab" data-bs-target="#return" type="button" role="tab" aria-controls="return" aria-selected="false">Return</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="late-tab" data-bs-toggle="tab" data-bs-target="#late" type="button" role="tab" aria-controls="late" aria-selected="false">Late Returns</button>
+    </li>
+</ul>
+
+<div class="tab-content mt-3" id="pickupReturnTabContent">
+    <!-- Pickup Tab -->
+    <div class="tab-pane fade show active" id="pickup" role="tabpanel" aria-labelledby="pickup-tab">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Rental ID</th>
+                    <th>Customer</th>
+                    <th>Vehicle</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @* Loop your pickup data here *@
+                @foreach (var p in ViewBag.Pickups)
+                {
+                    <tr>
+                        <td>@p.RentalId</td>
+                        <td>@p.CustomerName</td>
+                        <td>@p.VehiclePlate</td>
+                        <td>
+                            <a asp-action="Pickup" asp-route-rentalId="@p.RentalId" class="btn btn-sm btn-primary">Process Pickup</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Return Tab -->
+    <div class="tab-pane fade" id="return" role="tabpanel" aria-labelledby="return-tab">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Rental ID</th>
+                    <th>Customer</th>
+                    <th>Vehicle</th>
+                    <th>Pickup Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @* Loop your return data here *@
+                @foreach (var r in ViewBag.Returns)
+                {
+                    <tr>
+                        <td>@r.RentalId</td>
+                        <td>@r.CustomerName</td>
+                        <td>@r.VehiclePlate</td>
+                        <td>@r.PickupDate.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            <a asp-action="Return" asp-route-rentalId="@r.RentalId" class="btn btn-sm btn-success">Process Return</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Late Returns Tab -->
+    <div class="tab-pane fade" id="late" role="tabpanel" aria-labelledby="late-tab">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Rental ID</th>
+                    <th>Customer</th>
+                    <th>Vehicle</th>
+                    <th>Pickup Date</th>
+                    <th>Days Late</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var l in ViewBag.LateReturns)
+                {
+                    <tr>
+                        <td>@l.RentalId</td>
+                        <td>@l.CustomerName</td>
+                        <td>@l.VehiclePlate</td>
+                        <td>@l.PickupDate.ToString("yyyy-MM-dd")</td>
+                        <td>@l.DaysLate</td>
+                        <td>
+                            <a asp-action="Return" asp-route-rentalId="@l.RentalId" class="btn btn-sm btn-warning">Process Return</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+@* <table class="table table-bordered">
+
+    <tr>
+        <th>Rental Id</th>
+        <th>Customer Id</th>
+        <th>Rental Date</th>
+        <th>Status</th>
+        <th></th>
+    </tr>
+
+    @foreach (var s in Model)
+    {
+        if (s.RentalDate.Date == DateTime.Today && s.Status == "Booked")
+        {
+            <tr>
+                <td>@s.RentalId</td>
+                <td>@s.CustomerId</td>
+                <td>@s.RentalDate</td>
+                <td>@s.Status</td>
+                <td>
+                    <button data-get="/PickupReturn/Pickup?rentalId=@s.RentalId">Pickup</button>
+                </td>
+            </tr>
+        }
+    }
+</table> *@

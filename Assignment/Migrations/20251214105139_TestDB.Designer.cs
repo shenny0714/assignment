@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Assignment.Migrations
 {
     [DbContext(typeof(DB))]
-    [Migration("20251208153147_CreateDB")]
-    partial class CreateDB
+    [Migration("20251214105139_TestDB")]
+    partial class TestDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,57 @@ namespace Assignment.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Assignment.Models.Brand", b =>
+                {
+                    b.Property<int>("BrandId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BrandId"));
+
+                    b.Property<string>("BrandName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("BrandId");
+
+                    b.ToTable("Brands");
+                });
+
+            modelBuilder.Entity("Assignment.Models.CarModel", b =>
+                {
+                    b.Property<int>("ModelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ModelId"));
+
+                    b.Property<int>("BrandId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CategoryId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("ModelName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
+                    b.HasKey("ModelId");
+
+                    b.HasIndex("BrandId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("CarModels");
+                });
 
             modelBuilder.Entity("Assignment.Models.Customer", b =>
                 {
@@ -52,8 +103,7 @@ namespace Assignment.Migrations
 
                     b.Property<string>("PhotoURL")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CustomerId");
 
@@ -73,9 +123,17 @@ namespace Assignment.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PaymentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RentalId")
                         .IsRequired()
                         .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PaymentId");
 
@@ -93,38 +151,38 @@ namespace Assignment.Migrations
 
                     b.Property<string>("BodyCondition")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerDrivingLisence")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExteriorPhotoPath")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FuelLevelPickup")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FuelPhotoPath")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InteriorCondition")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InteriorPhotoPath")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LightsCondition")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OdometerPhotoPath")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OdometerPickup")
@@ -134,8 +192,7 @@ namespace Assignment.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Remarks")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RentalId")
                         .IsRequired()
@@ -147,8 +204,11 @@ namespace Assignment.Migrations
 
                     b.Property<string>("TyreCondition")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VehicleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(8)");
 
                     b.HasKey("PickupId");
 
@@ -156,6 +216,8 @@ namespace Assignment.Migrations
                         .IsUnique();
 
                     b.HasIndex("StaffId");
+
+                    b.HasIndex("VehicleId");
 
                     b.ToTable("PickupRecord");
                 });
@@ -174,10 +236,19 @@ namespace Assignment.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<bool>("IsDepositRefunded")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ModelId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PickupDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("RentalDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ReturnDate")
+                    b.Property<DateTime>("ReturnDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("StaffId")
@@ -192,17 +263,13 @@ namespace Assignment.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<string>("VehicleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(8)");
-
                     b.HasKey("RentalId");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("StaffId");
+                    b.HasIndex("ModelId");
 
-                    b.HasIndex("VehicleId");
+                    b.HasIndex("StaffId");
 
                     b.ToTable("Rentals");
                 });
@@ -215,8 +282,7 @@ namespace Assignment.Migrations
 
                     b.Property<string>("BodyCondition")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("CleaningFee")
                         .HasPrecision(10, 2)
@@ -224,26 +290,24 @@ namespace Assignment.Migrations
 
                     b.Property<string>("CleanlinessCondition")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("DamageCost")
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("DamageDescription")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DamagePhotoPath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExteriorPhotoPath")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("ExtraCharges")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("FuelCharge")
                         .HasPrecision(10, 2)
@@ -251,10 +315,10 @@ namespace Assignment.Migrations
 
                     b.Property<string>("FuelLevelReturn")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FuelPhotoPath")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasDamage")
@@ -262,10 +326,10 @@ namespace Assignment.Migrations
 
                     b.Property<string>("InteriorCondition")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InteriorPhotoPath")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("LateFee")
@@ -277,19 +341,17 @@ namespace Assignment.Migrations
 
                     b.Property<string>("LightsCondition")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OdometerPhotoPath")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OdometerReturn")
                         .HasColumnType("int");
 
                     b.Property<string>("Remarks")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RentalId")
                         .IsRequired()
@@ -308,8 +370,7 @@ namespace Assignment.Migrations
 
                     b.Property<string>("TyreCondition")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ReturnId");
 
@@ -365,17 +426,8 @@ namespace Assignment.Migrations
                     b.Property<bool>("Available")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Brand")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CategoryId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(8)");
-
-                    b.Property<string>("Model")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ModelId")
+                        .HasColumnType("int");
 
                     b.Property<string>("PlateNumber")
                         .IsRequired()
@@ -384,7 +436,7 @@ namespace Assignment.Migrations
 
                     b.HasKey("VehicleId");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("ModelId");
 
                     b.ToTable("Vehicles");
                 });
@@ -403,6 +455,25 @@ namespace Assignment.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("VehicleCategories");
+                });
+
+            modelBuilder.Entity("Assignment.Models.CarModel", b =>
+                {
+                    b.HasOne("Assignment.Models.Brand", "Brand")
+                        .WithMany("Models")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Assignment.Models.VehicleCategory", "Category")
+                        .WithMany("CarModels")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Assignment.Models.Payment", b =>
@@ -430,9 +501,17 @@ namespace Assignment.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Assignment.Models.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Rental");
 
                     b.Navigation("Staff");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Assignment.Models.Rental", b =>
@@ -443,19 +522,19 @@ namespace Assignment.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Assignment.Models.CarModel", "Model")
+                        .WithMany()
+                        .HasForeignKey("ModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Assignment.Models.Staff", null)
                         .WithMany("RentalsHandled")
                         .HasForeignKey("StaffId");
 
-                    b.HasOne("Assignment.Models.Vehicle", "Vehicle")
-                        .WithMany("Rentals")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Customer");
 
-                    b.Navigation("Vehicle");
+                    b.Navigation("Model");
                 });
 
             modelBuilder.Entity("Assignment.Models.ReturnRecord", b =>
@@ -466,7 +545,7 @@ namespace Assignment.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Assignment.Models.Staff", "staff")
+                    b.HasOne("Assignment.Models.Staff", "Staff")
                         .WithMany()
                         .HasForeignKey("StaffId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -474,18 +553,28 @@ namespace Assignment.Migrations
 
                     b.Navigation("Rental");
 
-                    b.Navigation("staff");
+                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("Assignment.Models.Vehicle", b =>
                 {
-                    b.HasOne("Assignment.Models.VehicleCategory", "Category")
+                    b.HasOne("Assignment.Models.CarModel", "Model")
                         .WithMany("Vehicles")
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("ModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("Model");
+                });
+
+            modelBuilder.Entity("Assignment.Models.Brand", b =>
+                {
+                    b.Navigation("Models");
+                });
+
+            modelBuilder.Entity("Assignment.Models.CarModel", b =>
+                {
+                    b.Navigation("Vehicles");
                 });
 
             modelBuilder.Entity("Assignment.Models.Customer", b =>
@@ -510,14 +599,9 @@ namespace Assignment.Migrations
                     b.Navigation("RentalsHandled");
                 });
 
-            modelBuilder.Entity("Assignment.Models.Vehicle", b =>
-                {
-                    b.Navigation("Rentals");
-                });
-
             modelBuilder.Entity("Assignment.Models.VehicleCategory", b =>
                 {
-                    b.Navigation("Vehicles");
+                    b.Navigation("CarModels");
                 });
 #pragma warning restore 612, 618
         }

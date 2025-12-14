@@ -8,7 +8,7 @@ namespace Assignment.Models;
 
 #nullable disable warnings
 
-public class DB(DbContextOptions options) : DbContext(options)
+public class DB(DbContextOptions<DB> options) : DbContext(options)
 {
     
    
@@ -23,6 +23,32 @@ public class DB(DbContextOptions options) : DbContext(options)
     public DbSet<Payment> Payments { get; set; }
     public DbSet<PickupRecord> PickupRecord { get; set; }
     public DbSet<ReturnRecord> ReturnRecord { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Prevent multiple cascade paths for PickupRecord → Vehicle
+        modelBuilder.Entity<PickupRecord>()
+            .HasOne(p => p.Vehicle)
+            .WithMany()
+            .HasForeignKey(p => p.VehicleId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Optional: explicitly define cascade for Rental → PickupRecord
+        modelBuilder.Entity<PickupRecord>()
+            .HasOne(p => p.Rental)
+            .WithOne(r => r.PickupRecord)
+            .HasForeignKey<PickupRecord>(p => p.RentalId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Optional: ReturnRecord → Rental
+        modelBuilder.Entity<ReturnRecord>()
+            .HasOne(r => r.Rental)
+            .WithOne(rn => rn.ReturnRecord)
+            .HasForeignKey<ReturnRecord>(r => r.RentalId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
 }
 
 
@@ -44,7 +70,6 @@ public class User
 
     [MaxLength(11)]
     public string Phone { get; set; }
-
     public string Role => GetType().Name;
 }
 
@@ -127,8 +152,11 @@ public class CarModel
 
     [MaxLength(50)]
     public string ModelName { get; set; }
-    public string? CategoryId { get; set; }
-    public VehicleCategory? Category { get; set; }
+    [Precision(6,2)]
+    public decimal Price { get; set; }
+
+    public string CategoryId { get; set; }
+    public VehicleCategory Category { get; set; }
     public List<Vehicle> Vehicles { get; set; } = [];
 }
 
@@ -145,13 +173,11 @@ public class Vehicle
     [MaxLength(50)]
     public string PlateNumber { get; set; }
 
-    // NEW normalized model table
     public int ModelId { get; set; }
     public CarModel Model { get; set; }
 
     public bool Available { get; set; }
 
-    public List<Rental> Rentals { get; set; } = [];
 }
 
 //
@@ -173,8 +199,14 @@ public class Rental
     public int ModelId { get; set; }
     public CarModel Model { get; set; }
 
+    [DataType(DataType.Date)]
     public DateTime RentalDate { get; set; }
-    public DateTime? ReturnDate { get; set; }
+
+    [DataType(DataType.Date)]
+    public DateTime PickupDate { get; set; }
+
+    [DataType(DataType.Date)]
+    public DateTime ReturnDate { get; set; }
 
     [Precision(10, 2)]
     public decimal DepositAmount { get; set; }
@@ -184,6 +216,7 @@ public class Rental
 
     [MaxLength(15)]
     public string Status { get; set; }
+    public bool IsDepositRefunded { get; set; }
 
     public Payment Payment { get; set; }
     public PickupRecord PickupRecord { get; set; }
@@ -199,12 +232,15 @@ public class Payment
 {
     [Key, MaxLength(8)]
     public string PaymentId { get; set; }
-
     public string RentalId { get; set; }
     public Rental Rental { get; set; }
 
     [Precision(10, 2)]
     public decimal Amount { get; set; }
+    public string PaymentType { get; set; }
+    // Deposit / Rental / ExtraCharge / Refund
+
+    public string Status { get; set; }
 
     public DateTime Date { get; set; }
 }
@@ -221,14 +257,13 @@ public class PickupRecord
 
     public string RentalId { get; set; }
     public Rental Rental { get; set; }
-
     public DateTime PickupDateTime { get; set; }
 
     public string CustomerDrivingLisence { get; set; }
     public string VehicleId { get; set; } 
     public Vehicle Vehicle { get; set; }
 
-    [Range(0,100000)]
+    [Range(1,100000)]
     public int OdometerPickup { get; set; }
     public string FuelLevelPickup { get; set; }
 
@@ -257,13 +292,11 @@ public class ReturnRecord
 {
     [Key, MaxLength(8)]
     public string ReturnId { get; set; }
-
     public string RentalId { get; set; }
     public Rental Rental { get; set; }
-
     public DateTime ReturnDateTime { get; set; }
 
-    [Range(0, 100000)]
+    [Range(1, 100000)]
     public int OdometerReturn { get; set; }
     public string FuelLevelReturn { get; set; }
 
@@ -275,18 +308,21 @@ public class ReturnRecord
 
     public bool HasDamage { get; set; }
     public string? DamageDescription { get; set; }
-
+    [Precision(10, 2)]
     public decimal? DamageCost { get; set; }
+    [Precision(10, 2)]
     public decimal? FuelCharge { get; set; }
 
     public int? LateReturnDay { get; set; }
+    [Precision(10, 2)]
     public decimal? LateFee { get; set; }
-
+    [Precision(10, 2)]
     public decimal? CleaningFee { get; set; }
     public decimal? ExtraCharges { get; set; }
+    [Precision(10, 2)]
     public decimal? TotalReturnCost { get; set; }
 
-    public string Remarks { get; set; }
+    public string? Remarks { get; set; }
 
     public string StaffId { get; set; }
     public Staff Staff { get; set; }
