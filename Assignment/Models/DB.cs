@@ -239,7 +239,7 @@ public class Payment
     public decimal Amount { get; set; }
     public string PaymentType { get; set; }
     // Deposit / Rental / ExtraCharge / Refund
-
+    public string PaymentMethod { get; set; }
     public string Status { get; set; }
 
     public DateTime Date { get; set; }

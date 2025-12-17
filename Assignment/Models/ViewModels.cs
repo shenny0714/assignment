@@ -17,9 +17,6 @@ public class PickupViewModel
     // ───────────────────────────────────────────
     [Required]
     [StringLength(8)]
-    public string PickupId { get; set; }
-    [Required]
-    [StringLength(8)]
     [RegularExpression(@"RN\d{4}", ErrorMessage = "Invalid {0}.")]
     public string RentalId { get; set; }
     [Required]
@@ -72,7 +69,7 @@ public class PickupViewModel
     // ───────────────────────────────────────────
     // Staff Handling Pickup
     // ───────────────────────────────────────────
-    [RegularExpression(@"STF\d{4}", ErrorMessage = "Invalid {0}.")]
+    [RegularExpression(@"ST\d{4}", ErrorMessage = "Invalid {0}.")]
     public string? StaffId { get; set; }
     public string? StaffName { get; set; }
 
@@ -87,27 +84,14 @@ public class PickupViewModel
     public IFormFile OdometerPhoto { get; set; }
     [Required]
     public IFormFile FuelPhoto { get; set; }
-
-    // ───────────────────────────────────────────
-    // DB Saved Photo Paths (for display)
-    // ───────────────────────────────────────────
-    public string? ExteriorPhotoPath { get; set; }
-    public string? InteriorPhotoPath { get; set; }
-    public string? OdometerPhotoPath { get; set; }
-    public string? FuelPhotoPath { get; set; }
 }
 
 public class ReturnRecordVM
 {
     [Required]
-    [MaxLength(8)]
-    public string ReturnId { get; set; }
-
-    [Required]
-    [MaxLength(8)]
-    [RegularExpression(@"VH\d{4}", ErrorMessage = "Invalid {0}.")]
+    [StringLength(8)]
+    [RegularExpression(@"RN\d{4}", ErrorMessage = "Invalid {0}.")]
     public string RentalId { get; set; }
-
     // ───────────────────────────────────────────
     // Customer & Vehicle Info (for display in form)
     // ───────────────────────────────────────────
@@ -157,12 +141,12 @@ public class ReturnRecordVM
     // -----------------------------
     // EXTRA CHARGES
     // -----------------------------
-    public decimal? FuelCharge { get; set; }
-    public int? LateReturnDay { get; set; }
-    public decimal? LateFee { get; set; }
-    public decimal? CleaningFee { get; set; }
+    //public decimal? FuelCharge { get; set; }
+    //public int? LateReturnDay { get; set; }
+    //public decimal? LateFee { get; set; }
+    //public decimal? CleaningFee { get; set; }
     public decimal? ExtraCharges { get; set; }
-    public decimal? TotalReturnCost { get; set; }
+    //public decimal? TotalReturnCost { get; set; }
 
     public string? Remarks { get; set; }
 
@@ -170,7 +154,7 @@ public class ReturnRecordVM
     // STAFF
     // -----------------------------
     [Required]
-    [RegularExpression(@"STF\d{4}", ErrorMessage = "Invalid {0}.")]
+    [RegularExpression(@"ST\d{4}", ErrorMessage = "Invalid {0}.")]
     public string StaffId { get; set; }
 
     // -----------------------------
@@ -189,4 +173,36 @@ public class ReturnRecordVM
     public IFormFile FuelPhoto { get; set; }
 
     public IFormFile? DamagePhoto { get; set; }
+}
+
+public class LateReturnVM
+{
+    [Display(Name = "Rental ID")]
+    public string RentalId { get; set; }
+
+    [Display(Name = "Late Days")]
+    public int LateDays { get; set; }
+
+    [Display(Name = "Late Fee (RM)")]
+    [DataType(DataType.Currency)]
+    public decimal LateFee { get; set; }
+}
+
+public class RentalStatusVM
+{
+    public string Status { get; set; }
+    public int Count { get; set; }
+}
+
+public class ModelSummaryVM
+{
+    public string ModelName { get; set; }
+    public int RentalCount { get; set; }
+    public decimal TotalRevenue { get; set; }
+}
+
+public class RevenueVM
+{
+    public string PaymentType { get; set; }
+    public decimal Total { get; set; }
 }

@@ -13,6 +13,7 @@
 
     <form asp-action="Pickup" asp-controller="PickupReturn" asp-route-rentalId="@Model.RentalId" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly"></div>
+        <div asp-validation-for="StaffId"></div>
 
         <input type="hidden" asp-for="RentalId" />
         <input type="hidden" asp-for="StaffId" />

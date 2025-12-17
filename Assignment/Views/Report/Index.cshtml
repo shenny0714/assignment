@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Reports Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row mb-3">
+    <div class="col-md-3">
+        <label>Start Date</label>
+        <input type="date" id="start" class="form-control" value="@ViewBag.Start" />
+    </div>
+    <div class="col-md-3">
+        <label>End Date</label>
+        <input type="date" id="end" class="form-control" value="@ViewBag.End" />
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <button class="btn btn-primary" id="applyFilter">Apply</button>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6" id="rentalStatus"></div>
+    <div class="col-md-6" id="revenue"></div>
+    <div class="col-md-6" id="model"></div>
+    <div class="col-md-6" id="late"></div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function fetchChartData(url) {
+            return $.getJSON(url)
+                .then(data => (data && data.length > 0) ? data : [{ Label: 'No Data', Value: 0 }]);
+        }
+
+        function renderChart(canvasId, data, chartLabel, type = 'bar') {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: type,
+                data: {
+                   labels: data.map(x => x.label),
+                    datasets: [{
+                        label: chartLabel,
+                        data: data.map(x => x.value),
+                        backgroundColor: data.map((_, i) => data[0].label === 'No Data' ? '#ccc' : `hsl(${i*60%360},70%,50%)`),
+                        borderColor: data.map((_, i) => data[0].label === 'No Data' ? '#999' : `hsl(${i*60%360},70%,30%)`),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function loadCharts(start, end) {
+            // Rental Status
+            $('#rentalStatus').load(`/Report/RentalStatusChart?start=${start}&end=${end}`, function() {
+                fetchChartData(`/Report/RentalStatusChartData?start=${start}&end=${end}`).then(data => {
+                    renderChart('statusChart', data, 'Rental Status', 'doughnut');
+                });
+            });
+
+            // Revenue
+            $('#revenue').load(`/Report/RevenueChart?start=${start}&end=${end}`, function() {
+                fetchChartData(`/Report/RevenueChartData?start=${start}&end=${end}`).then(data => {
+                    renderChart('revenueChart', data, 'Revenue', 'bar');
+                });
+            });
+
+            // Model Popularity
+            $('#model').load(`/Report/ModelChart?start=${start}&end=${end}`, function() {
+                fetchChartData(`/Report/ModelChartData?start=${start}&end=${end}`).then(data => {
+                    renderChart('modelChart', data, 'Model Popularity', 'bar');
+                });
+            });
+
+            // Late Returns
+            $('#late').load(`/Report/LateReturnChart?start=${start}&end=${end}`, function() {
+                fetchChartData(`/Report/LateReturnChartData?start=${start}&end=${end}`).then(data => {
+                    renderChart('lateChart', data, 'Late Returns', 'bar');
+                });
+            });
+        }
+
+        $(document).ready(function() {
+            const start = $('#start').val();
+            const end = $('#end').val();
+            loadCharts(start, end);
+
+            $('#applyFilter').click(function() {
+                const start = $('#start').val();
+                const end = $('#end').val();
+                loadCharts(start, end);
+            });
+        });
+    </script>
+}
