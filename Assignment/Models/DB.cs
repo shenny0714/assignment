@@ -10,9 +10,6 @@ namespace Assignment.Models;
 
 public class DB(DbContextOptions<DB> options) : DbContext(options)
 {
-    
-   
-
     public DbSet<Staff> Staffs { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<VehicleCategory> VehicleCategories { get; set; }

@@ -202,3 +202,4 @@ document.getElementById('btnUpdatePass').addEventListener('click', function (e) 
         e.preventDefault();
     }
 });
+

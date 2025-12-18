@@ -1,0 +1,7 @@
+﻿# SQL Server database files
+*.mdf
+*.ldf
+
+# Build outputs
+bin/
+obj/

@@ -1,0 +1,105 @@
+﻿@model IEnumerable<Assignment.Models.CarModel>
+
+@{
+    ViewData["Title"] = "Test - Select Model";
+    Layout = "_Layout";
+
+    // 1. Get the Date to show in the box
+    string currentSearchDate = ViewBag.UserSearchDate as string ?? DateTime.Today.ToString("yyyy-MM-dd");
+
+    // 2. Logic: Calculate the Minimum Allowed Date for the Input
+    // If it is past 12:00 PM, the earliest you can book is Tomorrow.
+    // If it is before 12:00 PM, the earliest you can book is Today.
+    string minDate = DateTime.Today.ToString("yyyy-MM-dd");
+    if (DateTime.Now.Hour >= 12)
+    {
+        minDate = DateTime.Today.AddDays(1).ToString("yyyy-MM-dd");
+    }
+}
+
+<div class="container mt-4">
+    <h2>Select a Model</h2>
+
+    @* 3. Show Alert if Controller changed the date automatically *@
+    @if (TempData["Info"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["Info"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card bg-light mb-4 shadow-sm">
+        <div class="card-body">
+            <form method="get" asp-action="Test" class="row align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">When do you want to rent?</label>
+
+                    @* 4. UPDATED INPUT: Uses dynamic 'min' attribute *@
+                    <input type="date" name="pickedDate" value="@currentSearchDate"
+                           min="@minDate" class="form-control" />
+
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Search Availability
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-striped shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Model ID</th>
+                <th>Brand</th>
+                <th>Model Name</th>
+                <th>Price (RM)</th>
+                <th>Stock Available</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                // The Controller filled 'item.Vehicles' with dummy items to represent count
+                int stock = item.Vehicles.Count;
+                string rowClass = stock > 0 ? "" : "table-danger";
+
+                <tr class="@rowClass">
+                    <td>@item.ModelId</td>
+                    <td>@item.Brand.BrandName</td>
+                    <td>@item.ModelName</td>
+                    <td>@item.Price.ToString("N2")</td>
+                    <td>
+                        @if (stock > 0)
+                        {
+                            <span class="badge bg-success">@stock units on @currentSearchDate</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Fully Booked on this date</span>
+                        }
+                    </td>
+                    <td>
+                        @if (stock > 0)
+                        {
+                            <a asp-controller="Rental"
+                               asp-action="Reserve"
+                               asp-route-modelId="@item.ModelId"
+                               asp-route-pickedDate="@currentSearchDate"
+                               class="btn btn-primary btn-sm">
+                                Book Now
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary btn-sm" disabled>Unavailable</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

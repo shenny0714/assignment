@@ -1,0 +1,125 @@
+﻿@model Assignment.Models.Rental
+@{
+    ViewData["Title"] = "Booking Receipt";
+    Layout = "_Layout";
+
+    // Calculate Duration for display
+    int days = (Model.ReturnDate - Model.PickupDate).Days;
+    if (days < 1) days = 1;
+
+    decimal totalPaid = Model.TotalPrice + Model.DepositAmount;
+}
+
+<div class="container mt-5 mb-5">
+
+    @if (TempData["Info"] != null)
+    {
+        <div class="alert alert-success d-flex align-items-center mb-4 shadow-sm">
+            <i class="bi bi-check-circle-fill fs-3 me-3"></i>
+            <div>
+                <h5 class="mb-0">Booking Confirmed!</h5>
+                <p class="mb-0">@TempData["Info"]</p>
+            </div>
+        </div>
+    }
+
+    <div class="card shadow border-0" id="receipt-card">
+        <div class="card-header bg-dark text-white p-4 d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0">INVOICE / RECEIPT</h4>
+                <small class="text-white-50">Ref: #@Model.RentalId</small>
+            </div>
+            <div class="text-end">
+                <h5 class="mb-0">@Model.Status.ToUpper()</h5>
+                <small>@Model.RentalDate.ToString("dd MMM yyyy, hh:mm tt")</small>
+            </div>
+        </div>
+
+        <div class="card-body p-5">
+
+            <div class="row mb-5">
+                <div class="col-md-6">
+                    <h6 class="text-muted text-uppercase">Billed To:</h6>
+                    <p class="fw-bold mb-0">Customer ID: @Model.CustomerId</p>
+                    <p>Valued Customer</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h6 class="text-muted text-uppercase">Rental Details:</h6>
+                    <p class="mb-1"><strong>Pick-up:</strong> @Model.PickupDate.ToString("dd MMM yyyy")</p>
+                    <p class="mb-1"><strong>Return:</strong> @Model.ReturnDate.ToString("dd MMM yyyy")</p>
+                    <p class="mb-0"><strong>Duration:</strong> @days Day(s)</p>
+                </div>
+            </div>
+
+            <div class="row mb-4 bg-light p-3 rounded align-items-center">
+                <div class="col-md-2 text-center">
+                    <i class="bi bi-car-front-fill fs-1 text-primary"></i>
+                </div>
+                <div class="col-md-10">
+                    <h5 class="mb-1">@Model.Model.Brand.BrandName @Model.Model.ModelName</h5>
+                    <p class="text-muted mb-0 small">Plate No: (Assigned upon pickup)</p>
+                </div>
+            </div>
+
+            <table class="table table-borderless">
+                <thead class="border-bottom">
+                    <tr>
+                        <th>Description</th>
+                        <th class="text-end">Amount (RM)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Rental Charges (@days Days)</td>
+                        <td class="text-end">@Model.TotalPrice.ToString("N2")</td>
+                    </tr>
+                    <tr>
+                        <td>Security Deposit (Refundable)</td>
+                        <td class="text-end">@Model.DepositAmount.ToString("N2")</td>
+                    </tr>
+                </tbody>
+                <tfoot class="border-top mt-2">
+                    <tr>
+                        <td class="pt-3 h5">Total Paid</td>
+                        <td class="pt-3 h4 text-success text-end fw-bold">RM @totalPaid.ToString("N2")</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <hr class="my-5">
+
+            <div class="text-center d-print-none">
+                <p class="text-muted small mb-3">A copy of this receipt has been sent to your email.</p>
+
+                <button onclick="window.print()" class="btn btn-outline-secondary me-2">
+                    <i class="bi bi-printer"></i> Print Receipt
+                </button>
+
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                    <i class="bi bi-house-door"></i> Back to Home
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section foot {
+    <style>
+        /* Print Styles: Hide buttons when printing */
+        @@media print {
+            .d-print-none, header, footer {
+                display: none !important;
+            }
+
+            #receipt-card {
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            body {
+                background-color: white;
+            }
+        }
+    </style>
+}

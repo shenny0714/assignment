@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Car Rental</title>
 
-    <link rel="stylesheet" href="~/css/app.css" />
+	<link rel="stylesheet" href="~/css/app.css" />
+	<link href="~/css/payment.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-
 </head>
 <body>
     <div class="container-1">
@@ -26,6 +26,7 @@
                 <div style="display:flex; align-items:center; gap: 1.5rem;">
                     <nav class="nav-links">
                         <a href="/">Home</a>
+                        <a href="~/Home/index">Home</a>
                         <a href="/Cars">Cars</a>
                         <a href="/About">About</a>
                         <a href="/Contact">Contact</a>
@@ -34,6 +35,7 @@
                         <button id="theme-toggle" class="btn-theme-toggle" title="Toggle Dark Mode">
                             <span class="material-symbols-outlined">dark_mode</span>
                         </button>
+
                         @{
                             // 1. Check Login Status
                             var isLoggedIn = User.Identity?.IsAuthenticated == true;
@@ -125,8 +127,6 @@
                     </div>
                 </div>
                 <div style="border-top:1px solid var(--border-color); margin-top:2rem; padding-top:1.5rem; text-align:center; font-size:0.875rem; color:var(--text-muted);">
-                    <p>© 2025 Title. All Rights Reserved.</p>
-
                     <div class="social-links" style="margin-top: 1rem; display: flex; justify-content: center; gap: 1rem;">
                         <a class="btn-social" href="#!" aria-label="Twitter">
                             <i class="fab fa-twitter"></i>
@@ -138,7 +138,7 @@
                             <i class="fab fa-instagram"></i>
                         </a>
                     </div>
-
+                    <p>© 2025 Title. All Rights Reserved.</p>
                 </div>
             </div>
         </footer>
@@ -146,7 +146,10 @@
 
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="~/js/app.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="/js/jquery.validate.min.js"></script>
+    <script src="/js/jquery.validate.unobtrusive.min.js"></script>
+    @await RenderSectionAsync("foot", required: false)
 </body>
 </html>
