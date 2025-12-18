@@ -1,0 +1,234 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* --- Page Background --- */
+body {
+    background: linear-gradient(135deg, #eef2ff, #f8f9fc);
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* --- Wrapper --- */
+.auth-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 100px 20px;
+}
+
+/* --- Bigger Card --- */
+.auth-card {
+    background: #fff;
+    width: 100%;
+    max-width: 600px; /* ⬅ Bigger */
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    overflow: hidden;
+}
+
+/* --- Content Area --- */
+.auth-content {
+    padding: 40px 50px; /* ⬅ More breathing room */
+}
+
+
+/* --- The Tabs --- */
+.tab-header {
+    display: flex;
+    width: 100%;
+    background-color: #f1f1f1;
+}
+
+/* We use <a> tags now, so we style them to look like buttons */
+.tab-link {
+    width: 50%;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 500;
+    color: #666;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+    background: transparent;
+    display: block; /* Makes the whole area clickable */
+}
+
+    .tab-link:hover {
+        background-color: #e0e0e0;
+        color: #333;
+    }
+
+    /* The Active Tab Style */
+    .tab-link.active {
+        background-color: #e8f0fe; /* Light Blue */
+        color: #1976d2; /* Google Blue */
+        border-bottom: 2px solid #1976d2;
+        font-weight: bold;
+        pointer-events: none; /* Disables clicking the active tab */
+    }
+
+/* --- Content Area --- */
+.auth-content {
+    padding: 30px 40px;
+}
+
+/* --- Inputs & Buttons --- */
+.input-box {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s;
+    box-sizing: border-box; 
+}
+
+
+    .input-box:focus {
+        border-color: #1976d2;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+    }
+
+.btn-main {
+    width: 100%;
+    padding: 12px;
+    background-color: #3b71ca;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 9px -4px #3b71ca;
+    transition: 0.3s;
+}
+
+    .btn-main:hover {
+        background-color: #2c569b;
+    }
+
+
+
+/* --- Divider & Utils --- */
+.divider {
+    position: relative;
+    text-align: center;
+    margin: 30px 0;
+}
+ .divider:before {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: #ddd;
+   }
+
+
+
+.options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-bottom: 25px;
+    color: #555;
+}
+
+.link {
+    color: #1976d2;
+    text-decoration: none;
+}
+
+    .link:hover {
+        text-decoration: underline;
+    }
+
+.error {
+    color: red;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.text-dark {
+    font-size:medium;
+}
+
+.form-group {
+    margin: 10px 0 10px 0;
+}
+
+
+
+/* Logged In Info */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.user-email {
+    font-weight: bold;
+    color: #3b71ca;
+}
+
+
+
+/* Button group */
+.button-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+    /* Both buttons same width */
+    .button-group button {
+        flex: 1;
+    }
+
+/* Reset button style */
+.btn-reset {
+    padding: 12px;
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    .btn-reset:hover {
+        background-color: #cfcfcf;
+    }
+
+.btn-logout {
+    color: #dc3545;
+    text-decoration: none;
+    font-size: 13px;
+    border: 1px solid #dc3545;
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+    .btn-logout:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+/* Push content down so it isn't hidden behind the fixed header */
+.main-content {
+    margin-top: 80px;
+    width: 100%;
+    padding: 20px;
+}

@@ -1,4 +1,399 @@
-﻿
+﻿/* --- Color Definitions --- */
+:root {
+    /* Light Mode Colors (Default) */
+    --bg-body: #f7f7f7;
+    --text-main: #212529;
+    --text-muted: #4b5563;
+    --bg-card: #ffffff;
+    --bg-navbar: rgba(247, 247, 247, 0.9);
+    --border-color: #e5e7eb;
+    --accent-color: #007BFF;
+    --input-bg: #ffffff;
+}
+
+body.dark-mode {
+    /* Dark Mode Colors */
+    --bg-body: #121212;
+    --text-main: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --bg-card: #1e1e1e;
+    --bg-navbar: rgba(18, 18, 18, 0.9);
+    --border-color: #333333;
+    --accent-color: #3b82f6;
+    --input-bg: #2c2c2c;
+}
+
+/* Global Settings */
+body {
+    background-color: var(--bg-body);
+    font-family: 'Lexend', sans-serif;
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* --- Layout Containers --- */
+.container-1 {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.container-2 {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 1rem;
+}
+
+/* --- Components --- */
+
+/* Navigation Bar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    background-color: var(--bg-navbar);
+    backdrop-filter: blur(4px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.3s;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: bold;
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: var(--text-main);
+}
+
+.nav-links {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+    }
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+    .nav-links a:hover {
+        color: var(--accent-color);
+    }
+
+/* Buttons */
+.btn-login {
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-main);
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+}
+
+    .btn-login:hover {
+        background-color: var(--border-color);
+    }
+
+.btn-register, .btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+    .btn-primary:hover, .btn-register:hover {
+        opacity: 0.9;
+    }
+
+/* Theme Toggle Button */
+.btn-theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .btn-theme-toggle:hover {
+        background-color: var(--border-color);
+    }
+
+/*Section */
+.section-1 {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url('../images/homebackground.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 0.75rem;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    margin-top: 1.25rem;
+    padding: 2rem;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+}
+
+/* Booking Widget */
+.widget-box {
+    background-color: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    margin-top: -5rem;
+    margin-bottom: 4rem;
+    position: relative;
+    z-index: 10;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+    .form-grid {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: end;
+    }
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    box-sizing: border-box;
+}
+
+/* --- Section 1 Content Helpers --- */
+.content-1 {
+    max-width: 600px;
+}
+
+.title-1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+}
+
+.subtitle-1 {
+    font-size: 1.125rem;
+    font-weight: normal;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.btn-1 {
+    font-size: 1.125rem;
+    padding: 0.75rem 2.5rem;
+}
+
+.btn-search {
+    height: 46px;
+    border-radius: 0.5rem;
+    width: 100%;
+}
+
+/* --- Car Card Specifics --- */
+.car-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+.price-suffix {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-weight: normal;
+}
+
+.btn-rent {
+    font-size: 0.875rem;
+    padding: 0.5rem 1.25rem;
+}
+
+/* Featured Cars Section */
+.section-header {
+    text-align: center;
+    font-size: 1.875rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    color: var(--text-main);
+}
+
+.car-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 640px) {
+    .car-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .car-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.car-card {
+    background-color: var(--bg-card);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+}
+
+.car-img {
+    width: 100%;
+    height: 12rem;
+    object-fit: cover;
+}
+
+.car-details {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.car-features {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.price-row {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price-tag {
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+/* Footer */
+.footer-main {
+    background-color: var(--bg-card);
+    margin-top: 4rem;
+    border-top: 1px solid var(--border-color);
+    padding: 2.5rem 0;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .footer-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: var(--text-muted);
+}
+
+    .footer-links a:hover {
+        color: var(--accent-color);
+    }
+
+/* --- Social Media Buttons --- */
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    /* LIGHT MODE SETTINGS */
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #d1d5db;
+}
+
+    .btn-social:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+/* DARK MODE SETTINGS */
+body.dark-mode .btn-social {
+    background-color: #000000;
+    color: #ffffff;
+    border: 1px solid #333333;
+}
 /*Temp Info*/
 
 .info {
@@ -56,23 +451,23 @@
     background: #fafafa;
 }
 
-.section-box h3 {
-    margin-bottom: 10px;
-    color: #333;
-}
+    .section-box h3 {
+        margin-bottom: 10px;
+        color: #333;
+    }
 
-.section-box label {
-    font-weight: bold;
-    display: block;
-    margin-top: 15px;
-}
+    .section-box label {
+        font-weight: bold;
+        display: block;
+        margin-top: 15px;
+    }
 
-.section-box input,
-.section-box textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-}
+    .section-box input,
+    .section-box textarea {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+    }
 
 .btn-save {
     background: #0066ff;
@@ -84,115 +479,95 @@
     font-size: 16px;
 }
 
-.btn-save:hover {
-    background: #004ec2;
-}
+    .btn-save:hover {
+        background: #004ec2;
+    }
 
-/* Form ----------------------------------------------------------------------- */
-
-label > * {
-    vertical-align: text-top;
-}
-
-.form {
-    display: grid;
-    grid: auto / auto auto auto;
-    gap: 5px;
-    place-content: start;
-    place-items: center start;
-}
-
-.form > label:not(:has(*)) {
-    background: #ccc;
-    font-weight: bold;
-    padding: 5px;
-    place-self: stretch;
-}
-
-.form > section,
-.validation-summary-valid,
-.validation-summary-errors {
-    grid-column: 1 / -1;
-}
-
-.validation-summary-valid ul,
-.validation-summary-errors ul {
-    margin: 0;
-}
-
-.field-validation-error,
-.validation-summary-errors {
-    color: red;
-}
-
-.toggle {
+/* Header for the top profile */
+.user-profile-container {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 28px;
 }
 
-.toggle input {
-    display: none;
-}
-
-.slider {
-    position: absolute;
+/* The visible part of the header */
+.profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
 }
 
-.slider:before {
+
+.profile-img {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #eee;
+}
+
+.profile-trigger:hover {
+    background-color: var(--border-color); /* Use variable instead of hardcoded rgba */
+}
+
+.profile-name {
+    font-weight: 500;
+    color: var(--text-main); /* Use variable so it turns white in Dark Mode */
+}
+
+.profile-dropdown {
     position: absolute;
-    content: "";
-    height: 22px;
-    width: 22px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
+    overflow: hidden;
+    margin-top: 8px;
+    width: 200px;
+    background: var(--bg-card); /* Use variable */
+    border: 1px solid var(--border-color); /* Use variable */
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    padding: 8px 0;
 }
 
-input:checked + .slider {
-    background-color: #4caf50;
-}
+    /* Show when active */
+    .profile-dropdown.show {
+        display: flex;
+    }
 
-input:checked + .slider:before {
-    transform: translateX(32px);
-}
-
-.toggle-row {
+/* Links and Buttons inside dropdown */
+.dropdown-link {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 10px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--text-main); /* Use variable */
+    font-size: 15px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    transition: background 0.2s;
 }
 
-.condition-msg {
-    font-weight: bold;
+    .dropdown-link:hover {
+        background-color: var(--border-color); /* Use variable */
+    }
+
+
+    .dropdown-link.logout-btn {
+        color: #dc3545; /* Red for logout */
+    }
+
+.dropdown-divider {
+    height: 1px;
+    background-color: var(--border-color); /* Use variable */
+    margin: 4px 0;
 }
 
-.condition-msg.ok {
-    color: green;
-}
-
-.condition-msg.not-ok {
-    color: red;
-}
-
-
-/*Rental  History*/
-.clickable-row {
-    cursor: pointer;
-}
-
-.clickable-row:hover {
-    background-color: #f8f9fa;
+.dropdown-link .material-symbols-outlined {
+    font-size: 20px;
 }

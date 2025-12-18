@@ -10,56 +10,44 @@ public class Helper(IWebHostEnvironment en)
     // Photo Upload
     // ------------------------------------------------------------------------
 
-    public string ValidatePhoto(IFormFile f)
+    public string ValidatePhoto(IFormFile photo)
     {
-        try
-        {
-            var reType = new Regex(@"^image\/(jpeg|png)$", RegexOptions.IgnoreCase);
-            var reName = new Regex(@"^.+\.(jpeg|jpg|png)$", RegexOptions.IgnoreCase);
+        if (photo == null) return "";
 
-            if (!reType.IsMatch(f.ContentType) || !reName.IsMatch(f.FileName))
-            {
-                return "Only JPG and PNG photo is allowed.";
-            }
-            else if (f.Length > 1 * 1024 * 1024)
-            {
-                return "Photo size cannot more than 1MB.";
-            }
+        // 1. Check file size (e.g., max 1MB)
+        if (photo.Length > 1024 * 1024) return "File size too large (max 1MB).";
 
-            return "";
-        }
-        catch (Exception err)
-        {
-            return err.Message;
-        }
+        // 2. Check extension
+        var ext = Path.GetExtension(photo.FileName).ToLower();
+        if (ext != ".jpg" && ext != ".jpeg" && ext != ".png") return "Only JPG/PNG allowed.";
+
+        return "";
     }
 
-    public string SavePhoto(IFormFile f, string folder)
+    public string SavePhoto(IFormFile photo, string folder)
     {
-        // TODO
-        var file = Guid.NewGuid().ToString("n") + ".jpg";
-        var path = Path.Combine(en.WebRootPath, folder, file);
+        if (photo == null) return null;
 
-        var options = new ResizeOptions
+        var fileName = Guid.NewGuid().ToString("N") + Path.GetExtension(photo.FileName);
+        var path = Path.Combine(en.WebRootPath, folder, fileName);
+
+        // Ensure directory exists
+        var dir = Path.GetDirectoryName(path);
+        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+
+        using (var stream = new FileStream(path, FileMode.Create))
         {
-            Size = new(200, 200),
-            Mode = ResizeMode.Crop,
-        };
+            photo.CopyTo(stream);
+        }
 
-        using var stream = f.OpenReadStream();
-        using var img = Image.Load(stream);
-        img.Mutate(x => x.Resize(options));
-        img.Save(path);
-
-        return file;
+        return fileName;
     }
 
-    public void DeletePhoto(string file, string folder)
+    public void DeletePhoto(string fileName, string folder)
     {
-        // TODO
-        file = Path.GetFileName(file);
-        var path = Path.Combine(en.WebRootPath, folder, file);
-        File.Delete(path);
+        if (string.IsNullOrEmpty(fileName)) return;
+        var path = Path.Combine(en.WebRootPath, folder, fileName);
+        if (File.Exists(path)) File.Delete(path);
     }
 
 }
