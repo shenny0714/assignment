@@ -60,12 +60,28 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGlja3VwUmV0dXJuXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/User/source/repos/assignment/Assignment/Views/PickupReturn/Invoice.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGlja3VwUmV0dXJuXEludm9pY2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/User/source/repos/assignment/Assignment/Views/PickupReturn/Pickup.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGlja3VwUmV0dXJuXFBpY2t1cC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/User/source/repos/assignment/Assignment/Views/PickupReturn/ProceedPayment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGlja3VwUmV0dXJuXFByb2NlZWRQYXltZW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/source/repos/assignment/Assignment/Views/PickupReturn/Receipt.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGlja3VwUmV0dXJuXFJlY2VpcHQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/User/source/repos/assignment/Assignment/Views/PickupReturn/Return.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGlja3VwUmV0dXJuXFJldHVybi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/source/repos/assignment/Assignment/Views/PickupReturn/_PickupReturn.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGlja3VwUmV0dXJuXF9QaWNrdXBSZXR1cm4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/User/source/repos/assignment/Assignment/Views/RentalHistory/Details.cshtml]
@@ -90,6 +106,30 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/User/source/repos/assignment/Assignment/Views/Rental/Test.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVudGFsXFRlc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/source/repos/assignment/Assignment/Views/Report/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/source/repos/assignment/Assignment/Views/Report/_LateReturnChart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XF9MYXRlUmV0dXJuQ2hhcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/source/repos/assignment/Assignment/Views/Report/_ModelChart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XF9Nb2RlbENoYXJ0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/source/repos/assignment/Assignment/Views/Report/_RentalStatusChart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XF9SZW50YWxTdGF0dXNDaGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/source/repos/assignment/Assignment/Views/Report/_ReportTable.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XF9SZXBvcnRUYWJsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/source/repos/assignment/Assignment/Views/Report/_RevenueChart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XF9SZXZlbnVlQ2hhcnQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/User/source/repos/assignment/Assignment/Views/Shared/_Layout.cshtml]
