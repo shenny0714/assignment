@@ -206,3 +206,16 @@ public class RevenueVM
     public string PaymentType { get; set; }
     public decimal Total { get; set; }
 }
+
+public class PaymentVM
+{
+    public string RentalId { get; set; }
+    public string CustomerName { get; set; }
+
+    public decimal Amount { get; set; }
+
+    public string PaymentType { get; set; }   // ExtraCharge / Refund
+
+    [Required(ErrorMessage = "Please select payment method")]
+    public string PaymentMethod { get; set; } // Cash / TNG
+}

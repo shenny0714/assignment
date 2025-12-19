@@ -109,20 +109,38 @@
             </tr>
         }
     </table>
-
     @if ((ViewBag.AmountDue ?? 0) > 0)
     {
-        <form method="post" asp-action="ProceedCashPayment" asp-controller="PickupReturn">
-            <input type="hidden" name="rentalId" value="@Model.RentalId" />
-            <button type="submit" class="btn btn-success">
-                Proceed Payment (Cash)
-            </button>
-        </form>
+        <div style="display:inline-block; border:1px solid #28a745; border-radius:5px; padding:8px 16px; margin-right:10px; background:#28a745; transition:0.2s;">
+            <a style="color:white; text-decoration:none; font-weight:bold;"
+               asp-controller="PickupReturn"
+               asp-action="ProceedPayment"
+               asp-route-rentalId="@Model.RentalId">
+                Proceed Payment
+            </a>
+        </div>
+
+    }
+    else if ((ViewBag.Refund ?? 0) > 0)
+    {
+
+        <div style="display:inline-block; border:1px solid #ffc107; border-radius:5px; padding:8px 16px; background:#ffc107; transition:0.2s;">
+            <a style="color:#212529; text-decoration:none; font-weight:bold;"
+               asp-controller="PickupReturn"
+               asp-action="ProceedPayment"
+               asp-route-rentalId="@Model.RentalId">
+                Issue Refund
+            </a>
+        </div>
     }
     else
     {
-        
+        <div class="alert alert-info">
+            Payment settled. No additional charges or refund required.
+        </div>
     }
+
+  
     <div class="mt-4">
         <a href="@Url.Action("Index")" class="btn btn-secondary">
             Back to List

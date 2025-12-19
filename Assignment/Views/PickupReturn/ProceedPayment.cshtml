@@ -1,0 +1,62 @@
+﻿@model Assignment.ViewModels.PaymentVM
+
+@{
+    ViewData["Title"] = Model.PaymentType == "Refund" ? "Refund Payment" : "Proceed Payment";
+
+    var paymentMethods = new List<SelectListItem>
+    {
+        new SelectListItem { Text = "Cash", Value = "Cash" },
+        new SelectListItem { Text = "TNG", Value = "TNG" }
+    };
+}
+
+<div class="container mt-4">
+
+    <h3 class="mb-3">@ViewData["Title"]</h3>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <strong>Rental ID:</strong> @Model.RentalId <br />
+            <strong>Customer:</strong> @Model.CustomerName <br />
+
+            @if (Model.PaymentType == "Refund" && Model.Amount > 0)
+            {
+                <strong class="text-success">
+                    Refund Amount: RM @Model.Amount
+                </strong>
+            }
+            else if (Model.PaymentType == "ExtraCharge" && Model.Amount > 0)
+            {
+                <strong class="text-danger">
+                    Amount Due: RM @Model.Amount
+                </strong>
+            }
+        </div>
+    </div>
+
+    <form method="post" asp-action="ProceedPayment" asp-controller="PickupReturn">
+        <!-- Hidden fields using Razor helpers -->
+        @Html.HiddenFor(m => m.RentalId)
+        @Html.HiddenFor(m => m.PaymentType)
+        @Html.HiddenFor(m => m.Amount)
+        @Html.HiddenFor(m => m.CustomerName)
+
+        <div class="mb-3">
+            <label asp-for="PaymentMethod" class="form-label">Payment Method</label>
+            <select asp-for="PaymentMethod" class="form-select" asp-items="paymentMethods">
+                <option value="">-- Select Method --</option>
+            </select>
+            <span class="text-danger">@Html.ValidationMessageFor(m => m.PaymentMethod)</span>
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success">
+                @(Model.PaymentType == "Refund" ? "Confirm Refund" : "Confirm Payment")
+            </button>
+            <a href="@Url.Action("Invoice", new { rentalId = Model.RentalId })" class="btn btn-secondary ms-2">
+                Cancel
+            </a>
+        </div>
+    </form>
+
+</div>

@@ -1,10 +1,18 @@
 ﻿using Assignment;
 using Assignment.Models;
+using Assignment.PDF;
 using Assignment.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
+using Rotativa.AspNetCore;
+using System.Net.Mail;
+using System.Reflection.Metadata;
+
+
 
 namespace Assignment.Controllers;
 
@@ -115,7 +123,6 @@ public class PickupReturnController : Controller
         
 
         // get available vehicles
-
         var sessionDate = rental.PickupDate.Date;
 
         var occupiedVehicleIds = _db.PickupRecord
@@ -128,7 +135,6 @@ public class PickupReturnController : Controller
         // Get available vehicles of this model
         var availableVehicles = _db.Vehicles
             .Where(v => v.ModelId == rental.ModelId
-                        && v.Available
                         && !occupiedVehicleIds.Contains(v.VehicleId));
             
         ViewBag.VehicleList = new SelectList(availableVehicles, "VehicleId", "PlateNumber");
@@ -289,7 +295,7 @@ public class PickupReturnController : Controller
         }
 
 
-        // INFO : RESET VALUE AFTER POST / OPTIONAL HIDDEN VALUE ON UI
+        // RESET VALUE AFTER POST / OPTIONAL HIDDEN VALUE ON UI
         var rental = _db.Rentals
                    .Include(r => r.Customer)
                    .Include(r => r.Model)
@@ -303,9 +309,20 @@ public class PickupReturnController : Controller
         vm.StaffName = "John Staff";
 
         // selection list
+        // get available vehicles
+        var sessionDate = rental.PickupDate.Date;
+
+        var occupiedVehicleIds = _db.PickupRecord
+            .Where(p => p.Rental.Status != "Cancelled"
+                        && p.Rental.PickupDate <= sessionDate
+                        && p.Rental.ReturnDate >= sessionDate)
+            .Select(p => p.VehicleId)
+            .ToList();
+
+        // Get available vehicles of this model
         var availableVehicles = _db.Vehicles
-                                  .Where(v => v.ModelId == rental.ModelId && v.Available)
-                                  .ToList();
+            .Where(v => v.ModelId == rental.ModelId
+                        && !occupiedVehicleIds.Contains(v.VehicleId));
         ViewBag.VehicleList = new SelectList(availableVehicles, "VehicleId", "PlateNumber");
         ViewBag.FuelList = new[] { "Full", "Half", "Low" };
         
@@ -586,10 +603,6 @@ public class PickupReturnController : Controller
 
             _db.ReturnRecord.Add(rec);
 
-            // Update Vehicle Availability
-            var v = _db.Vehicles.FirstOrDefault(x => x.VehicleId == vehicle.VehicleId);
-            if (v != null) vehicle.Available = true;
-
             // Update Rental Status
             
             if (rental != null)
@@ -623,6 +636,7 @@ public class PickupReturnController : Controller
         return View(vm);
     }
 
+    // GET: Invoice
     public IActionResult Invoice(string rentalId)
     {
         if (string.IsNullOrEmpty(rentalId))
@@ -659,4 +673,200 @@ public class PickupReturnController : Controller
 
         return View(returnRec);
     }
+
+    private string NextPaymentId()
+    {
+        string max = _db.Payments.Max(p => p.PaymentId) ?? "PA0000";
+        int n = int.Parse(max[2..]);
+        return $"PA{(n + 1).ToString("0000")}";
+    }
+
+    // GET: Payment
+    public IActionResult ProceedPayment(string rentalId)
+    {
+        if (string.IsNullOrEmpty(rentalId))
+            return RedirectToAction("Index");
+
+        // Load return record including rental and customer
+        var returnRec = _db.ReturnRecord
+            .Include(r => r.Rental)
+            .ThenInclude(r => r.Customer)
+            .FirstOrDefault(r => r.RentalId == rentalId);
+
+        if (returnRec == null)
+            return RedirectToAction("Index");
+
+        decimal deposit = returnRec.Rental.DepositAmount;
+        decimal totalExtra = returnRec.TotalReturnCost ?? 0m;
+
+        decimal amountDue = 0;
+        decimal refund = 0;
+
+        if (totalExtra > deposit)
+            amountDue = totalExtra - deposit;
+        else
+            refund = deposit - totalExtra;
+
+        // If nothing to pay/refund, redirect to invoice
+        if (amountDue == 0 && refund == 0)
+            return RedirectToAction("Invoice", new { rentalId });
+
+        // Create view model
+        var vm = new PaymentVM
+        {
+            RentalId = rentalId,
+            CustomerName = returnRec.Rental.Customer.Name ?? "Unknown",
+            Amount = amountDue > 0 ? amountDue : refund,
+            PaymentType = amountDue > 0 ? "ExtraCharge" : "Refund"
+        };
+
+        return View(vm);
+    }
+
+    // POST: Payment
+    [HttpPost]
+    public IActionResult ProceedPayment(PaymentVM vm)
+    {
+        if (!ModelState.IsValid)
+            return View(vm);
+
+        var payment = new Payment
+        {
+            PaymentId = NextPaymentId(),
+            RentalId = vm.RentalId,
+            Amount = vm.Amount,
+            PaymentType = vm.PaymentType,     // ExtraCharge OR Refund
+            PaymentMethod = vm.PaymentMethod, // Cash / TNG
+            Status = "Paid",
+            Date = DateTime.Now
+        };
+
+        _db.Payments.Add(payment);
+        _db.SaveChanges();
+        
+        TempData["Success"] =
+            vm.PaymentType == "Refund"
+            ? $"Refund issued via {vm.PaymentMethod}."
+            : $"Payment received via {vm.PaymentMethod}.";
+
+        return RedirectToAction("Receipt", new { paymentId = payment.PaymentId });
+    }
+
+    // GET: Receipt
+    public IActionResult Receipt(string paymentId)
+    {
+        var payment = _db.Payments
+            .Include(p => p.Rental)
+            .ThenInclude(r => r.Customer)
+            .FirstOrDefault(p => p.PaymentId == paymentId);
+
+        if (payment == null)
+            return RedirectToAction("Index");
+
+        return View(payment); // send model to Receipt.cshtml
+    }
+
+    private bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == email;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    // POST: EmailReceipt
+    [HttpPost]
+    public async Task<IActionResult> EmailReceipt(string paymentId)
+    {
+        _logger.LogInformation("EmailReceipt started for PaymentId: {PaymentId}", paymentId);
+
+        var payment = _db.Payments
+            .Include(p => p.Rental)
+            .ThenInclude(r => r.Customer)
+            .FirstOrDefault(p => p.PaymentId == paymentId);
+
+        if (payment == null)
+        {
+            _logger.LogWarning("Payment not found for PaymentId: {PaymentId}", paymentId);
+            return RedirectToAction("Index");
+        }
+        _logger.LogInformation("Payment loaded for PaymentId: {PaymentId}, Customer: {Customer}", paymentId, payment.Rental.Customer.Name);
+
+        // generate PDF in memory
+        _logger.LogInformation("Generating PDF for PaymentId: {PaymentId}", paymentId);
+        var document = new ReceiptPdf(payment);
+        byte[] pdfBytes;
+        using (var ms = new MemoryStream())
+        {
+            document.GeneratePdf(ms);
+            pdfBytes = ms.ToArray();
+        }
+        _logger.LogInformation("PDF generated successfully for PaymentId: {PaymentId}, Size: {Size} bytes", paymentId, pdfBytes.Length);
+
+        // validate customer email
+        var email = payment.Rental.Customer.Email?.Trim();
+        if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
+        {
+            _logger.LogWarning("Invalid email for Customer: {Customer}, Email: {Email}", payment.Rental.Customer.Name, email);
+            TempData["Error"] = "Customer email is invalid.";
+            return RedirectToAction("Receipt", new { paymentId });
+        }
+        _logger.LogInformation("Customer email validated: {Email}", email);
+
+        try
+        {
+            // create email
+            _logger.LogInformation("Creating MailMessage for PaymentId: {PaymentId}", paymentId);
+            var mail = new MailMessage
+            {
+                Subject = "Your Rental Receipt",
+                Body = "Dear customer, please find attached your payment receipt.",
+                IsBodyHtml = true
+            };
+            mail.To.Add(new MailAddress(email, payment.Rental.Customer.Name));
+            _logger.LogInformation("MailMessage created, recipient: {Email}", email);
+
+            // attach PDF
+            _logger.LogInformation("Attaching PDF to email for PaymentId: {PaymentId}", paymentId);
+            mail.Attachments.Add(new Attachment(
+                new MemoryStream(pdfBytes),
+                $"Receipt_{payment.PaymentId}.pdf",
+                "application/pdf"));
+            _logger.LogInformation("PDF attached successfully for PaymentId: {PaymentId}", paymentId);
+
+            // send email
+            _logger.LogInformation("Sending email for PaymentId: {PaymentId}", paymentId);
+            _hp.SendEmail(mail);
+            _logger.LogInformation("Email sent successfully for PaymentId: {PaymentId} to {Email}", paymentId, email);
+
+            TempData["Info"] = "Receipt sent to customer via email.";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending email for PaymentId: {PaymentId}", paymentId);
+            TempData["Error"] = "Failed to send receipt email. Please check logs.";
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    public IActionResult DownloadReceiptPDF(string paymentId)
+    {
+        var payment = _db.Payments.Include(p => p.Rental).ThenInclude(r => r.Customer)
+                                  .FirstOrDefault(p => p.PaymentId == paymentId);
+        if (payment == null) return RedirectToAction("Index");
+
+        var pdf = new ReceiptPdf(payment);
+        var stream = new MemoryStream();
+        pdf.GeneratePdf(stream);
+        stream.Position = 0;
+        return File(stream, "application/pdf", $"Receipt_{paymentId}.pdf");
+    }
+
+
 }

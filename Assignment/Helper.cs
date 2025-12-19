@@ -1,10 +1,12 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using System.Net;
+using System.Net.Mail;
 using System.Text.RegularExpressions;
 
 namespace Assignment;
 
-public class Helper(IWebHostEnvironment en)
+public class Helper(IWebHostEnvironment en, IConfiguration cf)
 {
     // ------------------------------------------------------------------------
     // Photo Upload
@@ -62,4 +64,28 @@ public class Helper(IWebHostEnvironment en)
         File.Delete(path);
     }
 
+    public void SendEmail(MailMessage mail)
+    {
+        // TODO
+        string user = cf["Smtp:User"] ?? "";
+        string pass = cf["Smtp:Pass"] ?? "";
+        string name = cf["Smtp:Name"] ?? "";
+        string host = cf["Smtp:Host"] ?? "";
+        int port = cf.GetValue<int>("Smtp:Port");
+
+        mail.From = new MailAddress(user, name);
+
+        using var smtp = new SmtpClient
+        {
+            Host = host,
+            Port = port,
+            EnableSsl = true,
+            Credentials = new NetworkCredential(user, pass),
+        };
+
+
+        // TODO
+        smtp.Send(mail);
+        Console.WriteLine($"{user} {pass} {name} {host} {port}");
+    }
 }

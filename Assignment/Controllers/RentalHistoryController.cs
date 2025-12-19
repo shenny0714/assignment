@@ -55,7 +55,7 @@ public class RentalHistoryController : Controller
         // User.IsInRole("Customer")
         if (true)
         {
-            string id = "C001";
+            string id = "CU0001";
             q = q.Where(r => r.Customer.CustomerId == id);
         }
 
@@ -161,12 +161,19 @@ public class RentalHistoryController : Controller
         {
             // check iflogin user id == rental customer id?
             //  User.FindFirst("CustomerId")?.Value
-            var customerId = "C001";
+            var customerId = "CU0001";
             if (rental.CustomerId != customerId)
                 return RedirectToAction("Index");
         }
 
         return View(rental);
+    }
+
+    private string NextPaymentId()
+    {
+        string max = _db.Payments.Max(p => p.PaymentId) ?? "PA0000";
+        int n = int.Parse(max[2..]);
+        return $"PA{(n + 1).ToString("0000")}";
     }
 
     [HttpPost]
@@ -175,14 +182,48 @@ public class RentalHistoryController : Controller
         var rental = _db.Rentals.FirstOrDefault(r => r.RentalId == id);
 
         if (rental == null)
-            return NotFound();
+            return RedirectToAction("Index");
 
         // Only allow cancel before pickup
         if (rental.Status != "Booked")
             TempData["Info"] = "Booking cannot be cancel after pickup.";
 
+        var hoursBeforePickup = (rental.PickupDate - DateTime.Now).TotalHours;
+
+        decimal refundAmount = 0m;
+
+        decimal bookingFee = rental.TotalPrice - rental.DepositAmount;
+
+        if (hoursBeforePickup > 48)
+        {
+            // Refund deposit + booking fee
+            refundAmount = rental.DepositAmount + bookingFee;
+            rental.IsDepositRefunded = true;
+        }
+        else
+        {
+            // Refund booking fee only
+            refundAmount = bookingFee;
+        }
+
+        // Insert refund payment record
+        var refundPayment = new Payment
+        {
+            PaymentId = NextPaymentId(),
+            RentalId = rental.RentalId,
+            Amount = refundAmount,
+            PaymentType = "Refund",
+            PaymentMethod = "Online Banking",
+            Status = "Completed",
+            Date = DateTime.Now
+        };
+        _db.Payments.Add(refundPayment);
+
         rental.Status = "Cancelled";
+
         _db.SaveChanges();
+
+        TempData["Success"] = $"Booking cancelled. Refund amount: RM {refundAmount:N2}";
 
         return RedirectToAction("Details", new { id });
     }

@@ -1,8 +1,22 @@
 ﻿@model IEnumerable<dynamic>
 
-<div class="card">
-    <div class="card-body text-center" style="max-width: 300px; margin: 0 auto;">
-        <h5 class="card-title mb-3">Late Return Fees</h5>
-        <canvas id="lateChart" style="max-width: 300px; max-height: 300px;"></canvas>
+<div class="card mb-4 p-2">
+    <h5>Late Returns</h5>
+    <div class="d-flex" style="gap:10px; align-items:flex-start;">
+        <div style="flex:1; max-width:70%;">
+            <canvas id="lateChart" style="width:100%; height:300px;"></canvas>
+        </div>
+        <div style="flex:1; max-width:30%; overflow-y:auto; max-height:300px;">
+            <table id="lateTable" class="table table-bordered table-striped table-hover" style="width:100%;">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Rental ID</th>
+                        <th>Value</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 </div>
