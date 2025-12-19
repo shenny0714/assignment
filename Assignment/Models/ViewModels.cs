@@ -219,3 +219,73 @@ public class PaymentVM
     [Required(ErrorMessage = "Please select payment method")]
     public string PaymentMethod { get; set; } // Cash / TNG
 }
+
+
+
+// -----------------------------
+// LOGIN 
+// -----------------------------
+public class LoginVM
+{
+    [Required, EmailAddress]
+    public string Email { get; set; }
+
+    [Required]
+    public string Password { get; set; }
+
+    public bool RememberMe { get; set; }
+}
+
+// -----------------------------
+// REGISTER
+// -----------------------------
+public class RegisterVM
+{
+    [Required, StringLength(100)]
+    public string Name { get; set; }
+
+    [Required, EmailAddress]
+    public string Email { get; set; }
+
+    // [New] Added to match User model
+    [Required, Phone]
+    public string PhoneNumber { get; set; }
+
+    [Required, MinLength(5)]
+    public string Password { get; set; }
+
+    [Required, Compare("Password", ErrorMessage = "Passwords do not match")]
+    public string ConfirmPassword { get; set; }
+
+    public IFormFile? Photo { get; set; }
+}
+// -----------------------------
+// PROFILE
+// -----------------------------
+public class UpdateProfileVM
+{
+    public string? Email { get; set; }
+
+    [Required]
+    public string Name { get; set; }
+
+    [Phone]
+    [Display(Name = "Phone Number")]
+    public string? PhoneNumber { get; set; }
+
+    public string? PhotoURL { get; set; }
+    public IFormFile? Photo { get; set; }
+
+    [DataType(DataType.Password)]
+    [Display(Name = "Current Password")]
+    public string? CurrentPassword { get; set; }
+
+    [DataType(DataType.Password)]
+    [Display(Name = "New Password")]
+    public string? NewPassword { get; set; }
+
+    [DataType(DataType.Password)]
+    [Display(Name = "Confirm Password")]
+    [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+    public string? ConfirmNewPassword { get; set; }
+}
