@@ -1,0 +1,189 @@
+﻿@model Assignment.ViewModels.VehicleCatalogViewModel
+
+@{
+    ViewData["Title"] = "Find Your Drive";
+    // 1. Get the Date to show in the box (Default to Today if null)
+    string currentSearchDate = ViewBag.UserSearchDate as string ?? DateTime.Today.ToString("yyyy-MM-dd");
+
+    // 2. Logic: Calculate Minimum Allowed Date (12PM Rule)
+    string minDate = DateTime.Today.ToString("yyyy-MM-dd");
+    if (DateTime.Now.Hour >= 12)
+    {
+        minDate = DateTime.Today.AddDays(1).ToString("yyyy-MM-dd");
+    }
+}
+
+<style>
+    .search-container {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .car-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+    .image-frame {
+        height: 200px;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #eee;
+        position: relative;
+    }
+
+        .image-frame img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            padding: 10px;
+        }
+
+    .price-tag {
+        color: #0d6efd;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+</style>
+<link rel="stylesheet" href="~/css/catalog.css" asp-append-version="true" />
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Find Your Perfect Car</h1>
+    </div>
+
+    <div class="search-container border">
+        <form asp-action="Index" method="get">
+            <div class="row g-3 align-items-center">
+
+                <div class="col-md-3">
+                    <input type="date" name="pickedDate" value="@currentSearchDate"
+                           min="@minDate" class="form-control bg-light border-0"
+                           onchange="this.form.submit()" />
+                </div>
+
+                <div class="col-md-3">
+                    <select asp-for="SelectedCategory" asp-items="Model.CategoryList" class="form-select bg-light border-0">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select asp-for="SelectedBrandId" asp-items="Model.BrandList" class="form-select bg-light border-0">
+                        <option value="">All Brands</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
+                        <input asp-for="SearchTerm" class="form-control bg-light border-0" placeholder="e.g. Civic, Camry..." />
+                    </div>
+                </div>
+
+                <div class="col-md-2 text-end">
+                    <label class="form-label d-none d-md-block">&nbsp;</label> <button type="submit" class="btn btn-primary w-100 fw-bold">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row g-4">
+        @if (Model.CarModels.Any())
+        {
+            @foreach (var item in Model.CarModels)
+            {
+                // Logic: Count stock from the 'Vehicles' list populated by Controller
+                int stock = item.Vehicles != null ? item.Vehicles.Count : 0;
+                bool isAvailable = stock > 0;
+
+                <div class="col-md-4 col-sm-6">
+                    <div class="card car-card h-100 shadow-sm">
+
+                        <div class="image-frame">
+                            @if (!string.IsNullOrEmpty(item.ImagePathFront))
+                            {
+                                <img src="@item.ImagePathFront" alt="@item.ModelName" onerror="this.src='/images/default-car.png'; this.onerror=null;" />
+                            }
+                            else
+                            {
+                                <span class="text-muted"><i class="bi bi-car-front fs-1"></i><br>No Image</span>
+                            }
+
+                        </div>
+
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-light text-dark border">
+                                    @item.Category?.CategoryName
+                                </span>
+                            </div>
+
+                            <h5 class="card-title fw-bold text-dark mb-1">
+                                @item.Brand?.BrandName @item.ModelName
+                            </h5>
+
+                            <p class="card-text text-muted small flex-grow-1 text-truncate">
+                                @item.Description
+                            </p>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                                <div>
+                                    <span class="price-tag">RM @item.Price</span>
+                                    <span class="text-muted small">/ day</span>
+                                </div>
+                                <a asp-action="Details" asp-route-id="@item.ModelId" class="btn btn-outline-primary rounded-pill px-4">
+                                    Details
+                                </a>
+                            </div>
+                            <div class="d-grid">
+                                @if (isAvailable)
+                                {
+                                    <a asp-controller="Rental"
+                                       asp-action="Reserve"
+                                       asp-route-modelId="@item.ModelId"
+                                       asp-route-pickedDate="@currentSearchDate"
+                                       class="btn btn-primary fw-bold py-2">
+                                        Book for @DateTime.Parse(currentSearchDate).ToString("MMM dd")
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary py-2" disabled>
+                                        Unavailable on @DateTime.Parse(currentSearchDate).ToString("MMM dd")
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <div class="py-5 bg-light rounded-3">
+                    <h3 class="text-muted">No vehicles found.</h3>
+                    <p class="text-secondary">Try adjusting your search criteria.</p>
+                    <a asp-action="Index" class="btn btn-link text-decoration-none">Clear Filters</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

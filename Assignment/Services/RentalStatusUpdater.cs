@@ -30,13 +30,10 @@ namespace Assignment.Services
                     if (r.Status == "Booked")
                     {
                         var pickupStart = r.PickupDate.Date.AddHours(12); // 12:00 PM
-                        var pickupEnd = r.PickupDate.Date.AddDays(1).AddTicks(-1);  // 12:00 AM next day
+                        var pickupEnd = r.PickupDate.Date.AddDays(1);  // 12:00 AM next day
 
-                        if (r.PickupDate.Date < now.Date && now > pickupEnd)
-                        {
+                        if (now >= pickupEnd)
                             r.Status = "Expired";
-                        }
-
                     }
 
                     if (r.Status == "Pickup")

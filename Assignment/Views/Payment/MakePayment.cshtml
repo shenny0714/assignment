@@ -40,23 +40,24 @@
                                 </div>
 
                                 <div class="form-check p-3 border rounded" id="box-fpx">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="methodFPX" value="ToyyibPay">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="methodFPX" value="StripeFPX">
                                     <label class="form-check-label w-100" for="methodFPX">
                                         <strong>Online Banking (FPX)</strong>
-                                        <div class="text-muted small">Maybank2u, CIMB, RHB</div>
+                                        <div class="text-muted small">Maybank2u, CIMB, RHB (via Stripe)</div>
                                     </label>
                                 </div>
                             </div>
 
                             <hr class="my-4" />
 
-                            <div id="info-stripe" class="alert alert-info">
-                                <i class="bi bi-shield-lock"></i> You will be redirected to the <strong>Stripe Secure Page</strong> to enter your card details.
+                            <div id="payment-alert" class="pay-msg-box pay-msg-blue">
+                                <i id="alert-icon" class="bi bi-shield-lock fs-4"></i>
+
+                                <span id="alert-text">
+                                    You will be redirected to the <strong>Stripe Secure Page</strong> to enter your card details.
+                                </span>
                             </div>
 
-                            <div id="info-fpx" class="alert alert-warning" style="display:none;">
-                                <i class="bi bi-bank"></i> You will be redirected to <strong>Online Banking</strong> login.
-                            </div>
 
                             <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm">
                                 Pay RM @Model.Amount.ToString("N2")
@@ -103,23 +104,36 @@
 @section foot {
     <link rel="stylesheet" href="~/css/payment.css" />
     <script>
-        // Simple script to toggle the info message based on selection
         const radioStripe = document.getElementById('methodStripe');
         const radioFpx = document.getElementById('methodFPX');
-        const infoStripe = document.getElementById('info-stripe');
-        const infoFpx = document.getElementById('info-fpx');
+
+        // Get the SINGLE elements
+        const alertBox = document.getElementById('payment-alert');
+        const alertIcon = document.getElementById('alert-icon');
+        const alertText = document.getElementById('alert-text');
 
         function updateUI() {
             if (radioStripe.checked) {
-                infoStripe.style.display = 'block';
-                infoFpx.style.display = 'none';
+                // 1. Set Blue Style
+                alertBox.className = 'pay-msg-box pay-msg-blue';
+
+                // 2. Set Stripe Icon & Text
+                alertIcon.className = 'bi bi-shield-lock fs-4';
+                alertText.innerHTML = 'You will be redirected to the <strong>Stripe Secure Page</strong> to enter your card details.';
             } else {
-                infoStripe.style.display = 'none';
-                infoFpx.style.display = 'block';
+                // 1. Set Yellow Style
+                alertBox.className = 'pay-msg-box pay-msg-yellow';
+
+                // 2. Set FPX Icon & Text
+                alertIcon.className = 'bi bi-bank fs-4';
+                alertText.innerHTML = 'You will be redirected to <strong>Online Banking</strong> login.';
             }
         }
 
         radioStripe.addEventListener('change', updateUI);
         radioFpx.addEventListener('change', updateUI);
+
+        // Init on load
+        updateUI();
     </script>
 }

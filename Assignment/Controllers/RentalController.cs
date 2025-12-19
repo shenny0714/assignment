@@ -4,72 +4,20 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace Assignment.Controllers;
 
 public class RentalController(DB db) : Controller
 {
     // ============================================================
-    // 1. SEARCH PAGE (GET)
-    // ============================================================
-    public IActionResult Test(DateTime? pickedDate)
-    {
-        // 1. Determine Search Date (Default to Today)
-        DateTime searchDate = pickedDate ?? DateTime.Today;
-
-        // 2. 12 PM RULE: If searching Today & it's past 12pm -> Force Tomorrow
-        if (searchDate.Date == DateTime.Today && DateTime.Now.Hour >= 12)
-        {
-            searchDate = DateTime.Today.AddDays(1);
-            TempData["Info"] = "It is past 12:00 PM. Same-day bookings are closed. Showing cars for Tomorrow.";
-        }
-        
-        // Prevent searching in the past
-        if (searchDate < DateTime.Today) searchDate = DateTime.Today;
-
-        ViewBag.UserSearchDate = searchDate.ToString("yyyy-MM-dd");
-
-        // 3. Get Fleet Data
-        var models = db.CarModels
-            .Include(m => m.Brand)
-            .Include(m => m.Vehicles)
-            .OrderBy(m => m.Price)
-            .ToList();
-
-        // 4. FILTER LOGIC: Total Stock - Busy Cars = Available Stock
-        foreach (var model in models)
-        {
-            int totalCars = db.Vehicles.Count(v => v.ModelId == model.ModelId && v.Available == true);
-
-            // Busy if: Status is active AND Date overlaps
-            int busyCount = db.Rentals
-                .Where(r => r.ModelId == model.ModelId)
-                .Where(r => r.Status == "Reserved" || r.Status == "Booked" || r.Status == "Ongoing")
-                .Where(r => searchDate >= r.PickupDate && searchDate < r.ReturnDate)
-                .Count();
-
-            int availableStock = totalCars - busyCount;
-            if (availableStock < 0) availableStock = 0;
-
-            // Update List for View
-            model.Vehicles.Clear();
-            for (int i = 0; i < availableStock; i++)
-            {
-                model.Vehicles.Add(new Vehicle()); 
-            }
-        }
-
-        return View(models);
-    }
-
-    // ============================================================
     // 2. RESERVE PAGE (GET)
     // ============================================================
     public IActionResult Reserve(int? modelId, DateTime? pickedDate)
     {
-        if (modelId == null) return RedirectToAction("Test");
+        if (modelId == null) return RedirectToAction("Index", "CarCatalog");
 
         var model = db.CarModels.Find(modelId);
-        if (model == null) return RedirectToAction("Test");
+        if (model == null) return RedirectToAction("Index", "CarCatalog");
 
         // 1. Default to Today or Picked Date
         DateTime start = pickedDate ?? DateTime.Today;
@@ -104,7 +52,7 @@ public class RentalController(DB db) : Controller
     {
         // 1. Validate Model Exists
         var model = db.CarModels.Find(ModelId);
-        if (model == null) return RedirectToAction("Test");
+        if (model == null) return RedirectToAction("Index", "CarCatalog");
 
         // 2. SERVER-SIDE VALIDATION: 12 PM RULE
         if (vm.RentalDate.Date == DateTime.Today && DateTime.Now.Hour >= 12)
@@ -119,7 +67,6 @@ public class RentalController(DB db) : Controller
         }
 
         // 4. STOCK CHECK (Concurrency)
-        // Only run if dates are valid so far
         if (ModelState.IsValid)
         {
             int totalStock = db.Vehicles.Count(v => v.ModelId == ModelId && v.Available == true);
@@ -145,8 +92,6 @@ public class RentalController(DB db) : Controller
             decimal finalTotal = days * model.Price;
             decimal finalDeposit = finalTotal * 0.2m;
 
-            // REDIRECT TO "Payment/MakePayment" (GET)
-            // We pass the data in the URL.
             return RedirectToAction("MakePayment", "Payment", new
             {
                 modelId = ModelId,
@@ -154,8 +99,7 @@ public class RentalController(DB db) : Controller
                 returnDate = vm.ReturnDate.ToString("yyyy-MM-dd"), // Pass as String
                 totalPrice = finalTotal,
                 deposit = finalDeposit
-                // NOTE: We do NOT pass 'paymentMethod' here.
-                // This ensures the Payment Controller shows the selection screen first.
+
             });
         }
 
@@ -171,16 +115,18 @@ public class RentalController(DB db) : Controller
     // ============================================================
     public IActionResult Detail(string id)
     {
-        // Find the rental by ID (e.g., "RN0005")
         var rental = db.Rentals
-            .Include(r => r.Model)         
-            .ThenInclude(m => m.Brand)     
-            .FirstOrDefault(r => r.RentalId == id);
+                        .Include(r => r.Model)
+                            .ThenInclude(m => m.Brand)
+                        .Include(r => r.Model)
+                            .ThenInclude(m => m.Category)
+                        .Include(r => r.Customer)
+                        .FirstOrDefault(r => r.RentalId == id);
 
         if (rental == null)
         {
-            TempData["Error"] = "Rental record not found.";
-            return RedirectToAction("Test");
+            TempData["Info"] = "Receipt not found.";
+            return RedirectToAction("Index", "Home");
         }
 
         return View(rental);

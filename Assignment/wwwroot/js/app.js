@@ -84,7 +84,6 @@ $(document).on('click', '[data-checkable]', e => {
         .prop('checked', (i, v) => !v);
 });
 
-
 // PROFILE DROPDOWN MENU LOGIC
 document.addEventListener('DOMContentLoaded', function () {
     const trigger = document.getElementById('profileTrigger');

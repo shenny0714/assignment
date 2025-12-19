@@ -151,7 +151,10 @@ public class CarModel
     public string ModelName { get; set; }
     [Precision(6,2)]
     public decimal Price { get; set; }
-
+    public string Description { get; set; }
+    public string? ImagePathFront { get; set; }
+    public string? ImagePathSide { get; set; }
+    public string? ImagePathBack { get; set; }
     public string CategoryId { get; set; }
     public VehicleCategory Category { get; set; }
     public List<Vehicle> Vehicles { get; set; } = [];

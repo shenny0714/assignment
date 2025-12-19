@@ -106,7 +106,6 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
-    text-decoration: none;
 }
 
     .btn-login:hover {

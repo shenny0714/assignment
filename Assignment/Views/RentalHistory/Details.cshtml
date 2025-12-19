@@ -27,7 +27,7 @@
         <p><strong>Total Price:</strong> @Model.TotalPrice.ToString("C")</p>
 
         <!-- Customer cancel (only before pickup) -->
-        @if (!isStaff && status == "Booked")
+        @if (!isStaff && status == "booked")
         {
             <form asp-action="Cancel"
                     asp-controller="RentalHistory"

@@ -17,8 +17,12 @@ public class PickupViewModel
     // ───────────────────────────────────────────
     [Required]
     [StringLength(8)]
+    public string PickupId { get; set; }
+    [Required]
+    [StringLength(8)]
     [RegularExpression(@"RN\d{4}", ErrorMessage = "Invalid {0}.")]
     public string RentalId { get; set; }
+
     [Required]
     public DateTime PickupDateTime { get; set; } = DateTime.Today;
 
@@ -69,7 +73,7 @@ public class PickupViewModel
     // ───────────────────────────────────────────
     // Staff Handling Pickup
     // ───────────────────────────────────────────
-    [RegularExpression(@"ST\d{4}", ErrorMessage = "Invalid {0}.")]
+    [RegularExpression(@"STF\d{4}", ErrorMessage = "Invalid {0}.")]
     public string? StaffId { get; set; }
     public string? StaffName { get; set; }
 
@@ -84,14 +88,27 @@ public class PickupViewModel
     public IFormFile OdometerPhoto { get; set; }
     [Required]
     public IFormFile FuelPhoto { get; set; }
+
+    // ───────────────────────────────────────────
+    // DB Saved Photo Paths (for display)
+    // ───────────────────────────────────────────
+    public string? ExteriorPhotoPath { get; set; }
+    public string? InteriorPhotoPath { get; set; }
+    public string? OdometerPhotoPath { get; set; }
+    public string? FuelPhotoPath { get; set; }
 }
 
 public class ReturnRecordVM
 {
     [Required]
-    [StringLength(8)]
-    [RegularExpression(@"RN\d{4}", ErrorMessage = "Invalid {0}.")]
+    [MaxLength(8)]
+    public string ReturnId { get; set; }
+
+    [Required]
+    [MaxLength(8)]
+    [RegularExpression(@"VH\d{4}", ErrorMessage = "Invalid {0}.")]
     public string RentalId { get; set; }
+
     // ───────────────────────────────────────────
     // Customer & Vehicle Info (for display in form)
     // ───────────────────────────────────────────
@@ -141,12 +158,12 @@ public class ReturnRecordVM
     // -----------------------------
     // EXTRA CHARGES
     // -----------------------------
-    //public decimal? FuelCharge { get; set; }
-    //public int? LateReturnDay { get; set; }
-    //public decimal? LateFee { get; set; }
-    //public decimal? CleaningFee { get; set; }
+    public decimal? FuelCharge { get; set; }
+    public int? LateReturnDay { get; set; }
+    public decimal? LateFee { get; set; }
+    public decimal? CleaningFee { get; set; }
     public decimal? ExtraCharges { get; set; }
-    //public decimal? TotalReturnCost { get; set; }
+    public decimal? TotalReturnCost { get; set; }
 
     public string? Remarks { get; set; }
 
@@ -154,7 +171,7 @@ public class ReturnRecordVM
     // STAFF
     // -----------------------------
     [Required]
-    [RegularExpression(@"ST\d{4}", ErrorMessage = "Invalid {0}.")]
+    [RegularExpression(@"STF\d{4}", ErrorMessage = "Invalid {0}.")]
     public string StaffId { get; set; }
 
     // -----------------------------
@@ -173,121 +190,6 @@ public class ReturnRecordVM
     public IFormFile FuelPhoto { get; set; }
 
     public IFormFile? DamagePhoto { get; set; }
-}
-
-public class LateReturnVM
-{
-    [Display(Name = "Rental ID")]
-    public string RentalId { get; set; }
-
-    [Display(Name = "Late Days")]
-    public int LateDays { get; set; }
-
-    [Display(Name = "Late Fee (RM)")]
-    [DataType(DataType.Currency)]
-    public decimal LateFee { get; set; }
-}
-
-public class RentalStatusVM
-{
-    public string Status { get; set; }
-    public int Count { get; set; }
-}
-
-public class ModelSummaryVM
-{
-    public string ModelName { get; set; }
-    public int RentalCount { get; set; }
-    public decimal TotalRevenue { get; set; }
-}
-
-public class RevenueVM
-{
-    public string PaymentType { get; set; }
-    public decimal Total { get; set; }
-}
-
-public class PaymentVM
-{
-    public string RentalId { get; set; }
-    public string CustomerName { get; set; }
-
-    public decimal Amount { get; set; }
-
-    public string PaymentType { get; set; }   // ExtraCharge / Refund
-
-    [Required(ErrorMessage = "Please select payment method")]
-    public string PaymentMethod { get; set; } // Cash / TNG
-}
-
-
-
-// -----------------------------
-// LOGIN 
-// -----------------------------
-public class LoginVM
-{
-    [Required, EmailAddress]
-    public string Email { get; set; }
-
-    [Required]
-    public string Password { get; set; }
-
-    public bool RememberMe { get; set; }
-}
-
-// -----------------------------
-// REGISTER
-// -----------------------------
-public class RegisterVM
-{
-    [Required, StringLength(100)]
-    public string Name { get; set; }
-
-    [Required, EmailAddress]
-    public string Email { get; set; }
-
-    // [New] Added to match User model
-    [Required, Phone]
-    public string PhoneNumber { get; set; }
-
-    [Required, MinLength(5)]
-    public string Password { get; set; }
-
-    [Required, Compare("Password", ErrorMessage = "Passwords do not match")]
-    public string ConfirmPassword { get; set; }
-
-    public IFormFile? Photo { get; set; }
-}
-// -----------------------------
-// PROFILE
-// -----------------------------
-public class UpdateProfileVM
-{
-    public string? Email { get; set; }
-
-    [Required]
-    public string Name { get; set; }
-
-    [Phone]
-    [Display(Name = "Phone Number")]
-    public string? PhoneNumber { get; set; }
-
-    public string? PhotoURL { get; set; }
-    public IFormFile? Photo { get; set; }
-
-    [DataType(DataType.Password)]
-    [Display(Name = "Current Password")]
-    public string? CurrentPassword { get; set; }
-
-    [DataType(DataType.Password)]
-    [Display(Name = "New Password")]
-    public string? NewPassword { get; set; }
-
-    [DataType(DataType.Password)]
-    [Display(Name = "Confirm Password")]
-    [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
-    public string? ConfirmNewPassword { get; set; }
 }
 
 // -----------------------------
@@ -351,3 +253,101 @@ public class PaymentVM
     public string? CVV { get; set; }
 }
 
+
+// -----------------------------
+// LOGIN 
+// -----------------------------
+public class LoginVM
+    {
+        [Required, EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        public string Password { get; set; }
+
+        public bool RememberMe { get; set; }
+    }
+
+// -----------------------------
+// REGISTER
+// -----------------------------
+public class RegisterVM
+    {
+        [Required, StringLength(100)]
+        public string Name { get; set; }
+
+        [Required, EmailAddress]
+        public string Email { get; set; }
+
+        // [New] Added to match User model
+        [Required, Phone]
+        public string PhoneNumber { get; set; }
+
+        [Required, MinLength(5)]
+        public string Password { get; set; }
+
+        [Required, Compare("Password", ErrorMessage = "Passwords do not match")]
+        public string ConfirmPassword { get; set; }
+
+        public IFormFile? Photo { get; set; }
+    }
+// -----------------------------
+// PROFILE
+// -----------------------------
+public class UpdateProfileVM
+    {
+        public string? Email { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        [Phone]
+        [Display(Name = "Phone Number")]
+        public string? PhoneNumber { get; set; }
+
+        public string? PhotoURL { get; set; }
+        public IFormFile? Photo { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Current Password")]
+        public string? CurrentPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "New Password")]
+        public string? NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm Password")]
+        [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+        public string? ConfirmNewPassword { get; set; }
+    }
+
+// -----------------------------
+// CarCatalog
+// -----------------------------
+public class VehicleCatalogViewModel
+{
+    public IEnumerable<CarModel> CarModels { get; set; }
+
+    // === 改这里：把 int? 改成 string ===
+    public string SelectedCategory { get; set; }
+    public string SelectedBrandId { get; set; }
+    // ===================================
+
+    public string SearchTerm { get; set; }
+    public SelectList CategoryList { get; set; }
+    public SelectList BrandList { get; set; }
+}
+// -----------------------------
+// Vehicle Category
+// -----------------------------
+public class VehicleCategoryViewModel
+{
+    // ID 在创建时不需要（自动生成），但在编辑时可能需要隐藏字段
+    public string? CategoryId { get; set; }
+
+    [Required(ErrorMessage = "Category Name is required")]
+    [Display(Name = "Category Name")]
+    [MaxLength(50)]
+    public string? CategoryName { get; set; } // e.g., Sedan, SUV
+}

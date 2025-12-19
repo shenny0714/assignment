@@ -13,7 +13,6 @@
 
     <form asp-action="Pickup" asp-controller="PickupReturn" asp-route-rentalId="@Model.RentalId" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly"></div>
-        <div asp-validation-for="StaffId"></div>
 
         <input type="hidden" asp-for="RentalId" />
         <input type="hidden" asp-for="StaffId" />
@@ -46,28 +45,8 @@
             </select>
             <span asp-validation-for="VehicleId"></span>
 
-            <label>Driving License</label>
-
-            <input asp-for="CustomerDrivingLicense"
-                   type="file"
-                   accept="image/jpeg,image/png"
-                   id="licenseInput" />
-
-            <button type="button" class="btn btn-secondary" onclick="openCamera()">
-                Capture Driving License
-            </button>
-
-            <br /><br />
-
-            <video id="video" width="300" autoplay style="display:none;"></video>
-            <button type="button" class="btn btn-success" onclick="snapPhoto()">
-                Snap Photo
-            </button>
-
-            <canvas id="canvas" width="300" height="200" style="display:none;"></canvas>
-
-            <img id="preview" style="max-width:300px; display:none;" />
-
+            <label asp-for="CustomerDrivingLicense">Driving License</label>
+            <input asp-for="CustomerDrivingLicense" type="file" accept="image/jpeg,image/png" />
             <span asp-validation-for="CustomerDrivingLicense"></span>
 
             <label asp-for="OdometerPickup">Odometer Reading</label>
@@ -146,41 +125,3 @@
     </form>
 </div>
 
-<script>
-    let stream;
-
-    function openCamera() {
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(s => {
-                stream = s;
-                document.getElementById("video").srcObject = stream;
-                document.getElementById("video").style.display = "block";
-            })
-            .catch(err => alert("Camera access denied"));
-    }
-
-    function snapPhoto() {
-        const video = document.getElementById("video");
-        const canvas = document.getElementById("canvas");
-        const preview = document.getElementById("preview");
-
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        canvas.toBlob(blob => {
-            const file = new File([blob], "license.png", { type: "image/png" });
-
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-
-            document.getElementById("licenseInput").files = dataTransfer.files;
-
-            preview.src = URL.createObjectURL(blob);
-            preview.style.display = "block";
-
-            // Stop camera
-            stream.getTracks().forEach(t => t.stop());
-            video.style.display = "none";
-        });
-    }
-</script>
