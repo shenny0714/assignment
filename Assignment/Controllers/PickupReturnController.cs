@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
-using Rotativa.AspNetCore;
 using System.Net.Mail;
 using System.Reflection.Metadata;
 
@@ -644,7 +643,7 @@ public class PickupReturnController : Controller
             return RedirectToAction("Invoice", new { rentalId });
 
         // Create view model
-        var vm = new PaymentVM
+        var vm = new ReturnPaymentVM
         {
             RentalId = rentalId,
             CustomerName = returnRec.Rental.Customer.Name ?? "Unknown",

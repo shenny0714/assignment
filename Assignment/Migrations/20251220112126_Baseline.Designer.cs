@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Assignment.Migrations
 {
     [DbContext(typeof(DB))]
-    [Migration("20251216152526_updatePayment")]
-    partial class updatePayment
+    [Migration("20251220112126_Baseline")]
+    partial class Baseline
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,6 +57,19 @@ namespace Assignment.Migrations
                     b.Property<string>("CategoryId")
                         .IsRequired()
                         .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImagePathBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImagePathFront")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImagePathSide")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModelName")
                         .IsRequired()
@@ -141,8 +154,7 @@ namespace Assignment.Migrations
 
                     b.HasKey("PaymentId");
 
-                    b.HasIndex("RentalId")
-                        .IsUnique();
+                    b.HasIndex("RentalId");
 
                     b.ToTable("Payments");
                 });
@@ -483,8 +495,8 @@ namespace Assignment.Migrations
             modelBuilder.Entity("Assignment.Models.Payment", b =>
                 {
                     b.HasOne("Assignment.Models.Rental", "Rental")
-                        .WithOne("Payment")
-                        .HasForeignKey("Assignment.Models.Payment", "RentalId")
+                        .WithMany("Payment")
+                        .HasForeignKey("RentalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -588,8 +600,7 @@ namespace Assignment.Migrations
 
             modelBuilder.Entity("Assignment.Models.Rental", b =>
                 {
-                    b.Navigation("Payment")
-                        .IsRequired();
+                    b.Navigation("Payment");
 
                     b.Navigation("PickupRecord")
                         .IsRequired();

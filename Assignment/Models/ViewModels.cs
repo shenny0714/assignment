@@ -216,6 +216,19 @@ public class ReserveVM
 // -----------------------------
 // Payment
 // -----------------------------
+public class ReturnPaymentVM
+{
+    public string RentalId { get; set; }
+    public string CustomerName { get; set; }
+
+    public decimal Amount { get; set; }
+
+    public string PaymentType { get; set; }   // ExtraCharge / Refund
+
+    [Required(ErrorMessage = "Please select payment method")]
+    public string PaymentMethod { get; set; } // Cash / TNG
+}
+
 public class PaymentVM
 {
     [Required]
@@ -335,15 +348,12 @@ public class EditUserVM
     [Required]
     public string Phone { get; set; }
     public string UserType { get; set; } // "Staff" or "Customer"
-}
 
-<<<<<<< HEAD
-=======
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password")]
-        [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
-        public string? ConfirmNewPassword { get; set; }
-    }
+    [DataType(DataType.Password)]
+    [Display(Name = "Confirm Password")]
+    [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+    public string? ConfirmNewPassword { get; set; }
+}
 
 // -----------------------------
 // CarCatalog
@@ -374,4 +384,3 @@ public class VehicleCategoryViewModel
     [MaxLength(50)]
     public string? CategoryName { get; set; } // e.g., Sedan, SUV
 }
->>>>>>> a913b1d90971bbd9d7caa84884ff4d76939b5213

@@ -10,11 +10,6 @@ CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Set QuestPDF license (required for v2023+)
-QuestPDF.Settings.License = LicenseType.Community;
-
-// Add services
 builder.Services.AddControllersWithViews();
 builder.Services.AddSqlServer<DB>($@"
     Data Source=(LocalDB)\MSSQLLocalDB;
@@ -33,8 +28,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 var app = builder.Build();
-
-// Middleware
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
