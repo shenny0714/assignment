@@ -34,43 +34,46 @@ namespace Assignment.Services
                 {
                     if (r.Status == "Booked")
                     {
-                        var pickupStart = r.PickupDate.Date.AddHours(12); // 12:00 PM
                         var pickupEnd = r.PickupDate.Date.AddDays(1);  // 12:00 AM next day
 
                         if (now >= pickupEnd)
+                        {
                             r.Status = "Expired";
 
-                        decimal refundAmount = 0m;
-                        decimal bookingFee = r.TotalPrice - r.DepositAmount;
-                        var hoursBeforePickup = (r.PickupDate - DateTime.Now).TotalHours;
+                            // Refund calculation
+                            decimal refundAmount = 0m;
+                            decimal bookingFee = r.TotalPrice - r.DepositAmount;
+                            var hoursBeforePickup = (r.PickupDate - DateTime.Now).TotalHours;
 
-                        if (hoursBeforePickup > 48)
-                        {
-                            // Refund deposit + booking fee
-                            refundAmount = r.DepositAmount + bookingFee;
-                        }
-                        else
-                        {
-                            // Refund booking fee only
-                            refundAmount = bookingFee;
-                        }
+                            if (hoursBeforePickup > 48)
+                            {
+                                // Refund deposit + booking fee
+                                refundAmount = r.DepositAmount + bookingFee;
+                            }
+                            else
+                            {
+                                // Refund booking fee only
+                                refundAmount = bookingFee;
+                            }
 
-                        // Insert refund payment record
-                        var refundPayment = new Payment
-                        {
-                            PaymentId = NextPaymentId(),
-                            RentalId = r.RentalId,
-                            Amount = refundAmount,
-                            PaymentType = "Refund",
-                            PaymentMethod = "Online Banking",
-                            Status = "Completed",
-                            Date = DateTime.Now
-                        };
-                        db.Payments.Add(refundPayment);
+                            // Insert refund payment record
+                            var refundPayment = new Payment
+                            {
+                                PaymentId = NextPaymentId(),
+                                RentalId = r.RentalId,
+                                Amount = refundAmount,
+                                PaymentType = "Refund",
+                                PaymentMethod = "Online Banking",
+                                Status = "Completed",
+                                Date = DateTime.Now
+                            };
+                            db.Payments.Add(refundPayment);
 
-                        if (r.Customer != null && !string.IsNullOrEmpty(r.Customer.Email))
-                        {
-                            SendExpiredEmail(r.Customer.Email, r);
+                            // Send email
+                            if (r.Customer != null && !string.IsNullOrEmpty(r.Customer.Email))
+                            {
+                                SendExpiredEmail(r.Customer.Email, r);
+                            }
                         }
                     }
 
