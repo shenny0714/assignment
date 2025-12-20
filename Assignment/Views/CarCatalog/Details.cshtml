@@ -1,0 +1,225 @@
+﻿@model Assignment.Models.CarModel
+
+@{
+    ViewData["Title"] = $"{Model.Brand?.BrandName} {Model.ModelName} - Details";
+}
+
+<style>
+    
+    .car-detail-container {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        color: #333;
+    }
+
+    
+    .image-column {
+        background-color: #f8f9fa; 
+        border-radius: 12px;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 500px; 
+    }
+
+    .main-image {
+        width: 100%;
+        height: auto;
+        max-height: 400px;
+        object-fit: contain; 
+        transition: opacity 0.3s ease;
+    }
+
+   
+    .thumbnail-container {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .thumbnail {
+        width: 60px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+        cursor: pointer;
+        opacity: 0.5;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+    }
+
+        .thumbnail.active, .thumbnail:hover {
+            opacity: 1;
+            border-color: #0d6efd; 
+        }
+
+    /* right side*/
+    .info-column {
+        padding-left: 3rem; 
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        height: 100%;
+    }
+
+    .category-label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .car-title {
+        font-size: 2.5rem; 
+        font-weight: 800;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .price-tag {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: #0d6efd; 
+    }
+
+    .price-unit {
+        font-size: 1rem;
+        color: #666;
+        font-weight: 400;
+    }
+
+    .section-divider {
+        border-top: 1px solid #dee2e6;
+        margin: 1.5rem 0;
+    }
+
+    .description-box {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #444;
+        font-style: italic; 
+    }
+
+   
+    .action-area {
+        margin-top: auto; 
+        padding-top: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end; 
+        gap: 20px;
+    }
+
+    .btn-rent {
+        background-color: #0d6efd;
+        border: none;
+        padding: 12px 30px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 6px;
+        transition: background 0.2s;
+    }
+
+        .btn-rent:hover {
+            background-color: #0b5ed7;
+        }
+
+    .link-back {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+    }
+
+        .link-back:hover {
+            color: #0d6efd;
+        }
+</style>
+
+<div class="container py-5 car-detail-container">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-muted">Catalog</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Details</li>
+        </ol>
+    </nav>
+
+    <div class="row gx-5">
+        <div class="col-md-7">
+            <div class="image-column">
+                <img id="mainImage" src="@Model.ImagePathFront" alt="@Model.ModelName" class="main-image" onerror="this.src='/images/default-car.png'" />
+
+                <div class="thumbnail-container">
+                    @if (!string.IsNullOrEmpty(Model.ImagePathFront))
+                    {
+                        <img src="@Model.ImagePathFront" class="thumbnail active" onclick="changeImage(this)" />
+                    }
+                    @if (!string.IsNullOrEmpty(Model.ImagePathSide))
+                    {
+                        <img src="@Model.ImagePathSide" class="thumbnail" onclick="changeImage(this)" />
+                    }
+                    @if (!string.IsNullOrEmpty(Model.ImagePathBack))
+                    {
+                        <img src="@Model.ImagePathBack" class="thumbnail" onclick="changeImage(this)" />
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="info-column">
+
+                <div class="category-label">
+                    @Model.Category?.CategoryName
+                </div>
+
+                <h1 class="car-title">
+                    @Model.Brand?.BrandName @Model.ModelName
+                </h1>
+
+                <div class="mb-2">
+                    <span class="price-tag">RM @Model.Price.ToString("N2")</span>
+                    <span class="price-unit">/ day</span>
+                </div>
+
+                <div class="section-divider">
+                    <span class="fw-bold small text-uppercase text-muted">Vehicle Overview</span>
+                </div>
+
+                <div class="description-box">
+                    “@(!string.IsNullOrEmpty(Model.Description) ? Model.Description : "Experience unmatched luxury and performance in this flagship vehicle, perfect for business travel or special occasions.")”
+                </div>
+
+                <div class="action-area">
+                    <a asp-action="Index" class="link-back">
+                        Back to Catalog
+                    </a>
+
+                    <a asp-controller="Booking" asp-action="Create" asp-route-modelId="@Model.ModelId" class="btn btn-primary btn-rent text-white">
+                        Rent This Car Now
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changeImage(element) {
+        var mainImg = document.getElementById('mainImage');
+
+       
+        mainImg.style.opacity = 0.5;
+
+        setTimeout(function(){
+            mainImg.src = element.src;
+            mainImg.style.opacity = 1;
+        }, 200);
+
+ 
+        document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+        element.classList.add('active');
+    }
+</script>

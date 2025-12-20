@@ -106,7 +106,6 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
-    text-decoration: none;
 }
 
     .btn-login:hover {
@@ -146,7 +145,7 @@ body {
 
 /*Section */
 .section-1 {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url('../images/homebackground.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url('../images/homeBackground.jpg');
     background-size: cover;
     background-position: center;
     border-radius: 0.75rem;
@@ -394,6 +393,7 @@ body.dark-mode .btn-social {
     color: #ffffff;
     border: 1px solid #333333;
 }
+
 /*Temp Info*/
 
 .info {

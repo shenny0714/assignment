@@ -1,0 +1,80 @@
+﻿@model Assignment.ViewModels.EditUserVM
+@{
+    Layout = null;
+    var adminName = User.Identity.Name;
+    // Determine where the "Cancel" button goes
+    var cancelLink = Model.UserType == "Staff" ? "/Account/AdminStaff" : "/Account/Admin";
+    var title = Model.UserType == "Staff" ? "Edit Staff Member" : "Edit Customer";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Admin - @title</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" />
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="user-widget">
+                <div class="user-info-row">
+                    <div class="user-avatar"><i class="fa-solid fa-user-secret"></i></div>
+                    <div class="user-details"><span class="user-name">@adminName</span><span class="user-role">Administrator</span></div>
+                </div>
+            </div>
+            <nav class="side-nav">
+                <div class="nav-label">ADMIN PANEL</div>
+                <ul>
+                    <li class="@(Model.UserType == "Customer" ? "active" : "")"><a href="/Account/Admin"><i class="fas fa-users"></i><span>Customers</span></a></li>
+                    <li class="@(Model.UserType == "Staff" ? "active" : "")"><a href="/Account/AdminStaff"><i class="fas fa-user-tie"></i><span>Staff</span></a></li>
+                </ul>
+            </nav>
+            <div class="logout-wrap"><a href="/Account/Logout" class="logout-btn"><i class="fas fa-power-off"></i> Logout</a></div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar"><h1>@title</h1></header>
+            <div class="content-area">
+
+                <div class="form-card">
+                    <form asp-action="EditUser" method="post">
+
+                        <input type="hidden" asp-for="UserType" />
+
+                        <div class="form-group">
+                            <label class="form-label">@Model.UserType ID</label>
+                            <input asp-for="Id" class="form-input" readonly />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input asp-for="Name" class="form-input" placeholder="Enter full name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input asp-for="Email" class="form-input" type="email" placeholder="name@example.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input asp-for="Phone" class="form-input" placeholder="012-3456789" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save">Save Changes</button>
+                            <a href="@cancelLink" class="btn-cancel">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,158 @@
+﻿@model Assignment.ViewModels.ReserveVM
+
+@{
+    ViewData["Title"] = "Reserve Car";
+    Layout = "_Layout";
+
+    var carModel = ViewBag.SelectedModel as Assignment.Models.CarModel;
+
+    // 1. SERVER-SIDE LIMITS
+    // ====================================================
+    // UPDATED LOGIC: 12 PM RULE
+    // If it is past 12:00 PM, the earliest start date becomes TOMORROW.
+    // ====================================================
+    DateTime earliestDate = DateTime.Today;
+    
+    if (DateTime.Now.Hour >= 12)
+    {
+        earliestDate = DateTime.Today.AddDays(1);
+    }
+
+    string minStart = earliestDate.ToString("yyyy-MM-dd");
+    string maxStart = DateTime.Today.AddDays(90).ToString("yyyy-MM-dd");
+}
+
+<div class="container mt-4">
+    <div class="card shadow" style="max-width: 600px; margin: auto;">
+        <div class="card-header bg-primary text-white">
+            <h3>Reserve: @carModel.ModelName</h3>
+        </div>
+        <div class="card-body">
+
+            <p class="text-muted small">
+                * You can book a car up to 3 months in advance.<br>
+                * Maximum rental duration is 30 days per booking.
+            </p>
+
+            <form asp-action="Reserve" method="post">
+                <input type="hidden" name="ModelId" value="@ViewBag.ModelId" />
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">Rental Date</label>
+                    <input asp-for="RentalDate" type="date" class="form-control"
+                           min="@minStart" max="@maxStart" id="RentalDate" />
+                    <span asp-validation-for="RentalDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">Return Date</label>
+                    <input asp-for="ReturnDate" type="date" class="form-control" id="ReturnDate" />
+                    <span asp-validation-for="ReturnDate" class="text-danger"></span>
+                </div>
+
+                <div class="alert alert-secondary d-flex justify-content-between align-items-center">
+                    <span><strong>Duration: </strong> <span id="daysDisplay">1</span> Day(s)</span>
+                </div>
+
+                <div class="form-group mb-2">
+                    <label>Rental Fee (RM)</label>
+                    <input id="RentalFee" class="form-control" readonly />
+                </div>
+
+                <div class="form-group mb-2">
+                    <label>Deposit (20%)</label>
+                    <input id="DepositAmount" class="form-control" readonly />
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="text-success fw-bold">Grand Total (Pay Now)</label>
+                    <input id="GrandTotal" class="form-control bg-success text-white fw-bold" readonly />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 btn-lg">Book</button>
+                <a asp-controller="CarCatalog" asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">
+                    Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section foot {
+
+    <script>
+        $(document).ready(function() {
+            // ==========================================
+            // 2. EXTEND DATE OBJECT (Hotel Style)
+            // ==========================================
+            Date.prototype.addDays = function (days) {
+                const d = new Date(this);
+                d.setDate(d.getDate() + days);
+                return d;
+            };
+
+            Date.prototype.format = function () {
+                return this.toISOString().substring(0, 10);
+            };
+
+            const pricePerDay = @Model.PricePerDay;
+
+            // ==========================================
+            // 3. LOGIC: UPDATE RETURN DATE LIMITS
+            // ==========================================
+            function updateReturnLimits() {
+                const ci = $('#RentalDate')[0];
+                const co = $('#ReturnDate')[0];
+
+                if (!ci.valueAsDate) return;
+
+                // Rule: Return Date must be between +1 days and +30 days
+                const minReturn = ci.valueAsDate.addDays(1).format();
+                const maxReturn = ci.valueAsDate.addDays(30).format();
+
+                // Apply limits to the Return Date picker
+                co.min = minReturn;
+                co.max = maxReturn;
+
+                // Auto-Correct: If user picked a date outside range, fix it
+                if (co.value < minReturn) co.value = minReturn;
+                if (co.value > maxReturn) co.value = maxReturn;
+
+                updateCosts(); // Recalculate price immediately
+            }
+
+            // ==========================================
+            // 4. LOGIC: CALCULATE MONEY
+            // ==========================================
+            function updateCosts() {
+                const ci = $('#RentalDate')[0];
+                const co = $('#ReturnDate')[0];
+
+                if (ci.valueAsDate && co.valueAsDate) {
+                    const ms = co.valueAsDate - ci.valueAsDate;
+
+                    let days = parseInt(ms / (24 * 60 * 60 * 1000));
+
+                    if (days <= 0) days = 1;
+
+                    $('#daysDisplay').text(days);
+
+                    const rentalTotal = days * pricePerDay;
+                    const deposit = rentalTotal * 0.20;
+                    const grandTotal = rentalTotal + deposit;
+
+                    $('#RentalFee').val(rentalTotal.toFixed(2));
+                    $('#DepositAmount').val(deposit.toFixed(2));
+                    $('#GrandTotal').val(grandTotal.toFixed(2));
+                }
+            }
+            // ==========================================
+            // 5. EVENTS
+            // ==========================================
+            $('#RentalDate').on('input change', updateReturnLimits);
+            $('#ReturnDate').on('input change', updateCosts);
+
+            updateReturnLimits();
+        });
+    </script>
+}

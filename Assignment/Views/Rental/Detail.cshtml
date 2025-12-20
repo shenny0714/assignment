@@ -1,0 +1,152 @@
+﻿@model Assignment.Models.Rental
+@{
+    ViewData["Title"] = "Booking Receipt";
+    Layout = "_Layout";
+
+    int days = (Model.ReturnDate - Model.PickupDate).Days;
+    if (days < 1) days = 1;
+
+    decimal totalPaid = Model.TotalPrice + Model.DepositAmount;
+}
+<link rel="stylesheet" href="~/css/receipt.css" asp-append-version="true" />
+
+<div class="container-3 mt-5 mb-5">
+
+    @* Success Flash Message *@
+    @if (TempData["Info"] != null)
+    {
+        <div class="info">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle fs-3 me-3"></i>
+                <div>
+                    <h5 class="mb-0 fw-bold">Success!</h5>
+                    <p class="mb-0">@TempData["Info"]</p>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="card receipt-card mx-auto">
+
+        <!-- Header -->
+        <div class="card-header receipt-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-0 fw-bold">
+                        <i class="fas fa-receipt"></i> RECEIPT
+                    </h4>
+                    <span class="opacity-75">Ref: #@Model.RentalId</span>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-success px-3 py-2 mb-1">
+                        @Model.Status.ToUpper()
+                    </span>
+                    <div class="small opacity-75">
+                        @Model.RentalDate.ToString("dd MMM yyyy, hh:mm tt")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body p-4 p-md-5">
+
+            <!-- Customer & Date Info -->
+            <div class="row mb-5">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <h4 class="text-uppercase text-muted fw-bold small">Billed To</h4>
+                    <h4 class="fw-bold mb-1">Customer: @Model.Customer.Name</h4>
+                    <p class="text-muted mb-0">Valued Customer</p>
+                </div>
+
+            </div>
+
+            <!-- Car Summary -->
+            <div class="car-summary-box mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="icon-box me-3">
+                        <i class="fas fa-car fs-2"></i>
+                    </div>
+                    <div>
+						<h4 class="mb-1 fw-bold">
+                            Model:
+                            @(Model.Model?.ModelName ?? "Unknown Model")
+                        </h4>
+                        <h4 class="text-uppercase text-muted fw-bold small">Rental Period</h4>
+                        <div class="mb-1">
+                            <i class="far fa-calendar-alt text-primary"></i>
+                            <strong>Pick-up:</strong>
+                            @Model.PickupDate.ToString("dd MMM yyyy")
+                        </div>
+                        <div class="mb-1">
+                            <i class="far fa-calendar-check text-primary"></i>
+                            <strong>Return:</strong>
+                            @Model.ReturnDate.ToString("dd MMM yyyy")
+                        </div>
+                        <div class="text-primary fw-bold">
+                            <i class="fa-regular fa-clock"></i>                            
+                            <strong>Duration: </strong>
+                            @days Day(s)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Table -->
+            <div class="table-responsive">
+                <table class="table table-borderless">
+                    <thead class="border-bottom">
+                        <tr>
+                            <th class="ps-0">Description</th>
+                            <th class="text-end pe-0">Amount (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="ps-0 py-3">
+                                Rental Charges (@days Days)
+                            </td>
+                            <td class="text-end pe-0 py-3 fw-bold">
+                                @Model.TotalPrice.ToString("N2")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="ps-0 py-3 text-muted">
+                                Security Deposit (Refundable)
+                            </td>
+                            <td class="text-end pe-0 py-3 text-muted">
+                                @Model.DepositAmount.ToString("N2")
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="border-top">
+                        <tr>
+                            <td class="ps-0 pt-4 h5 fw-bold">
+                                Total Paid
+                            </td>
+                            <td class="text-end pe-0 pt-4 h4 text-success fw-bold">
+                                RM @totalPaid.ToString("N2")
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <hr class="my-5 opacity-25">
+
+            <!-- Actions -->
+            <div class="text-center d-print-none">
+                <p class="text-muted small mb-4">
+                    A copy of this receipt has been sent to your registered email.
+                </p>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-primary px-4" style="text-decoration: none;">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,291 @@
+﻿/* ===================================================
+   Rent Page Styles (Car Grid Layout & Sidebar)
+   =================================================== */
+
+/ 1. 图片容器：固定高度，保证卡片整齐 */
+.car-image-wrapper {
+    height: 180px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f8f9fa;*/ /* 淡灰色背景 */
+    /*overflow: hidden;*/ /* 防止大图溢出 */
+    /*border-bottom: 1px solid #eee;
+}
+
+    /* 2. 图片本身：保持比例，不拉伸 */
+    .car-image-wrapper img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+/* 3. 悬停效果：图片轻微放大 */
+.card:hover .car-image-wrapper img {
+    transform: scale(1.05);
+}
+
+/* 4. 侧边栏链接样式 (对应 HTML 里的 filter-link 或 category-link) */
+.filter-link, .category-link {
+    display: block;
+    padding: 8px 12px;
+    color: #495057;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+    .filter-link:hover, .category-link:hover {
+        background-color: #e9ecef;
+        color: #0d6efd;*/ /* 蓝色高亮 */
+    }
+
+    .filter-link.active, .category-link.active {
+        background-color: #000;*/ /* 选中变黑 */
+        color: #fff;
+        font-weight: bold;
+    }
+
+:root {
+    /* === 🎨 颜色变量 === */
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --accent-color: #007bff;
+    --text-color: #333;
+    --text-muted: #6c757d;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --border-color: #e5e7eb;
+    --danger-color: #dc3545;
+    --success-color: #28a745;
+    /* === 📐 布局变量 === */
+    --container-width: 1200px;
+    --header-height: 70px;
+    --border-radius: 8px;
+}
+
+/* === 基础重置 === */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Lexend', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s;
+}
+
+ul {
+    list-style: none;
+}
+
+/* === 🏗️ 布局容器 === */
+.container-1 {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container-2 {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 1rem;
+    width: 100%;
+}
+
+main {
+    flex: 1;
+    width: 100%;
+    padding: 2rem 0;
+}
+
+/* === 🧭 导航栏 (Navbar) === */
+.navbar {
+    background-color: var(--card-bg);
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 800;
+    font-size: 1.25rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+    .nav-links a {
+        font-weight: 500;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+/* === 🔘 按钮组件 === */
+.btn-login {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .btn-login:hover {
+        background-color: var(--primary-hover);
+    }
+
+.btn-theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+}
+
+/* === 🦶 页脚 (Footer) === */
+.footer-main {
+    background-color: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 3rem 0 1.5rem;
+    margin-top: auto;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 2rem;
+}
+
+.footer-links h3 {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.footer-links ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+    .footer-links a:hover {
+        color: var(--primary-color);
+    }
+
+.btn-social {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #f1f3f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+
+    .btn-social:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+/* === 🛠️ 通用工具类 (模拟 Bootstrap) === */
+.text-danger {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+/* 简单的 Grid 系统 (为了 Create/Edit 页面) */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.col-md-6, .col-md-4 {
+    padding: 0 10px;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .col-md-6 {
+        width: 50%;
+    }
+
+    .col-md-4 {
+        width: 33.33%;
+    }
+}
+
+/* 表单控件样式 */
+.form-control, .form-select {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text-color);
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: var(--border-radius);
+    transition: border-color 0.15s ease-in-out;
+}
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
