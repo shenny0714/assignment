@@ -22,6 +22,7 @@ public class PickupViewModel
     [StringLength(8)]
     [RegularExpression(@"RN\d{4}", ErrorMessage = "Invalid {0}.")]
     public string RentalId { get; set; }
+
     [Required]
     public DateTime PickupDateTime { get; set; } = DateTime.Today;
 
@@ -192,6 +193,68 @@ public class ReturnRecordVM
 }
 
 // -----------------------------
+// Reservation 
+// -----------------------------
+public class ReserveVM
+{
+    public int ModelId { get; set; }
+
+    [DataType(DataType.Date)]
+    public DateTime RentalDate { get; set; }
+
+    [DataType(DataType.Date)]
+
+    public DateTime ReturnDate { get; set; }
+
+    public decimal PricePerDay { get; set; }
+
+    public decimal TotalPrice { get; set; }
+
+    public decimal DepositAmount { get; set; }
+}
+
+// -----------------------------
+// Payment
+// -----------------------------
+public class PaymentVM
+{
+    [Required]
+    public string RentalId { get; set; }
+
+    public string CarModel { get; set; }
+
+    [Display(Name = "Payment Date")]
+    public DateTime PaymentDate { get; set; } = DateTime.Now;
+
+    [Required]
+    [Range(0.01, 100000, ErrorMessage = "Amount must be greater than 0.")]
+    public decimal Amount { get; set; }
+
+    [Required]
+    [Display(Name = "Payment Type")]
+    public string PaymentType { get; set; } // "Deposit", "Rental Fee", "Damage Fee"
+
+    [Required]
+    [Display(Name = "Payment Method")]
+    public string PaymentMethod { get; set; } // "Credit Card", "Cash", "E-Wallet"
+    public decimal TotalRentalPrice { get; set; }
+    public decimal DepositRequired { get; set; }
+
+    [Display(Name = "Card Number")]
+    [RegularExpression(@"\d{16}", ErrorMessage = "Enter a valid 16-digit card number")]
+    public string? CardNumber { get; set; }
+
+    [Display(Name = "Expiry Date (MM/YY)")]
+    [RegularExpression(@"^(0[1-9]|1[0-2])\/?([0-9]{2})$", ErrorMessage = "Invalid format MM/YY")]
+    public string? ExpiryDate { get; set; }
+
+    [Display(Name = "CVV")]
+    [RegularExpression(@"\d{3}", ErrorMessage = "Invalid CVV")]
+    public string? CVV { get; set; }
+}
+
+
+// -----------------------------
 // LOGIN 
 // -----------------------------
 public class LoginVM
@@ -274,3 +337,41 @@ public class EditUserVM
     public string UserType { get; set; } // "Staff" or "Customer"
 }
 
+<<<<<<< HEAD
+=======
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm Password")]
+        [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+        public string? ConfirmNewPassword { get; set; }
+    }
+
+// -----------------------------
+// CarCatalog
+// -----------------------------
+public class VehicleCatalogViewModel
+{
+    public IEnumerable<CarModel> CarModels { get; set; }
+
+    // === 改这里：把 int? 改成 string ===
+    public string SelectedCategory { get; set; }
+    public string SelectedBrandId { get; set; }
+    // ===================================
+
+    public string SearchTerm { get; set; }
+    public SelectList CategoryList { get; set; }
+    public SelectList BrandList { get; set; }
+}
+// -----------------------------
+// Vehicle Category
+// -----------------------------
+public class VehicleCategoryViewModel
+{
+    // ID 在创建时不需要（自动生成），但在编辑时可能需要隐藏字段
+    public string? CategoryId { get; set; }
+
+    [Required(ErrorMessage = "Category Name is required")]
+    [Display(Name = "Category Name")]
+    [MaxLength(50)]
+    public string? CategoryName { get; set; } // e.g., Sedan, SUV
+}
+>>>>>>> a913b1d90971bbd9d7caa84884ff4d76939b5213

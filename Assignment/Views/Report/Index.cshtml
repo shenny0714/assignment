@@ -1,0 +1,189 @@
+﻿@{
+    ViewData["Title"] = "Reports Dashboard";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+
+<div class="row mb-3">
+    <div class="col-md-3">
+        <label>Start Date</label>
+        <input type="date" id="start" class="form-control" value="@ViewBag.Start" />
+    </div>
+    <div class="col-md-3">
+        <label>End Date</label>
+        <input type="date" id="end" class="form-control" value="@ViewBag.End" />
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <button class="btn btn-primary w-100" id="applyFilter">Apply</button>
+    </div>
+</div>
+
+<!-- Dashboard Cards -->
+<div id="rentalStatus" class="mb-4"></div>
+<div id="revenue" class="mb-4"></div>
+<div id="model" class="mb-4"></div>
+<div id="late" class="mb-4"></div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        function fetchData(url) {
+            return $.getJSON(url).then(d => (d && d.length) ? d : [{ label:'No Data', value:0 }]);
+        }
+
+        function renderChart(canvasId, data, label, type='bar') {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type,
+                data: {
+                    labels: data.map(x => x.label),
+                    datasets: [{
+                        label,
+                        data: data.map(x => x.value),
+                        backgroundColor: data.map((_, i) => `hsl(${i*60%360},70%,50%)`),
+                        borderColor: data.map((_, i) => `hsl(${i*60%360},70%,30%)`),
+                        borderWidth: 1
+                    }]
+                },
+                options:{
+                    responsive:true,
+                    maintainAspectRatio:false,
+                    scales:{ y:{ beginAtZero:true } },
+                    plugins:{ legend:{ display:type==='doughnut'?true:false } }
+                }
+            });
+        }
+
+        function initDataTable(tableId, data, jsonKeys, headers) {
+            if ($.fn.DataTable.isDataTable(tableId)) $(tableId).DataTable().clear().destroy();
+
+            let tbody = $(tableId+' tbody');
+            tbody.empty();
+
+            data.forEach(row => {
+                let tr = '<tr>';
+                jsonKeys.forEach(k => {
+                    tr += `<td>${row[k] !== undefined ? row[k] : ''}</td>`;
+                });
+                tr += '</tr>';
+                tbody.append(tr);
+            });
+
+            $(tableId).DataTable({
+                pageLength: 10,
+                lengthChange: false, // <-- hides the "Show X entries" dropdown
+                responsive: true,
+                searching: false, // Disable search
+                columns: headers.map(h => ({ title: h }))
+            });
+        }
+
+        function loadSection(id, chartUrl, tableUrl, chartLabel, jsonKeys, headers, chartType='bar', csvUrl=null) {
+            $(`#${id}`).html(`
+                <div class="card p-3">
+                    <h5>${chartLabel}</h5>
+                    <div class="d-flex gap-3" style="align-items:flex-start;">
+                        <div style="flex:1; min-width:50%;">
+                            <canvas id="${id}Chart" style="width:100%;"></canvas>
+                        </div>
+                        <div style="flex:1; min-width:50%;">
+                            ${csvUrl ? `<button class="btn btn-success mb-2" id="${id}CsvBtn">Download CSV</button>` : ''}
+                            <table id="${id}Table" class="table table-bordered table-striped table-hover">
+                                <thead class="table-dark"><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            fetchData(chartUrl).then(d => renderChart(`${id}Chart`, d, chartLabel, chartType));
+            $.getJSON(tableUrl, d => initDataTable(`#${id}Table`, d, jsonKeys, headers));
+
+            if (csvUrl) $(`#${id}CsvBtn`).click(() => { window.location = csvUrl; });
+        }
+
+        function loadAllCharts(start, end) {
+            loadSection(
+                'rentalStatus',
+                `/Report/RentalStatusChartData?start=${start}&end=${end}`,
+                `/Report/RentalStatusTableData?start=${start}&end=${end}`,
+                'Rental Status',
+                ['rentalId','customerId','status','rentalDate'],
+                ['Rental ID','Customer ID','Status','Rental Date'],
+                'doughnut',
+                `/Report/DownloadRentalStatusCsv?start=${start}&end=${end}`
+            );
+
+            loadSection(
+                'revenue',
+                `/Report/RevenueChartData?start=${start}&end=${end}`,
+                `/Report/RevenueTableData?start=${start}&end=${end}`,
+                'Revenue',
+                ['paymentId','date','customerId','paymentType','amount'],
+                ['Payment ID','Date','Customer ID','Payment Type','Amount'],
+                'bar',
+                `/Report/DownloadRevenueCsv?start=${start}&end=${end}`
+            );
+
+            loadSection(
+                'model',
+                `/Report/ModelChartData?start=${start}&end=${end}`,
+                `/Report/ModelTableData?start=${start}&end=${end}`,
+                'Model Popularity',
+                ['rentalId','customerId','modelName','rentalDate'],
+                ['Rental ID','Customer ID','Model Name','Rental Date'],
+                'bar',
+                `/Report/DownloadModelCsv?start=${start}&end=${end}`
+            );
+
+            loadSection(
+                'late',
+                `/Report/LateReturnChartData?start=${start}&end=${end}`,
+                `/Report/LateReturnTableData?start=${start}&end=${end}`,
+                'Late Returns',
+                ['rentalId','returnDateTime','lateReturnDay','lateFee'],
+                ['Rental ID','Return Date','Late Days','Late Fee'],
+                'bar',
+                `/Report/DownloadLateCsv?start=${start}&end=${end}`
+            );
+        }
+
+        $(document).ready(function(){
+            const start = $('#start').val();
+            const end = $('#end').val();
+            loadAllCharts(start,end);
+
+            $('#applyFilter').click(() => {
+                const start = $('#start').val();
+                const end = $('#end').val();
+                loadAllCharts(start,end);
+            });
+        });
+    </script>
+
+    <style>
+        .card {
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+            .card h5 {
+                margin-bottom: 15px;
+            }
+
+            .card canvas {
+                display: block;
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            .card .d-flex > div {
+                min-width: 50%; /* Chart and table 50% width */
+            }
+    </style>
+}

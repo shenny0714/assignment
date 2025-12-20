@@ -55,6 +55,19 @@ namespace Assignment.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(8)");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImagePathBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImagePathFront")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImagePathSide")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ModelName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -119,6 +132,10 @@ namespace Assignment.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaymentType")
                         .IsRequired()

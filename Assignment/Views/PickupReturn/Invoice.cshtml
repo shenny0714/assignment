@@ -1,0 +1,154 @@
+﻿@model Assignment.Models.ReturnRecord
+
+@{
+    ViewData["Title"] = "Return Invoice";
+}
+
+<div class="container mt-4">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    <h3 class="mb-3">Return Invoice</h3>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <strong>Rental ID:</strong> @Model.RentalId <br />
+            <strong>Customer:</strong> @Model.Rental.Customer.Name <br />
+            <strong>Vehicle:</strong> @Model.Rental.Model.ModelName <br />
+            <strong>Return Date:</strong> @Model.ReturnDateTime.ToString("yyyy-MM-dd HH:mm")
+        </div>
+    </div>
+
+    <h5>Charges Breakdown</h5>
+
+    <table class="table table-bordered">
+        <tbody>
+            @if (Model.LateFee > 0)
+            {
+                <tr>
+                    <td>Late Fee (@Model.LateReturnDay day)</td>
+                    <td class="text-end">RM @Model.LateFee</td>
+                </tr>
+            }
+
+            @if (Model.FuelCharge > 0)
+            {
+                <tr>
+                    <td>Fuel Charge</td>
+                    <td class="text-end">RM @Model.FuelCharge</td>
+                </tr>
+            }
+
+            @if (Model.CleaningFee > 0)
+            {
+                <tr>
+                    <td>Cleaning Fee</td>
+                    <td class="text-end">RM @Model.CleaningFee</td>
+                </tr>
+            }
+
+            @if (Model.DamageCost > 0)
+            {
+                <tr>
+                    <td>Damage Cost</td>
+                    <td class="text-end">RM @Model.DamageCost</td>
+                </tr>
+            }
+
+            @if (Model.ExtraCharges > 0)
+            {
+                <tr>
+                    <td>Extra Charges</td>
+                    <td class="text-end">RM @Model.ExtraCharges</td>
+                </tr>
+            }
+
+            @if (ViewBag.TotalExtra == 0)
+            {
+                <tr>
+                    <td colspan="2" class="text-center text-muted">
+                        No additional charges applied.
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+        <tfoot>
+            <tr class="fw-bold">
+                <td>Total Extra Charges</td>
+                <td class="text-end">RM @ViewBag.TotalExtra</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <h5>Payment Summary</h5>
+
+    <table class="table table-bordered">
+        <tr>
+            <td>Deposit Paid</td>
+            <td class="text-end">RM @ViewBag.DepositPaid</td>
+        </tr>
+
+        @if (ViewBag.AmountDue > 0)
+        {
+            <tr class="table-warning fw-bold">
+                <td>Amount Due</td>
+                <td class="text-end">RM @ViewBag.AmountDue</td>
+            </tr>
+        }
+        else
+        {
+            <tr class="table-success fw-bold">
+                <td>Refund Due</td>
+                <td class="text-end">RM @ViewBag.Refund</td>
+            </tr>
+        }
+    </table>
+    @if ((ViewBag.AmountDue ?? 0) > 0)
+    {
+        <div style="display:inline-block; border:1px solid #28a745; border-radius:5px; padding:8px 16px; margin-right:10px; background:#28a745; transition:0.2s;">
+            <a style="color:white; text-decoration:none; font-weight:bold;"
+               asp-controller="PickupReturn"
+               asp-action="ProceedPayment"
+               asp-route-rentalId="@Model.RentalId">
+                Proceed Payment
+            </a>
+        </div>
+
+    }
+    else if ((ViewBag.Refund ?? 0) > 0)
+    {
+
+        <div style="display:inline-block; border:1px solid #ffc107; border-radius:5px; padding:8px 16px; background:#ffc107; transition:0.2s;">
+            <a style="color:#212529; text-decoration:none; font-weight:bold;"
+               asp-controller="PickupReturn"
+               asp-action="ProceedPayment"
+               asp-route-rentalId="@Model.RentalId">
+                Issue Refund
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            Payment settled. No additional charges or refund required.
+        </div>
+    }
+
+  
+    <div class="mt-4">
+        <a href="@Url.Action("Index")" class="btn btn-secondary">
+            Back to List
+        </a>
+
+        <button class="btn btn-primary" onclick="window.print()">
+            Print Invoice
+        </button>
+    </div>
+
+</div>

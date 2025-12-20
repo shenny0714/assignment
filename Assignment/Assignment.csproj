@@ -7,13 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="itext7" Version="9.4.0" />
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.4.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="QRCoder" Version="1.7.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+
     <PackageReference Include="X.PagedList.Mvc.Core" Version="10.5.9" />
+
+    <PackageReference Include="Stripe.net" Version="50.1.0" />
+
   </ItemGroup>
 
   <ItemGroup>

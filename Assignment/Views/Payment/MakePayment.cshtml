@@ -1,0 +1,139 @@
+﻿@model Assignment.ViewModels.PaymentVM
+@{
+    ViewData["Title"] = "Secure Checkout";
+    Layout = "_Layout";
+
+    DateTime start = Convert.ToDateTime(ViewBag.RentalDate);
+    DateTime end = Convert.ToDateTime(ViewBag.ReturnDate);
+    int days = (end - start).Days;
+    if (days < 1) days = 1;
+}
+
+<div class="pay-wrap">
+    <div class="pay-inner">
+        <div class="pay-grid">
+
+            <div class="pay-left">
+                <div class="pay-box pay-payment">
+                    <div class="pay-head pay-head-primary">
+                        <h4 class="mb-0"><i class="bi bi-wallet2"></i> Choose Payment Method</h4>
+                    </div>
+
+                    <div class="pay-body">
+                        <form asp-action="MakePayment" method="post" id="paymentForm">
+
+                            <input type="hidden" name="modelId" value="@ViewBag.ModelId" />
+                            <input type="hidden" name="rentalDate" value="@ViewBag.RentalDate" />
+                            <input type="hidden" name="returnDate" value="@ViewBag.ReturnDate" />
+                            <input type="hidden" name="totalPrice" value="@Model.TotalRentalPrice" />
+                            <input type="hidden" name="deposit" value="@Model.DepositRequired" />
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Select Method:</label>
+
+                                <div class="form-check p-3 border rounded mb-2" id="box-stripe">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="methodStripe" value="Stripe" checked>
+                                    <label class="form-check-label w-100" for="methodStripe">
+                                        <strong>Credit / Debit Card</strong>
+                                        <div class="text-muted small">Visa, Mastercard (via Stripe)</div>
+                                    </label>
+                                </div>
+
+                                <div class="form-check p-3 border rounded" id="box-fpx">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="methodFPX" value="StripeFPX">
+                                    <label class="form-check-label w-100" for="methodFPX">
+                                        <strong>Online Banking (FPX)</strong>
+                                        <div class="text-muted small">Maybank2u, CIMB, RHB (via Stripe)</div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr class="my-4" />
+
+                            <div id="payment-alert" class="pay-msg-box pay-msg-blue">
+                                <i id="alert-icon" class="bi bi-shield-lock fs-4"></i>
+
+                                <span id="alert-text">
+                                    You will be redirected to the <strong>Stripe Secure Page</strong> to enter your card details.
+                                </span>
+                            </div>
+
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm">
+                                Pay RM @Model.Amount.ToString("N2")
+                            </button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pay-right">
+                <div class="pay-box pay-summary">
+                    <div class="pay-head pay-head-dark">
+                        <h4 class="mb-0">Booking Summary</h4>
+                    </div>
+                    <div class="pay-body">
+                        <h4 class="text-primary text-center">@Model.CarModel</h4>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Duration</span>
+                            <strong>@days Days</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Rental Fee</span>
+                            <span>RM @Model.TotalRentalPrice.ToString("N2")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 text-muted">
+                            <span>Deposit (Refundable)</span>
+                            <span>RM @Model.DepositRequired.ToString("N2")</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5>Total</h5>
+                            <h3 class="text-success">RM @Model.Amount.ToString("N2")</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section foot {
+    <link rel="stylesheet" href="~/css/payment.css" />
+    <script>
+        const radioStripe = document.getElementById('methodStripe');
+        const radioFpx = document.getElementById('methodFPX');
+
+        // Get the SINGLE elements
+        const alertBox = document.getElementById('payment-alert');
+        const alertIcon = document.getElementById('alert-icon');
+        const alertText = document.getElementById('alert-text');
+
+        function updateUI() {
+            if (radioStripe.checked) {
+                // 1. Set Blue Style
+                alertBox.className = 'pay-msg-box pay-msg-blue';
+
+                // 2. Set Stripe Icon & Text
+                alertIcon.className = 'bi bi-shield-lock fs-4';
+                alertText.innerHTML = 'You will be redirected to the <strong>Stripe Secure Page</strong> to enter your card details.';
+            } else {
+                // 1. Set Yellow Style
+                alertBox.className = 'pay-msg-box pay-msg-yellow';
+
+                // 2. Set FPX Icon & Text
+                alertIcon.className = 'bi bi-bank fs-4';
+                alertText.innerHTML = 'You will be redirected to <strong>Online Banking</strong> login.';
+            }
+        }
+
+        radioStripe.addEventListener('change', updateUI);
+        radioFpx.addEventListener('change', updateUI);
+
+        // Init on load
+        updateUI();
+    </script>
+}
