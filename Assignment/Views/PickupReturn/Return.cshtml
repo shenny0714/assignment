@@ -3,169 +3,190 @@
 @{
     ViewBag.Title = "Return Vehicle";
 }
-<form asp-action="Return" asp-controller="PickupReturn" asp-route-rentalId="@Model.RentalId" method="post" enctype="multipart/form-data">
+<link rel="stylesheet" href="~/css/return.css" />
 
-    <input type="hidden" asp-for="ModelName" />
-    <input type="hidden" asp-for="CustomerName" />
-    <input type="hidden" asp-for="PlateNumber" />
-    <input type="hidden" asp-for="PickupDateTime" />
+<div class="pickup-container-main">
+    <a asp-action="Index" asp-controller="PickupReturn" class="btn btn-secondary">
+        &larr; Back
+    </a>
+    <h2 class="pickup-title">Return Vehicle</h2>
 
-    <h3>Vehicle Return Form</h3>
+    <div class="pickup-form-wrapper">
+        <form asp-action="Return" asp-controller="PickupReturn" asp-route-rentalId="@Model.RentalId" method="post" enctype="multipart/form-data">
 
-    <div class="section-box">
-        <h3>Rental Information</h3>
+            <input type="hidden" asp-for="ModelName" />
+            <input type="hidden" asp-for="CustomerName" />
+            <input type="hidden" asp-for="PlateNumber" />
+            <input type="hidden" asp-for="PickupDateTime" />
+            <input type="hidden" asp-for="StaffId" />
+            <input type="hidden" asp-for="RentalId" />
 
-        <p><strong>Rental ID:</strong> @Model.RentalId</p>
-        <p><strong>Customer:</strong> @Model.CustomerName</p>
-        <p><strong>Model:</strong> @Model.ModelName</p>
-        <p><strong>Plate Number:</strong> @Model.PlateNumber</p>
-        <p><strong>Pickup Date:</strong> @(Model.PickupDateTime.ToString("yyyy-MM-dd"))</p>
+            <!-- Rental Info -->
+            <div class="pickup-card pickup-card-shadow mb-section">
+                <div class="pickup-card-header fw-bold">Rental Information</div>
+                <div class="pickup-card-body">
+                    <p><strong>Rental ID:</strong> @Model.RentalId</p>
+                    <p><strong>Customer:</strong> @Model.CustomerName</p>
+                    <p><strong>Model:</strong> @Model.ModelName</p>
+                    <p><strong>Plate Number:</strong> @Model.PlateNumber</p>
+                    <p><strong>Pickup Date:</strong> @(Model.PickupDateTime.ToString("yyyy-MM-dd"))</p>
+                </div>
+            </div>
 
+            <!-- Return Details -->
+            <div class="pickup-card pickup-card-shadow mb-section">
+                <div class="pickup-card-header fw-bold">Return Details</div>
+                <div class="pickup-card-body pickup-grid-2 g-gap">
+                    <div>
+                        <label asp-for="ReturnDateTime" class="pickup-label"></label>
+                        <input asp-for="ReturnDateTime" type="datetime-local" step="any" class="pickup-input" autofocus />
+                        <span asp-validation-for="ReturnDateTime" class="pickup-error"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="OdometerReturn" class="pickup-label"></label>
+                        <input asp-for="OdometerReturn" type="number" min="0" class="pickup-input" />
+                        <span asp-validation-for="OdometerReturn" class="pickup-error"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="FuelLevelReturn" class="pickup-label"></label>
+                        <select asp-for="FuelLevelReturn" asp-items="@(new SelectList(ViewBag.FuelList))" class="pickup-select">
+                            <option value="">-- Select Fuel Level --</option>
+                        </select>
+                        <span asp-validation-for="FuelLevelReturn" class="pickup-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pickup-card pickup-card-shadow mb-section">
+                <div class="pickup-card-header fw-bold">Vehicle Condition</div>
+                <div class="pickup-card-body return-vehicle-condition">
+                    <!-- Body, Interior, Tyre, Lights -->
+                    <div>
+                        <label asp-for="BodyCondition" class="pickup-label"></label>
+                        <select asp-for="BodyCondition" class="pickup-select">
+                            <option value="">-- Select Condition --</option>
+                            <option>OK</option>
+                            <option>Not OK</option>
+                        </select>
+                        <span asp-validation-for="BodyCondition" class="pickup-error"></span>
+                    </div>
+                    <div>
+                        <label asp-for="InteriorCondition" class="pickup-label"></label>
+                        <select asp-for="InteriorCondition" class="pickup-select">
+                            <option value="">-- Select Condition --</option>
+                            <option>OK</option>
+                            <option>Not OK</option>
+                        </select>
+                        <span asp-validation-for="InteriorCondition" class="pickup-error"></span>
+                    </div>
+                    <div>
+                        <label asp-for="TyreCondition" class="pickup-label"></label>
+                        <select asp-for="TyreCondition" class="pickup-select">
+                            <option value="">-- Select Condition --</option>
+                            <option>OK</option>
+                            <option>Not OK</option>
+                        </select>
+                        <span asp-validation-for="TyreCondition" class="pickup-error"></span>
+                    </div>
+                    <div>
+                        <label asp-for="LightsCondition" class="pickup-label"></label>
+                        <select asp-for="LightsCondition" class="pickup-select">
+                            <option value="">-- Select Condition --</option>
+                            <option>OK</option>
+                            <option>Not OK</option>
+                        </select>
+                        <span asp-validation-for="LightsCondition" class="pickup-error"></span>
+                    </div>
+                    <!-- Full width Cleanliness -->
+                    <div class="span-4 mt-3">
+                        <label asp-for="CleanlinessCondition" class="pickup-label"></label>
+                        <select asp-for="CleanlinessCondition" class="pickup-select">
+                            <option value="">-- Select Condition --</option>
+                            <option>Clean</option>
+                            <option>Dirty</option>
+                        </select>
+                        <span asp-validation-for="CleanlinessCondition" class="pickup-error"></span>
+                    </div>
+                    <!-- Full width Remarks -->
+                    <div class="span-4 mt-3">
+                        <label asp-for="Remarks" class="pickup-label"></label>
+                        <textarea asp-for="Remarks" class="pickup-textarea"></textarea>
+                        <span asp-validation-for="Remarks" class="pickup-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Damage Info -->
+            <div class="pickup-card pickup-card-shadow mb-section">
+                <div class="pickup-card-header fw-bold">Damage Information</div>
+                <div class="pickup-card-body pickup-grid-2 g-gap">
+                    <div class="d-flex align-items-center">
+                        <input asp-for="HasDamage" type="checkbox" class="pickup-checkbox me-2" />
+                        <label asp-for="HasDamage" class="pickup-label mb-0">Has Damage?</label>
+                    </div>
+
+                    <div class="span-2 mt-3">
+                        <label asp-for="DamageDescription" class="pickup-label"></label>
+                        <textarea asp-for="DamageDescription" class="pickup-textarea"></textarea>
+                        <span asp-validation-for="DamageDescription" class="pickup-error"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="DamageCost" class="pickup-label"></label>
+                        <input asp-for="DamageCost" type="number" step="0.01" class="pickup-input" />
+                        <span asp-validation-for="DamageCost" class="pickup-error"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="ExtraCharges" class="pickup-label"></label>
+                        <input asp-for="ExtraCharges" type="number" step="0.01" class="pickup-input" />
+                        <span asp-validation-for="ExtraCharges" class="pickup-error"></span>
+                    </div>
+
+                    <div class="span-2 mt-3">
+                        <label asp-for="DamagePhoto" class="pickup-label">Damage Photo (optional)</label>
+                        <input asp-for="DamagePhoto" type="file" class="pickup-input" />
+                        <span asp-validation-for="DamagePhoto" class="pickup-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Required Photos -->
+            <div class="pickup-card pickup-card-shadow mb-section">
+                <div class="pickup-card-header fw-bold">Required Photos</div>
+                <div class="pickup-card-body pickup-grid-2 g-gap">
+                    <div>
+                        <label asp-for="ExteriorPhoto" class="pickup-label"></label>
+                        <input asp-for="ExteriorPhoto" type="file" class="pickup-input" />
+                        <span asp-validation-for="ExteriorPhoto" class="pickup-error"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="InteriorPhoto" class="pickup-label"></label>
+                        <input asp-for="InteriorPhoto" type="file" class="pickup-input" />
+                        <span asp-validation-for="InteriorPhoto" class="pickup-error"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="OdometerPhoto" class="pickup-label"></label>
+                        <input asp-for="OdometerPhoto" type="file" class="pickup-input" />
+                        <span asp-validation-for="OdometerPhoto" class="pickup-error"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="FuelPhoto" class="pickup-label"></label>
+                        <input asp-for="FuelPhoto" type="file" class="pickup-input" />
+                        <span asp-validation-for="FuelPhoto" class="pickup-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pickup-text-end">
+                <button type="submit" class="pickup-btn-primary px-4">Submit Return Record</button>
+            </div>
+
+        </form>
     </div>
-
-    <label asp-for="ReturnDateTime">Return Date Time</label>
-    <input asp-for="ReturnDateTime" autofocus type="datetime-local" step="any">
-    <span asp-validation-for="ReturnDateTime"></span>
-
-    <div>
-        <label asp-for="OdometerReturn"></label>
-        <input asp-for="OdometerReturn" class="form-control" />
-        <span asp-validation-for="OdometerReturn"></span>
-    </div>
-
-    <div>
-        <label asp-for="FuelLevelReturn">Fuel Level</label>
-        <select asp-for="FuelLevelReturn" asp-items="@(new SelectList(ViewBag.FuelList))" class="form-control">
-            <option value="">-- Select Fuel Level --</option>
-        </select>
-        <span asp-validation-for="FuelLevelReturn"></span>
-    </div>
-
-    <hr />
-
-    <h4>Vehicle Condition</h4>
-
-    <div>
-        <label asp-for="BodyCondition">Body</label>
-        <select asp-for="BodyCondition" class="form-control">
-            <option value="">-- Select Condition--</option>
-            <option>OK</option>
-            <option>Not OK</option>
-        </select>
-        <span asp-validation-for="BodyCondition"></span>
-    </div>
-
-    <div>
-        <label asp-for="InteriorCondition">Interior</label>
-        <select asp-for="InteriorCondition" class="form-control">
-            <option value="">-- Select Condition--</option>
-            <option>OK</option>
-            <option>Not OK</option>
-        </select>
-        <span asp-validation-for="InteriorCondition"></span>
-    </div>
-
-    <div>
-        <label asp-for="TyreCondition">Tyre</label>
-        <select asp-for="TyreCondition" class="form-control">
-            <option value="">-- Select Condition--</option>
-            <option>OK</option>
-            <option>Not OK</option>
-        </select>
-        <span asp-validation-for="TyreCondition"></span>
-    </div>
-
-    <div>
-        <label asp-for="LightsCondition">Lights</label>
-        <select asp-for="LightsCondition" class="form-control">
-            <option value="">-- Select Condition--</option>
-            <option>OK</option>
-            <option>Not OK</option>
-        </select>
-        <span asp-validation-for="LightsCondition"></span>
-    </div>
-
-    <div>
-        <label asp-for="CleanlinessCondition">Cleanliness</label>
-        <select asp-for="CleanlinessCondition" class="form-control">
-            <option value="">-- Select Condition--</option>
-            <option>Clean</option>
-            <option>Dirty</option>
-        </select>
-        <span asp-validation-for="CleanlinessCondition"></span>
-    </div>
-
-    <hr />
-
-    <div>
-        <label asp-for="HasDamage">Has Damage?</label>
-        <input asp-for="HasDamage" type="checkbox" />
-    </div>
-
-    <div>
-        <label asp-for="DamageDescription"></label>
-        <textarea asp-for="DamageDescription" class="form-control"></textarea>
-        <span asp-validation-for="DamageDescription"></span>
-    </div>
-
-    <div>
-        <label asp-for="DamageCost"></label>
-        <input asp-for="DamageCost" type="number" step="0.01" />
-        <span asp-validation-for="DamageCost"></span>
-    </div>
-
-    <div>
-        <label>Damage Photo (optional)</label>
-        <input asp-for="DamagePhoto" type="file" />
-        <span asp-validation-for="DamagePhoto"></span>
-    </div>
-
-    <div>
-        <label asp-for="ExtraCharges"></label>
-        <input asp-for="ExtraCharges" type="number" step="0.01"></input>
-        <span asp-validation-for="ExtraCharges"></span>
-    </div>
-
-    <hr />
-
-    <h4>Required Photos</h4>
-
-    <div>
-        <label>Exterior Photo</label>
-        <input asp-for="ExteriorPhoto" type="file" />
-        <span asp-validation-for="ExteriorPhoto"></span>
-    </div>
-
-    <div>
-        <label>Interior Photo</label>
-        <input asp-for="InteriorPhoto" type="file" />
-        <span asp-validation-for="InteriorPhoto"></span>
-    </div>
-
-    <div>
-        <label>Odometer Photo</label>
-        <input asp-for="OdometerPhoto" type="file" />
-        <span asp-validation-for="OdometerPhoto"></span>
-    </div>
-
-    <div>
-        <label>Fuel Level Photo</label>
-        <input asp-for="FuelPhoto" type="file" />
-        <span asp-validation-for="FuelPhoto"></span>
-    </div>
-
-    <hr />
-
-    <div>
-        <label asp-for="Remarks"></label>
-        <textarea asp-for="Remarks" class="form-control"></textarea>
-        <span asp-validation-for="Remarks"></span>
-    </div>
-
-    <input type="hidden" asp-for="StaffId" />
-    <input type="hidden" asp-for="RentalId" />
-
-    <button type="submit" class="btn btn-primary">Submit Return</button>
-</form>
-
-@*odometer value client side validatio havent do*@
+</div>

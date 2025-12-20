@@ -10,53 +10,75 @@
     };
 }
 
-<div class="container mt-4">
+<link rel="stylesheet" href="~/css/invoice.css" />
 
-    <h3 class="mb-3">@ViewData["Title"]</h3>
+<div class="payment-wrapper">
+    <div class="payment-container">
+        <!-- Left Side: Payment Details -->
+        <div class="payment-left">
+            <div class="payment-header">
+                <h3>@ViewData["Title"]</h3>
+            </div>
 
-    <div class="card mb-4">
-        <div class="card-body">
-            <strong>Rental ID:</strong> @Model.RentalId <br />
-            <strong>Customer:</strong> @Model.CustomerName <br />
+            <div class="detail-section">
+                <h4>Payment Details</h4>
 
-            @if (Model.PaymentType == "Refund" && Model.Amount > 0)
-            {
-                <strong class="text-success">
-                    Refund Amount: RM @Model.Amount
-                </strong>
-            }
-            else if (Model.PaymentType == "ExtraCharge" && Model.Amount > 0)
-            {
-                <strong class="text-danger">
-                    Amount Due: RM @Model.Amount
-                </strong>
-            }
+                <div class="detail-row">
+                    <span class="detail-label">Rental ID</span>
+                    <span class="detail-value">@Model.RentalId</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Customer</span>
+                    <span class="detail-value">@Model.CustomerName</span>
+                </div>
+
+                @if (Model.PaymentType == "Refund" && Model.Amount > 0)
+                {
+                    <div class="detail-row amount-row refund">
+                        <span class="detail-label">Refund Amount</span>
+                        <span class="detail-value">RM @Model.Amount</span>
+                    </div>
+                }
+                else if (Model.PaymentType == "ExtraCharge" && Model.Amount > 0)
+                {
+                    <div class="detail-row amount-row charge">
+                        <span class="detail-label">Amount Due</span>
+                        <span class="detail-value">RM @Model.Amount</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Right Side: Payment Form -->
+        <div class="payment-right">
+            <form method="post" asp-action="ProceedPayment" asp-controller="PickupReturn">
+                @Html.HiddenFor(m => m.RentalId)
+                @Html.HiddenFor(m => m.PaymentType)
+                @Html.HiddenFor(m => m.Amount)
+                @Html.HiddenFor(m => m.CustomerName)
+
+                <div class="form-section">
+                    <h4>Complete Payment</h4>
+
+                    <div class="form-group">
+                        <label asp-for="PaymentMethod">Select Payment Method</label>
+                        <select asp-for="PaymentMethod" asp-items="paymentMethods">
+                            <option value="">-- Choose a method --</option>
+                        </select>
+                        <span class="validation-message">@Html.ValidationMessageFor(m => m.PaymentMethod)</span>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-primary">
+                            @(Model.PaymentType == "Refund" ? "Confirm Refund" : "Confirm Payment")
+                        </button>
+                        <a href="@Url.Action("Invoice", new { rentalId = Model.RentalId })" class="btn btn-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
-
-    <form method="post" asp-action="ProceedPayment" asp-controller="PickupReturn">
-        <!-- Hidden fields using Razor helpers -->
-        @Html.HiddenFor(m => m.RentalId)
-        @Html.HiddenFor(m => m.PaymentType)
-        @Html.HiddenFor(m => m.Amount)
-        @Html.HiddenFor(m => m.CustomerName)
-
-        <div class="mb-3">
-            <label asp-for="PaymentMethod" class="form-label">Payment Method</label>
-            <select asp-for="PaymentMethod" class="form-select" asp-items="paymentMethods">
-                <option value="">-- Select Method --</option>
-            </select>
-            <span class="text-danger">@Html.ValidationMessageFor(m => m.PaymentMethod)</span>
-        </div>
-
-        <div class="mt-3">
-            <button type="submit" class="btn btn-success">
-                @(Model.PaymentType == "Refund" ? "Confirm Refund" : "Confirm Payment")
-            </button>
-            <a href="@Url.Action("Invoice", new { rentalId = Model.RentalId })" class="btn btn-secondary ms-2">
-                Cancel
-            </a>
-        </div>
-    </form>
-
 </div>

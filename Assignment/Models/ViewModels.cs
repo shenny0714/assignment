@@ -20,7 +20,7 @@ public class PickupViewModel
     [RegularExpression(@"RN\d{4}", ErrorMessage = "Invalid {0}.")]
     public string RentalId { get; set; }
     [Required]
-    public DateTime PickupDateTime { get; set; } = DateTime.Today;
+    public DateTime PickupDateTime { get; set; } = DateTime.Now;
 
     // ───────────────────────────────────────────
     // Customer & Vehicle Info (for display in form)

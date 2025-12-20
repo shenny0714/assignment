@@ -6,56 +6,55 @@
     // change after security added
 }
 
-<table class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <th>Rental ID</th>
-            @if (isAdmin)
+<div class="table-container">
+    <table class="rental-table">
+        <thead>
+            <tr>
+                <th>Rental ID</th>
+                @if (isAdmin)
+                {
+                    <th>Customer</th>
+                }
+                <th>Model</th>
+                <th>Vehicle Plate</th>
+                <th>Booking Date</th>
+                <th>Expected Pickup</th>
+                <th>Expected Return</th>
+                <th>Pickup Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
             {
-                <th>Customer</th>
+                <tr><td colspan="@(isAdmin ? 10 : 9)" class="text-center">No records found.</td></tr>
             }
-            <th>Model</th>
-            <th>Vehicle Plate</th>
-            <th>Booking Date</th>
-            <th>Expected Pickup</th>
-            <th>Expected Return</th>
-            <th>Pickup Date</th>
-            <th>Return Date</th>
-            <th>Status</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (!Model.Any())
-        {
-            <tr><td colspan="@(isAdmin ? 10 : 9)" class="text-center">No records found.</td></tr>
-
-        }
-        else
-        {
-            @foreach (var r in Model)
+            else
             {
-                <tr class="clickable-row"
-                    data-href="@Url.Action("Details", "RentalHistory", new { id = r.RentalId })">
-                    <td>@r.RentalId</td>
-                    @if (isAdmin)
-                    {
-                        <td>@(r.Customer?.Name ?? "-")</td>
-                    }
-                    <td>@(r.Model?.ModelName ?? "-")</td>
-                    <td>@(r.PickupRecord?.Vehicle?.PlateNumber ?? "-")</td>
-                    <td>@r.RentalDate.ToString("yyyy-MM-dd")</td>
-                    <td>@r.PickupDate.ToString("yyyy-MM-dd")</td>
-                    <td>@( r.ReturnDate.ToString("yyyy-MM-dd"))</td>
-                    <td>@(r.PickupRecord != null ? r.PickupRecord.PickupDateTime.ToString("yyyy-MM-dd HH:mm") : "-")</td>
-                    <td>@(r.ReturnRecord != null ? r.ReturnRecord.ReturnDateTime.ToString("yyyy-MM-dd HH:mm") : "-")</td>
-                    <td><span class="badge @(GetStatusBadgeClass(r.Status))">@r.Status</span></td>
-                    
+                @foreach (var r in Model)
+                {
+                    <tr class="clickable-row"
+                        data-href="@Url.Action("Details", "RentalHistory", new { id = r.RentalId })">
+                        <td>@r.RentalId</td>
+                        @if (isAdmin)
+                        {
+                            <td>@(r.Customer?.Name ?? "-")</td>
+                        }
+                        <td>@(r.Model?.ModelName ?? "-")</td>
+                        <td>@(r.PickupRecord?.Vehicle?.PlateNumber ?? "-")</td>
+                        <td>@r.RentalDate.ToString("yyyy-MM-dd")</td>
+                        <td>@r.PickupDate.ToString("yyyy-MM-dd")</td>
+                        <td>@( r.ReturnDate.ToString("yyyy-MM-dd"))</td>
+                        <td>@(r.PickupRecord != null ? r.PickupRecord.PickupDateTime.ToString("yyyy-MM-dd HH:mm") : "-")</td>
+                        <td>@(r.ReturnRecord != null ? r.ReturnRecord.ReturnDateTime.ToString("yyyy-MM-dd HH:mm") : "-")</td>
+                        <td><span class="status-badge status-@(r.Status?.ToLower() ?? "unknown")">@r.Status</span></td>
                     </tr>
+                }
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -68,9 +67,7 @@
     });
 </script>
 
-
 @functions {
-    // status badge styling
     public string GetStatusBadgeClass(string status)
     {
         if (string.IsNullOrEmpty(status)) return "bg-secondary";
@@ -87,4 +84,4 @@
             _ => "bg-secondary"
         };
     }
-    }
+}

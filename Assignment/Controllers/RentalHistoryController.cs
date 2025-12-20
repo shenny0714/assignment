@@ -139,35 +139,33 @@ public class RentalHistoryController : Controller
         if (string.IsNullOrEmpty(id))
             return RedirectToAction("Index");
 
-        var rental = _db.Rentals
-                        .Include(r => r.Customer)
-                        .Include(r => r.Model)
-                        .Include(r => r.PickupRecord)
-                        .ThenInclude(p => p.Vehicle)
-                        .Include(r => r.PickupRecord)
-                        .ThenInclude(p => p.Staff)
-                        .Include(r => r.ReturnRecord)
-                        .ThenInclude(rp => rp.Staff)
-                        .FirstOrDefault(r => r.RentalId == id);
+        var rental = _db.Rentals.Include(r => r.Customer)
+                                .Include(r => r.Model)
+                                .Include(r => r.Payment)
+                                .Include(r => r.PickupRecord)
+                                .ThenInclude(p => p.Vehicle)
+                                .Include(r => r.PickupRecord)
+                                .ThenInclude(p => p.Staff)
+                                .Include(r => r.ReturnRecord)
+                                .ThenInclude(rp => rp.Staff)
+                                .FirstOrDefault(r => r.RentalId == id);
 
         if (rental == null)
             return RedirectToAction("Index");
 
-        //User.IsInRole("Admin") || User.IsInRole("Staff")
         bool isStaff = false;
         ViewBag.IsStaff = isStaff;
 
         if (!isStaff)
         {
-            // check iflogin user id == rental customer id?
-            //  User.FindFirst("CustomerId")?.Value
-            var customerId = "CU0001";
+            var customerId = "CU0001"; // replace with real login later
             if (rental.CustomerId != customerId)
                 return RedirectToAction("Index");
         }
 
         return View(rental);
     }
+
 
     private string NextPaymentId()
     {

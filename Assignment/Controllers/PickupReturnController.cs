@@ -157,11 +157,6 @@ public class PickupReturnController : Controller
     [HttpPost]
     public IActionResult Pickup(PickupViewModel vm)
     {
-
-        _logger.LogInformation("POST Pickup called for VehicleId: {u}", vm.ExteriorPhoto);
-        _logger.LogInformation("ExteriorPhoto: {file}", vm.ExteriorPhoto?.FileName ?? "null");
-        _logger.LogInformation("ExteriorPhoto: {file}", _hp);
-
         // rental id exist in Rentals but not exist in PickupRecord
         // should also check the status of rental or not
         bool isValid = _db.Rentals
@@ -188,7 +183,7 @@ public class PickupReturnController : Controller
 
         if (ModelState.IsValid("PickupDateTime"))
         {
-            if(vm.PickupDateTime != DateTime.Today)
+            if (vm.PickupDateTime.Date != DateTime.Today)
             {
                 ModelState.AddModelError("PickupDateTime", "Only Today Date Allow");
             }
@@ -203,8 +198,6 @@ public class PickupReturnController : Controller
         if (ModelState.IsValid("ExteriorPhoto"))
         {
             var e = _hp.ValidatePhoto(vm.ExteriorPhoto);
-            _logger.LogInformation("ExteriorPhoto: {file}", e);
-
             if (e != "") ModelState.AddModelError("ExteriorPhoto", e);
         }
         if (ModelState.IsValid("InteriorPhoto"))
@@ -226,40 +219,6 @@ public class PickupReturnController : Controller
         // vehicle id, staff id , rental id
         // check rental id dun exist inside pickup
         // Save pickup record
-
-        _logger.LogInformation("POST Redirect is valled: {RentalId}", vm.RentalId);
-        _logger.LogInformation("POST Pickup called for RentalId: {RentalId}", vm.RentalId);
-        _logger.LogInformation("POST Pickup called for ModelName: {RentalId}", ModelState.IsValid("ModelName"));
-        _logger.LogInformation("POST Pickup called for CustomerName: {RentalId}", ModelState.IsValid("CustomerName"));
-        _logger.LogInformation("POST Pickup called for FuelLevel: {RentalId}", ModelState.IsValid("FuelLevelPickup"));
-        _logger.LogInformation("POST Pickup called for BodyCondition: {RentalId}", ModelState.IsValid("BodyCondition"));
-        
-
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("InteriorCondition"));
-        
-       
-
-        _logger.LogInformation("POST Pickup called for BodyCondition: {u}", ModelState.IsValid("BodyCondition"));
-        _logger.LogInformation("POST Pickup called for StaffId: {u}", ModelState.IsValid("StaffId"));
-        _logger.LogInformation("POST Pickup called for Model State: {u}", ModelState.IsValid);
-        _logger.LogInformation("POST Pickup called for VehicleId: {u}", ModelState.IsValid("ExteriorPhoto"));
-        
-        _logger.LogInformation("POST Pickup called for rental id: {u}", ModelState.IsValid("RentalId"));
-        _logger.LogInformation("POST Pickup called for VehicleId: {u}", ModelState.IsValid("VehicleId"));
-        _logger.LogInformation("POST Pickup called for PickupDateTime: {u}", ModelState.IsValid("PickupDateTime"));
-        _logger.LogInformation("POST Pickup called for rental id: {u}", ModelState.IsValid("CustomerDrivingLicense"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("OdometerPickup"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("FuelLevelPickup"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("BodyCondition"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("InteriorCondition"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("TyreCondition"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("LightsCondition"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("StaffId"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("ExteriorPhoto"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("InteriorPhoto"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("OdometerPhoto"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("FuelPhoto"));
-        _logger.LogInformation("POST Pickup called for OdometerPickup: {RentalId}", ModelState.IsValid("Remarks"));
 
         if (ModelState.IsValid)
         {
@@ -332,7 +291,7 @@ public class PickupReturnController : Controller
 
     private string NextReturnId()
     {
-        string max = _db.PickupRecord.Max(p => p.PickupId) ?? "RR0000";
+        string max = _db.ReturnRecord.Max(p => p.ReturnId) ?? "RR0000";
         int n = int.Parse(max[2..]);
         return $"RR{(n + 1).ToString("0000")}";
     }
@@ -345,18 +304,15 @@ public class PickupReturnController : Controller
                            && (r.Status == "Pickup" || r.Status == "LateDue")
                            && !_db.ReturnRecord.Any(p => p.RentalId == rentalId));
 
-        _logger.LogInformation("POST Pickup called for VehicleId: {u}", isValid);
-
         if (!isValid)
         {
-            return BadRequest("Invalid RentalId. Rental must exist, be booked, and not yet picked up.");
+            return RedirectToAction("Index");
         }
 
         var rental = _db.Rentals
             .Include(r => r.Customer)
             .Include(r => r.Model)
             .FirstOrDefault(r => r.RentalId == rentalId);
-        _logger.LogInformation("Rental: {u}",rental);
 
         if (rental == null)
             return RedirectToAction("Index");
@@ -364,8 +320,6 @@ public class PickupReturnController : Controller
         var pickup = _db.PickupRecord
             .Include(p => p.Vehicle)
             .FirstOrDefault(p => p.RentalId == rentalId);
-
-        _logger.LogInformation("Pickup: {u}", rental);
 
         if (pickup == null)
             return RedirectToAction("Index");
@@ -393,9 +347,6 @@ public class PickupReturnController : Controller
     [HttpPost]
     public IActionResult Return(ReturnRecordVM vm)
     {
-        _logger.LogInformation("POST Return called for RentalId: {id}", vm.RentalId);
-
-
         // validate rental id and staff id
         bool isValidRental = _db.Rentals
             .Any(r => r.RentalId == vm.RentalId
@@ -436,8 +387,11 @@ public class PickupReturnController : Controller
             ModelState.AddModelError("OdometerReturn", "Return odometer must be greater than pickup odometer");
         }
 
-        // validate late return day, fee, cleaning fee, 
-        var rental = _db.Rentals.Find(vm.RentalId);
+
+        var rental = _db.Rentals
+                        .Include(r => r.Model)   
+                        .FirstOrDefault(r => r.RentalId == vm.RentalId);
+
 
         // calc late fee
         var dueTime = rental.ReturnDate.AddDays(1).Date.AddHours(12);
@@ -516,49 +470,6 @@ public class PickupReturnController : Controller
             var msg = _hp.ValidatePhoto(vm.DamagePhoto);
             if (msg != "") ModelState.AddModelError("DamagePhoto", msg);
         }
-
-        // -----------------------------
-        // MODEL STATE VALIDATION LOGS
-        // -----------------------------
-
-        _logger.LogInformation("Return Validation - RentalId: {v}", ModelState.IsValid("RentalId"));
-        _logger.LogInformation("Return Validation - CustomerName: {v}", ModelState.IsValid("CustomerName"));
-        _logger.LogInformation("Return Validation - ModelName: {v}", ModelState.IsValid("ModelName"));
-        _logger.LogInformation("Return Validation - PlateNumber: {v}", ModelState.IsValid("PlateNumber"));
-        _logger.LogInformation("Return Validation - PickupDateTime: {v}", ModelState.IsValid("PickupDateTime"));
-        _logger.LogInformation("Return Validation - ReturnDateTime: {v}", ModelState.IsValid("ReturnDateTime"));
-
-        // VEHICLE CONDITION
-        _logger.LogInformation("Return Validation - OdometerReturn: {v}", ModelState.IsValid("OdometerReturn"));
-        _logger.LogInformation("Return Validation - FuelLevelReturn: {v}", ModelState.IsValid("FuelLevelReturn"));
-        _logger.LogInformation("Return Validation - BodyCondition: {v}", ModelState.IsValid("BodyCondition"));
-        _logger.LogInformation("Return Validation - InteriorCondition: {v}", ModelState.IsValid("InteriorCondition"));
-        _logger.LogInformation("Return Validation - TyreCondition: {v}", ModelState.IsValid("TyreCondition"));
-        _logger.LogInformation("Return Validation - LightsCondition: {v}", ModelState.IsValid("LightsCondition"));
-        _logger.LogInformation("Return Validation - CleanlinessCondition: {v}", ModelState.IsValid("CleanlinessCondition"));
-
-        // DAMAGE DETAILS
-        _logger.LogInformation("Return Validation - HasDamage: {v}", ModelState.IsValid("HasDamage"));
-        _logger.LogInformation("Return Validation - DamageDescription: {v}", ModelState.IsValid("DamageDescription"));
-        _logger.LogInformation("Return Validation - DamageCost: {v}", ModelState.IsValid("DamageCost"));
-
-        // EXTRA CHARGES
-        _logger.LogInformation("Return Validation - ExtraCharges: {v}", ModelState.IsValid("ExtraCharges"));
-        _logger.LogInformation("Return Validation - Remarks: {v}", ModelState.IsValid("Remarks"));
-
-        // STAFF
-        _logger.LogInformation("Return Validation - StaffId: {v}", ModelState.IsValid("StaffId"));
-
-        // PHOTOS
-        _logger.LogInformation("Return Validation - ExteriorPhoto: {v}", ModelState.IsValid("ExteriorPhoto"));
-        _logger.LogInformation("Return Validation - InteriorPhoto: {v}", ModelState.IsValid("InteriorPhoto"));
-        _logger.LogInformation("Return Validation - OdometerPhoto: {v}", ModelState.IsValid("OdometerPhoto"));
-        _logger.LogInformation("Return Validation - FuelPhoto: {v}", ModelState.IsValid("FuelPhoto"));
-        _logger.LogInformation("Return Validation - DamagePhoto: {v}", ModelState.IsValid("DamagePhoto"));
-
-        // OVERALL
-        _logger.LogInformation("Return Validation - ModelState.IsValid: {v}", ModelState.IsValid);
-
 
         // save return record
         if (ModelState.IsValid)
@@ -666,6 +577,13 @@ public class PickupReturnController : Controller
         else
             refund = depositPaid - totalExtra;
 
+        bool isReturnPaymentSettled = _db.Payments.Any(p =>
+                                        p.RentalId == rentalId &&
+                                        p.Status == "Paid" &&
+                                        (p.PaymentType == "ExtraCharge" || p.PaymentType == "Refund")
+                                    );
+
+        ViewBag.IsPaid = isReturnPaymentSettled;
         ViewBag.DepositPaid = depositPaid;
         ViewBag.TotalExtra = totalExtra;
         ViewBag.AmountDue = amountDue;
@@ -686,6 +604,20 @@ public class PickupReturnController : Controller
     {
         if (string.IsNullOrEmpty(rentalId))
             return RedirectToAction("Index");
+
+        // check no exist payment for this rental id
+        var existingReturnPayment = _db.Payments.FirstOrDefault(p =>
+                                                p.RentalId == rentalId &&
+                                                p.Status == "Paid" &&
+                                                (p.PaymentType == "ExtraCharge" || p.PaymentType == "Refund")
+                                            );
+
+        if (existingReturnPayment != null)
+        {
+            TempData["Info"] = "Return payment has already been settled.";
+            return RedirectToAction("Receipt", new { paymentId = existingReturnPayment.PaymentId });
+        }
+
 
         // Load return record including rental and customer
         var returnRec = _db.ReturnRecord
@@ -729,6 +661,19 @@ public class PickupReturnController : Controller
     {
         if (!ModelState.IsValid)
             return View(vm);
+
+        bool alreadySettled = _db.Payments.Any(p =>
+                                    p.RentalId == vm.RentalId &&
+                                    p.Status == "Paid" &&
+                                    (p.PaymentType == "ExtraCharge" || p.PaymentType == "Refund")
+                                );
+
+        if (alreadySettled)
+        {
+            TempData["Error"] = "Return payment already processed.";
+            return RedirectToAction("Index");
+        }
+
 
         var payment = new Payment
         {
@@ -783,8 +728,6 @@ public class PickupReturnController : Controller
     [HttpPost]
     public async Task<IActionResult> EmailReceipt(string paymentId)
     {
-        _logger.LogInformation("EmailReceipt started for PaymentId: {PaymentId}", paymentId);
-
         var payment = _db.Payments
             .Include(p => p.Rental)
             .ThenInclude(r => r.Customer)
@@ -792,13 +735,9 @@ public class PickupReturnController : Controller
 
         if (payment == null)
         {
-            _logger.LogWarning("Payment not found for PaymentId: {PaymentId}", paymentId);
             return RedirectToAction("Index");
         }
-        _logger.LogInformation("Payment loaded for PaymentId: {PaymentId}, Customer: {Customer}", paymentId, payment.Rental.Customer.Name);
-
         // generate PDF in memory
-        _logger.LogInformation("Generating PDF for PaymentId: {PaymentId}", paymentId);
         var document = new ReceiptPdf(payment);
         byte[] pdfBytes;
         using (var ms = new MemoryStream())
@@ -806,22 +745,17 @@ public class PickupReturnController : Controller
             document.GeneratePdf(ms);
             pdfBytes = ms.ToArray();
         }
-        _logger.LogInformation("PDF generated successfully for PaymentId: {PaymentId}, Size: {Size} bytes", paymentId, pdfBytes.Length);
 
         // validate customer email
         var email = payment.Rental.Customer.Email?.Trim();
         if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
         {
-            _logger.LogWarning("Invalid email for Customer: {Customer}, Email: {Email}", payment.Rental.Customer.Name, email);
             TempData["Error"] = "Customer email is invalid.";
             return RedirectToAction("Receipt", new { paymentId });
         }
-        _logger.LogInformation("Customer email validated: {Email}", email);
-
         try
         {
             // create email
-            _logger.LogInformation("Creating MailMessage for PaymentId: {PaymentId}", paymentId);
             var mail = new MailMessage
             {
                 Subject = "Your Rental Receipt",
@@ -829,26 +763,20 @@ public class PickupReturnController : Controller
                 IsBodyHtml = true
             };
             mail.To.Add(new MailAddress(email, payment.Rental.Customer.Name));
-            _logger.LogInformation("MailMessage created, recipient: {Email}", email);
 
             // attach PDF
-            _logger.LogInformation("Attaching PDF to email for PaymentId: {PaymentId}", paymentId);
             mail.Attachments.Add(new Attachment(
                 new MemoryStream(pdfBytes),
                 $"Receipt_{payment.PaymentId}.pdf",
                 "application/pdf"));
-            _logger.LogInformation("PDF attached successfully for PaymentId: {PaymentId}", paymentId);
 
             // send email
-            _logger.LogInformation("Sending email for PaymentId: {PaymentId}", paymentId);
             _hp.SendEmail(mail);
-            _logger.LogInformation("Email sent successfully for PaymentId: {PaymentId} to {Email}", paymentId, email);
 
             TempData["Info"] = "Receipt sent to customer via email.";
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error sending email for PaymentId: {PaymentId}", paymentId);
             TempData["Error"] = "Failed to send receipt email. Please check logs.";
         }
 

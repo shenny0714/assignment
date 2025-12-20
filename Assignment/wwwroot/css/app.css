@@ -437,7 +437,7 @@ body.dark-mode .btn-social {
 }
 
 /*Test*/
-.pickup-container {
+.pickup-container .return_container{
     width: 60%;
     margin: auto;
     font-family: Arial;
@@ -571,3 +571,4 @@ body.dark-mode .btn-social {
 .dropdown-link .material-symbols-outlined {
     font-size: 20px;
 }
+
