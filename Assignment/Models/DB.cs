@@ -191,7 +191,6 @@ public class Rental
 {
     [Key, MaxLength(8)]
     public string RentalId { get; set; }
-
     public string CustomerId { get; set; }
     public Customer Customer { get; set; }
 
@@ -217,8 +216,7 @@ public class Rental
     [MaxLength(15)]
     public string Status { get; set; }
     public bool IsDepositRefunded { get; set; }
-
-    public Payment Payment { get; set; }
+    public List<Payment> Payment { get; set; } 
     public PickupRecord PickupRecord { get; set; }
     public ReturnRecord ReturnRecord { get; set; }
 }

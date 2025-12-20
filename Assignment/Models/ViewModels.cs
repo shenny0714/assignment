@@ -251,6 +251,8 @@ public class PaymentVM
     [Display(Name = "CVV")]
     [RegularExpression(@"\d{3}", ErrorMessage = "Invalid CVV")]
     public string? CVV { get; set; }
+
+    public string CustomerName { get; set; }
 }
 
 

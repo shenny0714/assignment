@@ -66,6 +66,11 @@
                                         <span class="material-symbols-outlined">person</span>
                                         My Profile
                                     </a>
+
+                                    <a href="@Url.Action("History", "Payment")" class="dropdown-link">
+                                        <span class="material-symbols-outlined">receipt_long</span>
+                                        Payment History
+                                    </a>
                                     <div class="dropdown-divider"></div>
                                     <form asp-controller="Account" asp-action="Logout" method="post">
                                         <button type="submit" class="dropdown-link logout-btn">
