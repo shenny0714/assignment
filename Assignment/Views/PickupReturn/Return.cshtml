@@ -6,10 +6,14 @@
 <link rel="stylesheet" href="~/css/return.css" />
 
 <div class="pickup-container-main">
-    <a asp-action="Index" asp-controller="PickupReturn" class="btn btn-secondary">
-        &larr; Back
-    </a>
-    <h2 class="pickup-title">Return Vehicle</h2>
+
+    <div class="pickup-container-header">
+        <a asp-action="Index" asp-controller="PickupReturn" class="btn btn-secondary">
+            &larr; Back
+        </a>
+        <h2 class="pickup-title">Return Vehicle</h2>
+    </div>
+
 
     <div class="pickup-form-wrapper">
         <form asp-action="Return" asp-controller="PickupReturn" asp-route-rentalId="@Model.RentalId" method="post" enctype="multipart/form-data">

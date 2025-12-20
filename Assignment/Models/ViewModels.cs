@@ -17,9 +17,6 @@ public class PickupViewModel
     // ───────────────────────────────────────────
     [Required]
     [StringLength(8)]
-    public string PickupId { get; set; }
-    [Required]
-    [StringLength(8)]
     [RegularExpression(@"RN\d{4}", ErrorMessage = "Invalid {0}.")]
     public string RentalId { get; set; }
 
@@ -73,7 +70,7 @@ public class PickupViewModel
     // ───────────────────────────────────────────
     // Staff Handling Pickup
     // ───────────────────────────────────────────
-    [RegularExpression(@"STF\d{4}", ErrorMessage = "Invalid {0}.")]
+    [RegularExpression(@"ST\d{4}", ErrorMessage = "Invalid {0}.")]
     public string? StaffId { get; set; }
     public string? StaffName { get; set; }
 
@@ -102,11 +99,7 @@ public class ReturnRecordVM
 {
     [Required]
     [MaxLength(8)]
-    public string ReturnId { get; set; }
-
-    [Required]
-    [MaxLength(8)]
-    [RegularExpression(@"VH\d{4}", ErrorMessage = "Invalid {0}.")]
+    [RegularExpression(@"RN\d{4}", ErrorMessage = "Invalid {0}.")]
     public string RentalId { get; set; }
 
     // ───────────────────────────────────────────
@@ -171,7 +164,7 @@ public class ReturnRecordVM
     // STAFF
     // -----------------------------
     [Required]
-    [RegularExpression(@"STF\d{4}", ErrorMessage = "Invalid {0}.")]
+    [RegularExpression(@"ST\d{4}", ErrorMessage = "Invalid {0}.")]
     public string StaffId { get; set; }
 
     // -----------------------------

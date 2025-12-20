@@ -12,6 +12,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
 </head>
+@{
+        // 1. Check Login Status
+        var isLoggedIn = User.Identity?.IsAuthenticated == true;
+
+        // 2. Get User Name & Photo from Cookie Claims
+        // User.Identity.Name automatically maps to the ClaimTypes.Name we set in AccountController
+        var userName = User.Identity?.Name;
+        var userPhoto = User.FindFirst("PhotoURL")?.Value;
+}
 <body>
     <div class="container-1">
 
@@ -30,20 +39,21 @@
                         <a href="/CarCatalog">Cars</a>
                         <a href="/About">About</a>
                         <a href="/Contact">Contact</a>
+                        <a href="/RentalHistory">Rental History</a>
+                        @if (User.IsInRole("Staff"))
+                        {
+                            <a href="/PickupReturn">Pickup Return</a>
+                        }
+                        @if (isLoggedIn)
+                        {
+                            <a href="/RentalHistory">Rental History</a>
+                        }
                     </nav>
                     <div style="display:flex; gap: 0.5rem;">
                         <button id="theme-toggle" class="btn-theme-toggle" title="Toggle Dark Mode">
                             <span class="material-symbols-outlined">dark_mode</span>
                         </button>
-                        @{
-                            // 1. Check Login Status
-                            var isLoggedIn = User.Identity?.IsAuthenticated == true;
-
-                            // 2. Get User Name & Photo from Cookie Claims
-                            // User.Identity.Name automatically maps to the ClaimTypes.Name we set in AccountController
-                            var userName = User.Identity?.Name;
-                            var userPhoto = User.FindFirst("PhotoURL")?.Value;
-                        }
+                        
 
                         @if (isLoggedIn)
                         {

@@ -346,6 +346,20 @@ public class PickupReturnController : Controller
     [HttpPost]
     public IActionResult Return(ReturnRecordVM vm)
     {
+        foreach (var entry in ModelState)
+        {
+            bool loopValid = entry.Value.Errors.Count == 0;
+            bool apiValid = ModelState.IsValid(entry.Key);
+
+            _logger.LogWarning(
+                "Field={Field}, LoopValid={LoopValid}, ApiValid={ApiValid}",
+                entry.Key,
+                loopValid,
+                apiValid
+            );
+        }
+
+
         // validate rental id and staff id
         bool isValidRental = _db.Rentals
             .Any(r => r.RentalId == vm.RentalId
@@ -656,10 +670,11 @@ public class PickupReturnController : Controller
 
     // POST: Payment
     [HttpPost]
-    public IActionResult ProceedPayment(PaymentVM vm)
+    public IActionResult ProceedPayment(ReturnPaymentVM vm)
     {
         if (!ModelState.IsValid)
             return View(vm);
+        
 
         bool alreadySettled = _db.Payments.Any(p =>
                                     p.RentalId == vm.RentalId &&

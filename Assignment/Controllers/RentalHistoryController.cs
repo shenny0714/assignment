@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Assignment;
+﻿using Assignment;
 using Assignment.Models;
 using Assignment.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
 
 namespace Assignment.Controllers;
 
@@ -177,7 +178,9 @@ public class RentalHistoryController : Controller
     [HttpPost]
     public IActionResult Cancel(string id)
     {
-        var rental = _db.Rentals.FirstOrDefault(r => r.RentalId == id);
+        var rental = _db.Rentals
+            .Include(r => r.Customer)
+            .FirstOrDefault(r => r.RentalId == id);
 
         if (rental == null)
             return RedirectToAction("Index");
@@ -196,7 +199,6 @@ public class RentalHistoryController : Controller
         {
             // Refund deposit + booking fee
             refundAmount = rental.DepositAmount + bookingFee;
-            rental.IsDepositRefunded = true;
         }
         else
         {
@@ -218,12 +220,89 @@ public class RentalHistoryController : Controller
         _db.Payments.Add(refundPayment);
 
         rental.Status = "Cancelled";
+        SendCancellationEmail(rental.Customer.Email,rental);
 
         _db.SaveChanges();
 
         TempData["Success"] = $"Booking cancelled. Refund amount: RM {refundAmount:N2}";
 
         return RedirectToAction("Details", new { id });
+    }
+
+    public void SendCancellationEmail(string email, Assignment.Models.Rental rental)
+    {
+        string customerName = rental.Customer?.Name ?? "Customer";
+
+        string body = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{
+            font-family: Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }}
+        .title {{
+            font-size: 18px;
+            font-weight: bold;
+            color: #212529;
+            margin-bottom: 15px;
+        }}
+        .text {{
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }}
+        .footer {{
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+        }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='title'>Booking Cancellation Confirmation</div>
+
+        <div class='text'>
+            Dear {customerName},<br><br>
+
+            Your booking (<strong>Ref: {rental.RentalId}</strong>) has been cancelled.<br><br>
+
+            The <strong>booking fee will be refunded</strong>, while the
+            <strong>deposit is non-refundable</strong> in accordance with our policy.<br><br>
+
+            Refund processing may take <strong>3–5 working days</strong>.
+        </div>
+
+        <div class='footer'>
+            Regards,<br>
+            Car Rental Admin
+        </div>
+    </div>
+</body>
+</html>";
+
+        var mail = new MailMessage
+        {
+            Subject = "Booking Cancellation Confirmation",
+            Body = body,
+            IsBodyHtml = true
+        };
+
+        mail.To.Add(new MailAddress(email, customerName));
+
+        // Send using your helper
+        _hp.SendEmail(mail);
     }
 
 }

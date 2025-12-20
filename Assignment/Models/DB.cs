@@ -216,8 +216,6 @@ public class Rental
 
     [MaxLength(15)]
     public string Status { get; set; }
-    public bool IsDepositRefunded { get; set; }
-
     public List<Payment> Payment { get; set; }
     public PickupRecord PickupRecord { get; set; }
     public ReturnRecord ReturnRecord { get; set; }

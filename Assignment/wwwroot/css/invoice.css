@@ -221,38 +221,38 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-    .action-box.pay {
-        background-color: #10b981;
-        color: white;
-    }
+.action-box.pay {
+    background-color: #10b981;
+    color: white;
+}
 
-        .action-box.pay:hover {
-            background-color: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
-        }
+.action-box.pay:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
 
-    .action-box.refund {
-        background-color: #3b82f6;
-        color: white;
-    }
+.action-box.refund {
+    background-color: #3b82f6;
+    color: white;
+}
 
-        .action-box.refund:hover {
-            background-color: #2563eb;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-        }
+.action-box.refund:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
 
-    .action-box.back {
-        background-color: #6b7280;
-        color: white;
-    }
+.action-box.back {
+    background-color: #6b7280;
+    color: white;
+}
 
-        .action-box.back:hover {
-            background-color: #4b5563;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(107, 114, 128, 0.3);
-        }
+.action-box.back:hover {
+    background-color: #4b5563;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(107, 114, 128, 0.3);
+}
 
 /* Print Styles */
 @media print {
@@ -300,7 +300,8 @@ body {
 }
 
 
-/* Reset parent layout constraints */
+/* Payment Proceed */
+/* ============================================ */
 .payment-wrapper {
     width: 100%;
     max-width: 100%;
@@ -310,7 +311,6 @@ body {
     box-sizing: border-box;
 }
 
-/* Main container with left-right split */
 .payment-container {
     display: flex;
     gap: 2rem;
@@ -322,7 +322,7 @@ body {
     overflow: hidden;
 }
 
-/* Left side - Payment details */
+/* Payment details */
 .payment-left {
     flex: 1;
     padding: 2rem;
@@ -330,7 +330,7 @@ body {
     border-right: 1px solid #e5e7eb;
 }
 
-/* Right side - Payment form */
+/* payment form */
 .payment-right {
     flex: 1;
     padding: 2rem;
@@ -344,7 +344,7 @@ body {
     color: #1f2937;
 }
 
-/* Detail section */
+/* details */
 .detail-section {
     background: white;
     border-radius: 6px;
@@ -368,9 +368,9 @@ body {
     border-bottom: 1px solid #f3f4f6;
 }
 
-    .detail-row:last-child {
-        border-bottom: none;
-    }
+.detail-row:last-child {
+    border-bottom: none;
+}
 
 .detail-label {
     font-weight: 500;
@@ -389,66 +389,66 @@ body {
     border: none;
 }
 
-    .amount-row.refund {
-        background: #d1fae5;
-    }
+.amount-row.refund {
+    background: #d1fae5;
+}
 
-        .amount-row.refund .detail-value {
-            color: #065f46;
-            font-size: 1.25rem;
-        }
+.amount-row.refund .detail-value {
+    color: #065f46;
+    font-size: 1.25rem;
+}
 
-    .amount-row.charge {
-        background: #fee2e2;
-    }
+.amount-row.charge {
+    background: #fee2e2;
+}
 
-        .amount-row.charge .detail-value {
-            color: #991b1b;
-            font-size: 1.25rem;
-        }
+.amount-row.charge .detail-value {
+    color: #991b1b;
+    font-size: 1.25rem;
+}
 
-/* Form section */
+/* form */
 .form-section {
     background: white;
 }
 
-    .form-section h4 {
-        margin: 0 0 1.5rem 0;
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1f2937;
-        padding-bottom: 0.75rem;
-        border-bottom: 2px solid #e5e7eb;
-    }
+.form-section h4 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e5e7eb;
+}
 
 .form-group {
     margin-bottom: 2rem;
 }
 
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: #374151;
-        font-size: 0.95rem;
-    }
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.95rem;
+}
 
-    .form-group select {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        font-size: 1rem;
-        color: #1f2937;
-        background: white;
-        transition: border-color 0.2s, box-shadow 0.2s;
-    }
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #1f2937;
+    background: white;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
 
-        .form-group select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
+.form-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
 
 .validation-message {
     display: block;
@@ -457,7 +457,7 @@ body {
     font-size: 0.875rem;
 }
 
-/* Action buttons */
+/* buttons */
 .action-buttons {
     display: flex;
     gap: 1rem;
@@ -482,22 +482,22 @@ body {
     flex: 1;
 }
 
-    .btn-primary:hover {
-        background: #2563eb;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
-    }
+.btn-primary:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+}
 
 .btn-secondary {
     background: #f3f4f6;
     color: #374151;
 }
 
-    .btn-secondary:hover {
-        background: #e5e7eb;
-    }
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
 
-/* Responsive design */
+
 @media (max-width: 768px) {
     .payment-wrapper {
         padding: 1rem;
@@ -521,4 +521,8 @@ body {
     .action-buttons {
         flex-direction: column;
     }
+}
+
+.error{
+    color: red !important;
 }

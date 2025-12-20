@@ -3,11 +3,16 @@
 @{
     ViewBag.Title = "Pickup Vehicle";
 }
-<link rel="stylesheet" href="~/css/pickupReturn.css" />
+<link rel="stylesheet" href="~/css/pickup.css" />
 
 <div class="pickup-container-main">
-    <h2 class="pickup-title">Pickup Vehicle</h2>
-
+    <div class="pickup-container-header">
+        <a asp-action="Index" asp-controller="PickupReturn" class="btn btn-secondary">
+            &larr; Back
+        </a>
+        <h2 class="pickup-title">Pickup Vehicle</h2>
+    </div>
+    
     <div class="pickup-form-wrapper">
 
         <form asp-action="Pickup"
