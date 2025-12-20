@@ -1,0 +1,156 @@
+﻿@model Assignment.ViewModels.ResetPasswordVM
+@{
+    ViewData["Title"] = "Reset Password";
+}
+
+<style>
+    .reset-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh; /* Takes up most of the screen height */
+        padding: 40px 20px;
+    }
+
+    .auth-card {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        width: 100%;
+        max-width: 450px;
+        border: 1px solid #e9edf2;
+        text-align: center;
+    }
+
+    .auth-icon {
+        margin-bottom: 20px;
+        color: #5d5fef; /* Your Primary Color */
+        font-size: 3.5rem;
+    }
+
+    .auth-card h1 {
+        font-size: 1.6rem;
+        margin: 0 0 10px 0;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .auth-card p {
+        color: #8d97ad;
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+    }
+
+    /* Form Styles */
+    .form-group {
+        text-align: left;
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-left: 5px;
+    }
+
+    .input-wrapper {
+        display: flex;
+        align-items: center;
+        background: #ffffff;
+        padding: 0 20px;
+        height: 50px;
+        border-radius: 50px;
+        border: 1px solid #e9edf2;
+        transition: all 0.3s ease;
+    }
+
+        .input-wrapper:focus-within {
+            border-color: #5d5fef;
+            box-shadow: 0 0 0 4px rgba(93, 95, 239, 0.1);
+        }
+
+        .input-wrapper i {
+            color: #8d97ad;
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        .input-wrapper input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+    .btn-primary {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 50px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        width: 100%;
+        border: none;
+        background-color: #5d5fef;
+        color: #ffffff;
+        box-shadow: 0 4px 15px rgba(93, 95, 239, 0.3);
+        transition: all 0.2s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #4a4cd6;
+            transform: translateY(-2px);
+        }
+
+    .text-danger {
+        color: #ff4757;
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: block;
+        margin-left: 10px;
+    }
+</style>
+
+<div class="reset-container">
+    <div class="auth-card">
+
+        <div class="auth-icon">
+            <i class="fa-solid fa-key"></i>
+        </div>
+
+        <h1>Set New Password</h1>
+        <p>Please create a strong password to secure your account.</p>
+
+        <form asp-action="ResetPass" method="post">
+            <input type="hidden" asp-for="Token" />
+
+            <div class="form-group">
+                <label class="form-label">New Password</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input asp-for="NewPassword" type="password" placeholder="Min 8 chars, 1 Upper, 1 Special" />
+                </div>
+                <span asp-validation-for="NewPassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input asp-for="ConfirmPassword" type="password" placeholder="Re-enter password" />
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Reset Password
+            </button>
+        </form>
+
+    </div>
+</div>
