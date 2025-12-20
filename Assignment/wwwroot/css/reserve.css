@@ -1,0 +1,216 @@
+﻿/* =========================
+   Layout (NO Bootstrap)
+========================= */
+.reserve-container-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+    .reserve-container-grid .row {
+        display: flex;
+        gap: 2rem;
+        align-items: stretch;
+    }
+
+        .reserve-container-grid .row > div {
+            flex: 1;
+            min-width: 0;
+        }
+
+/* Stack on small screens */
+@media (max-width: 768px) {
+    .reserve-container-grid .row {
+        flex-direction: column;
+    }
+}
+
+/* =========================
+   Reserve Card
+========================= */
+.reserve-card {
+    background-color: unset;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    overflow: hidden;
+    height: 100%;
+}
+
+.reserve-header {
+    background-color: #0d6efd;
+    color: #fff;
+    padding: 1rem 1.5rem;
+}
+
+    .reserve-header h3 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+
+.reserve-body {
+    padding: 1.5rem;
+}
+
+.note {
+    font-size: 0.85rem;
+    color: inherit;
+    margin-bottom: 1.5rem;
+}
+
+/* =========================
+   Form
+========================= */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+    .form-group label {
+        font-weight: 600;
+    }
+
+.form-control {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid currentColor;
+    font-size: 0.95rem;
+    background-color: unset;
+    color: inherit;
+    box-sizing: border-box;
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+    }
+
+    .form-control[readonly] {
+        background-color: unset;
+        font-weight: 500;
+    }
+
+/* =========================
+   Info Box
+========================= */
+.info-box {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* =========================
+   Calendar
+========================= */
+.calendar-card {
+    background-color: unset;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    height: 100%;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+    .calendar-header h4 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+.calendar-grid-header,
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+    .calendar-grid-header div {
+        font-size: 0.85rem;
+        font-weight: bold;
+        opacity: 0.7;
+        margin-bottom: 10px;
+    }
+
+
+.reserve-card{
+    height: 740px; 
+    flex-direction: column;
+}
+.calendar-card {
+    height: 700px;
+    flex-direction: column;
+}
+
+.calendar-grid {
+    flex: 1;
+    overflow-y: auto;
+}
+
+
+/* Days */
+.day-box {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background-color: rgba(25,135,84,0.15);
+    color: #198754;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+    .day-box:hover {
+        background-color: rgba(25,135,84,0.3);
+    }
+
+.day-empty {
+    background: transparent;
+}
+
+.day-busy {
+    background-color: rgba(220,53,69,0.25) !important;
+    color: #dc3545 !important;
+    text-decoration: line-through;
+    cursor: not-allowed;
+}
+
+/* =========================
+   Buttons
+========================= */
+.button-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn {
+    padding: 0.65rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border: 1px solid #0d6efd;
+    color: #fff;
+}
+
+.btn-outline-secondary {
+    background: none;
+    border: 1px solid currentColor;
+    color: inherit;
+}

@@ -70,7 +70,7 @@
                     <div>
 						<h4 class="mb-1 fw-bold">
                             Model:
-                            @(Model.Model?.ModelName ?? "Unknown Model")
+                            @($"{Model.Model?.Brand?.BrandName ?? "Unknown"} {Model.Model?.ModelName ?? "Unknown"}")
                         </h4>
                         <h4 class="text-uppercase text-muted fw-bold small">Rental Period</h4>
                         <div class="mb-1">

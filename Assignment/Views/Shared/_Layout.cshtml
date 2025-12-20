@@ -68,6 +68,11 @@
                                         <span class="material-symbols-outlined">person</span>
                                         My Profile
                                     </a>
+
+                                    <a href="@Url.Action("History", "Payment")" class="dropdown-link">
+                                        <span class="material-symbols-outlined">receipt_long</span>
+                                        Payment History
+                                    </a>
                                     <div class="dropdown-divider"></div>
                                     <form asp-controller="Account" asp-action="Logout" method="post">
                                         <button type="submit" class="dropdown-link logout-btn">
@@ -152,5 +157,6 @@
     <script src="~/js/app.js"></script>
     @await RenderSectionAsync("foot", required: false)
     @await RenderSectionAsync("Styles", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -24,7 +24,7 @@ public class PickupViewModel
     public string RentalId { get; set; }
 
     [Required]
-    public DateTime PickupDateTime { get; set; } = DateTime.Today;
+    public DateTime PickupDateTime { get; set; } = DateTime.Now;
 
     // ───────────────────────────────────────────
     // Customer & Vehicle Info (for display in form)
@@ -216,6 +216,19 @@ public class ReserveVM
 // -----------------------------
 // Payment
 // -----------------------------
+public class ReturnPaymentVM
+{
+    public string RentalId { get; set; }
+    public string CustomerName { get; set; }
+
+    public decimal Amount { get; set; }
+
+    public string PaymentType { get; set; }   // ExtraCharge / Refund
+
+    [Required(ErrorMessage = "Please select payment method")]
+    public string PaymentMethod { get; set; } // Cash / TNG
+}
+
 public class PaymentVM
 {
     [Required]
@@ -252,6 +265,8 @@ public class PaymentVM
     [Display(Name = "CVV")]
     [RegularExpression(@"\d{3}", ErrorMessage = "Invalid CVV")]
     public string? CVV { get; set; }
+
+    public string CustomerName { get; set; }
 }
 
 
@@ -337,6 +352,7 @@ public class EditUserVM
     public string Phone { get; set; }
     public string UserType { get; set; } // "Staff" or "Customer"
 
+<<<<<<< HEAD
 
 
         [DataType(DataType.Password)]
@@ -344,6 +360,13 @@ public class EditUserVM
         [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
         public string? ConfirmNewPassword { get; set; }
     }
+=======
+    [DataType(DataType.Password)]
+    [Display(Name = "Confirm Password")]
+    [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+    public string? ConfirmNewPassword { get; set; }
+}
+>>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
 
 
 public class ResetPasswordVM
@@ -392,4 +415,7 @@ public class VehicleCategoryViewModel
     [MaxLength(50)]
     public string? CategoryName { get; set; } // e.g., Sedan, SUV
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975

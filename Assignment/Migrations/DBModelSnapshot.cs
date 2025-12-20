@@ -151,8 +151,7 @@ namespace Assignment.Migrations
 
                     b.HasKey("PaymentId");
 
-                    b.HasIndex("RentalId")
-                        .IsUnique();
+                    b.HasIndex("RentalId");
 
                     b.ToTable("Payments");
                 });
@@ -255,6 +254,10 @@ namespace Assignment.Migrations
 
                     b.Property<int>("ModelId")
                         .HasColumnType("int");
+
+                    b.Property<string>("PaymentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("PickupDate")
                         .HasColumnType("datetime2");
@@ -493,8 +496,8 @@ namespace Assignment.Migrations
             modelBuilder.Entity("Assignment.Models.Payment", b =>
                 {
                     b.HasOne("Assignment.Models.Rental", "Rental")
-                        .WithOne("Payment")
-                        .HasForeignKey("Assignment.Models.Payment", "RentalId")
+                        .WithMany("Payment")
+                        .HasForeignKey("RentalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -598,8 +601,7 @@ namespace Assignment.Migrations
 
             modelBuilder.Entity("Assignment.Models.Rental", b =>
                 {
-                    b.Navigation("Payment")
-                        .IsRequired();
+                    b.Navigation("Payment");
 
                     b.Navigation("PickupRecord")
                         .IsRequired();

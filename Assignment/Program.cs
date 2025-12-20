@@ -1,6 +1,13 @@
 global using Assignment;
 global using Assignment.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using QuestPDF.Infrastructure;
+using System.Globalization;
+
+// RM
+var culture = new CultureInfo("ms-MY");
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
