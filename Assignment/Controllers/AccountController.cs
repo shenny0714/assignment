@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,19 +21,59 @@ namespace Assignment.Controllers
     {
         private readonly DB _db;
         private readonly Helper _hp;
+        private readonly IMemoryCache _cache;
 
-        public AccountController(DB db, Helper hp)
+        public AccountController(DB db, Helper hp, IMemoryCache cache)
         {
             _db = db;
             _hp = hp;
+            _cache = cache;
         }
 
-        // --- LOGIN ---
-        public IActionResult Login()
+        // GET: Account/Login
+        public IActionResult Login(string? email)
         {
-            if (User.Identity!.IsAuthenticated)
-                return RedirectToAction("Index", "Home");
-            return View();
+            // 1. If we have a specific error from the Redirect (POST), show it first.
+            if (TempData["Error"] != null)
+            {
+                ModelState.AddModelError("", TempData["Error"]!.ToString());
+            }
+            // 2. If no TempData, check DB to see if we should show a persistent warning
+            else if (!string.IsNullOrEmpty(email))
+            {
+                var c = _db.Customers.FirstOrDefault(x => x.Email == email);
+                if (c != null)
+                {
+                    CheckUserStatus(c.LoginRetryCount, c.LockedUntil, $"FailTime_{c.Email}");
+                }
+            }
+
+            // 3. Pre-fill email
+            var vm = new LoginVM { Email = email };
+            return View(vm);
+        }
+
+        private void CheckUserStatus(int retryCount, DateTime? lockedUntil, string cacheKey)
+        {
+            bool isReset = !_cache.TryGetValue(cacheKey, out DateTime _);
+
+            if (isReset && retryCount > 0)
+            {
+                return;
+            }
+
+            // B. Check Lock
+            if (lockedUntil.HasValue && lockedUntil.Value > DateTime.Now)
+            {
+                var remaining = Math.Ceiling((lockedUntil.Value - DateTime.Now).TotalMinutes);
+                ModelState.AddModelError("", $"Account locked. Try again in {remaining} minute(s).");
+            }
+            // C. Check Attempts
+            else if (retryCount > 0)
+            {
+                int attemptsLeft = 3 - retryCount;
+                ModelState.AddModelError("", $"Warning: You have {attemptsLeft} attempt(s) remaining.");
+            }
         }
 
         [HttpPost]
@@ -47,76 +92,173 @@ namespace Assignment.Controllers
                     else return RedirectToAction("Staff");
                 }
 
-                // 2. Check Customer Table Second
-                var cust = _db.Customers.FirstOrDefault(c => c.Email == vm.Email && c.HashPassword == hash);
+                // ──────────────────────────────────────────────
+                // 2. CHECK CUSTOMER (Repeat Logic)
+                // ──────────────────────────────────────────────
+                var cust = _db.Customers.FirstOrDefault(c => c.Email == vm.Email);
                 if (cust != null)
                 {
-                    await SignInUser(cust.CustomerId, cust.Name, cust.Email, "Customer", cust.PhotoURL, vm.RememberMe);
-                    return RedirectToAction("Index", "Home");
-                }
+                    string cacheKey = $"FailTime_{cust.Email}";
 
-                ModelState.AddModelError("", "Invalid email or password.");
+                    // ✅ AUTO-RESET Check
+                    if (!_cache.TryGetValue(cacheKey, out DateTime _))
+                    {
+                        if (cust.LoginRetryCount > 0)
+                        {
+                            cust.LoginRetryCount = 0;
+                            cust.LockedUntil = null;
+                            _db.SaveChanges();
+                        }
+                    }
+
+                    if (cust.LockedUntil.HasValue && cust.LockedUntil.Value > DateTime.Now)
+                    {
+                        var remaining = Math.Ceiling((cust.LockedUntil.Value - DateTime.Now).TotalMinutes);
+                        TempData["Error"] = $"Account locked. Try again in {remaining} minute(s).";
+                        return RedirectToAction("Login", new { email = vm.Email });
+                    }
+
+                    if (cust.HashPassword == hash)
+                    {
+                        cust.LoginRetryCount = 0;
+                        cust.LockedUntil = null;
+                        _db.SaveChanges();
+                        _cache.Remove(cacheKey);
+
+
+                        await SignInUser(cust.CustomerId, cust.Name, cust.Email, "Customer", cust.PhotoURL, vm.RememberMe);
+                        TempData["Info"] = "Login successfully.";
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        cust.LoginRetryCount++;
+                        // SET CACHE: expire in 10 minutes
+                        _cache.Set(cacheKey, DateTime.Now, TimeSpan.FromMinutes(1));
+
+                        int attemptsLeft = 3 - cust.LoginRetryCount;
+
+                        if (attemptsLeft <= 0)
+                        {
+                            cust.LockedUntil = DateTime.Now.AddMinutes(5);
+                            _db.SaveChanges();
+                            TempData["Error"] = "Account locked. Try again in 5 minutes.";
+                        }
+                        else
+                        {
+                            _db.SaveChanges();
+                            TempData["Error"] = $"Invalid password. You have {attemptsLeft} attempt(s) remaining.";
+                        }
+                        return RedirectToAction("Login", new { email = vm.Email });
+                    }
+                }
+                TempData["Info"] = "Invalid email or password.";
             }
-            return View(vm);
+            return RedirectToAction("Login", new { email = vm.Email });
         }
 
-        // --- REGISTER (For Customers Only) ---
 
+        // ──────────────────────────────────────
+        // CUSTOMER REGISTRATION
+        // ──────────────────────────────────────
         public IActionResult Register() => View();
 
         [HttpPost]
-        public IActionResult Register(RegisterVM vm)
+        public IActionResult Register(RegisterVM vm, string captchaInput)
         {
-            if (_db.Customers.Any(x => x.Email == vm.Email) || _db.Staffs.Any(x => x.Email == vm.Email))
+            /* =========================
+             * 1️. BASIC INPUT VALIDATION
+             * ========================= */
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            /* =========================
+             *  2.CAPTCHA VALIDATION
+             * ========================= */
+            var sessionCaptcha = HttpContext.Session.GetString("CaptchaCode");
+            if (string.IsNullOrEmpty(captchaInput) || captchaInput != sessionCaptcha)
+            {
+                ModelState.AddModelError("Captcha", "Invalid Captcha code.");
+                return View(vm);
+            }
+
+            /* =========================
+             * 3️. PASSWORD STRENGTH CHECK
+             * ========================= */
+            if (!_hp.IsStrongPassword(vm.Password))
+            {
+                ModelState.AddModelError(
+                    "Password",
+                    "Password must be at least 8 characters, contain 1 uppercase, 1 lowercase, 1 number, and 1 special character."
+                );
+                return View(vm);
+            }
+
+            /* =========================
+             * 4️. DUPLICATE EMAIL CHECK
+             * ========================= */
+            if (_db.Customers.Any(x => x.Email == vm.Email) ||
+                _db.Staffs.Any(x => x.Email == vm.Email))
             {
                 ModelState.AddModelError("Email", "Email already registered.");
+                return View(vm);
             }
 
-            if (ModelState.IsValid)
+            /* =========================
+             * 5️. GENERATE CUSTOMER ID
+             * ========================= */
+            string newId = "CU001";
+
+            var lastCust = _db.Customers
+                .AsEnumerable()
+                .OrderByDescending(c => c.CustomerId.Length)
+                .ThenByDescending(c => c.CustomerId)
+                .FirstOrDefault();
+
+            if (lastCust != null)
             {
-                // Generate ID: CU001, CU002...
-                string newId = "CU001";
-                var lastCust = _db.Customers
-                    .AsEnumerable()
-                    .OrderByDescending(c => c.CustomerId.Length)
-                    .ThenByDescending(c => c.CustomerId)
-                    .FirstOrDefault();
-
-                if (lastCust != null)
+                string numPart = lastCust.CustomerId.Substring(2);
+                if (int.TryParse(numPart, out int lastNum))
                 {
-                    string numPart = lastCust.CustomerId.Substring(2);
-                    if (int.TryParse(numPart, out int lastNum))
-                    {
-                        newId = "CU" + (lastNum + 1).ToString("D3");
-                    }
+                    newId = "CU" + (lastNum + 1).ToString("D3");
                 }
-
-                var c = new Customer
-                {
-                    CustomerId = newId,
-                    Name = vm.Name,
-                    Email = vm.Email,
-                    Phone = vm.PhoneNumber,
-                    HashPassword = HashPassword(vm.Password),
-                    PhotoURL = _hp.SavePhoto(vm.Photo, "photos")
-                };
-
-                _db.Customers.Add(c);
-                _db.SaveChanges();
-
-                TempData["Success"] = "Registration successful! Please login.";
-                return RedirectToAction("Login");
             }
-            return View(vm);
+
+            /* =========================
+             * 6️. SAVE CUSTOMER
+             * ========================= */
+            var customer = new Customer
+            {
+                CustomerId = newId,
+                Name = vm.Name,
+                Email = vm.Email,
+                Phone = vm.Phone,
+                HashPassword = HashPassword(vm.Password),
+                PhotoURL = _hp.SavePhoto(vm.Photo, "photos")
+            };
+
+            _db.Customers.Add(customer);
+            _db.SaveChanges();
+
+            TempData["Info"] = "Registration successful! Please login.";
+            return RedirectToAction("Login");
         }
+
 
         // --- LOGOUT ---
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
+            TempData["Info"] = "Logout successfully.";
+            return RedirectToAction("Home","Index");
         }
-
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
         // --- PROFILE (GET) ---
         [Authorize]
         public IActionResult Profile()
@@ -191,7 +333,7 @@ namespace Assignment.Controllers
                     u.Name, u.Email, u.Role, photo, false
                 );
 
-                TempData["Success"] = "Profile updated successfully!";
+                TempData["Info"] = "Profile updated successfully!";
                 return RedirectToAction("Profile");
             }
 
@@ -203,8 +345,6 @@ namespace Assignment.Controllers
         // ──────────────────────────────────────
 
         // 1. CUSTOMER LIST (Default Admin Page)
-
-
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
@@ -276,7 +416,7 @@ namespace Assignment.Controllers
                     StaffId = newId,
                     Name = vm.Name,
                     Email = vm.Email,
-                    Phone = vm.PhoneNumber,
+                    Phone = vm.Phone,
                     HashPassword = HashPassword(vm.Password),
                     Type = "Staff" // Explicitly create as Staff
                 };
@@ -522,9 +662,201 @@ namespace Assignment.Controllers
             return View(model);
         }
 
+        // ──────────────────────────────────────
+        // FORGOT PASSWORD (Sends Email Link)
+        // ──────────────────────────────────────
+        public IActionResult ForgotPass() => View();
 
+        [HttpPost]
+        public IActionResult ForgotPass(string email)
+        {
+            // 1. Generate Token
+            string token = Guid.NewGuid().ToString();
+            string resetLink = Url.Action("ResetPass", "Account", new { token }, Request.Scheme);
+
+            // 2. Find User
+
+            var c = _db.Customers.FirstOrDefault(x => x.Email == email);
+            if (c != null)
+            {
+                c.ResetToken = token;
+                c.ResetTokenExpiry = DateTime.Now.AddMinutes(15);
+                _db.SaveChanges();
+            }
+
+            // 3. Send Email if user exists
+            if (c != null)
+            {
+                string name = c.Name;
+                SendResetLinkEmail(email, name, resetLink);
+                TempData["Info"] = "Reset link sent to your email.";
+            }
+            else
+            {
+                TempData["Info"] = "If the email exists, a link has been sent.";
+            }
+
+            return View();
+        }
+
+        // Helper to construct the email (Similar to Demo)
+        private void SendResetLinkEmail(string toEmail, string name, string link)
+        {
+            var mail = new MailMessage();
+            mail.To.Add(new MailAddress(toEmail, name));
+            mail.Subject = "Reset Password Request";
+            mail.IsBodyHtml = true;
+
+            // Body with Link
+            mail.Body = $@"
+        <div style='font-family: Arial, sans-serif; padding: 20px;'>
+            <h2 style='color: #5d5fef;'>Password Reset</h2>
+            <p>Dear {name},</p>
+            <p>We received a request to reset your password.</p>
+            <p>Please click the button below to reset it (valid for 15 minutes):</p>
+            <a href='{link}' style='background-color: #5d5fef; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;'>Reset Password</a>
+            <p style='margin-top: 20px;'>If you did not request this, please ignore this email.</p>
+            <p>From,<br>Car Rental Admin</p>
+        </div>
+    ";
+
+            _hp.SendEmail(mail);
+        }
+
+        // ──────────────────────────────────────
+        // RESET PASSWORD (Validate & Update)
+        // ──────────────────────────────────────
+        public IActionResult ResetPass(string token)
+        {
+            if (_db.Customers.Any(x => x.ResetToken == token && x.ResetTokenExpiry > DateTime.Now))
+            {
+                return View(new ResetPasswordVM { Token = token });
+            }
+            return Content("Invalid or expired token.");
+        }
+
+        [HttpPost]
+        public IActionResult ResetPass(ResetPasswordVM vm)
+        {
+            if (!_hp.IsStrongPassword(vm.NewPassword))
+            {
+                ModelState.AddModelError("NewPassword", "Password must be at least 8 characters, contain 1 uppercase, 1 lowercase, 1 number, and 1 special character.");
+                return View(vm);
+            }
+
+
+            var c = _db.Customers.FirstOrDefault(x => x.ResetToken == vm.Token);
+            if (c != null)
+            {
+                c.HashPassword = HashPassword(vm.NewPassword);
+                c.ResetToken = null;
+                _db.SaveChanges();
+                TempData["Info"] = "Password reset successful. Please login.";
+                return RedirectToAction("Login");
+            }
+
+            return View(vm);
+        }
+
+        // ──────────────────────────────────────
+        // Captcha Image for Register
+        // ──────────────────────────────────────
+        [AllowAnonymous]
+        public IActionResult GetCaptchaImage()
+        {
+            // 1. Generate stronger random code (Alphanumeric, avoiding confusing chars)
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            var random = new Random();
+            // Generate a 5-character string
+            string code = new string(Enumerable.Repeat(chars, 5)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+
+            // Store in session for validation later
+            HttpContext.Session.SetString("CaptchaCode", code);
+
+            // Increase image size slightly to fit distorted text
+            int width = 160;
+            int height = 50;
+
+            using (var bitmap = new Bitmap(width, height))
+            using (var g = Graphics.FromImage(bitmap))
+            {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                g.Clear(Color.White);
+
+                // 2. Add Noise: Random Lines across background
+                Pen linePen = new Pen(Color.LightGray, 2);
+                for (int i = 0; i < 4; i++)
+                {
+                    int x1 = random.Next(width);
+                    int y1 = random.Next(height);
+                    int x2 = random.Next(width);
+                    int y2 = random.Next(height);
+                    g.DrawBezier(linePen, x1, y1, x1 + 50, y1 - 30, x2 - 50, y2 + 30, x2, y2);
+                }
+
+                // 3. Draw Characters with Rotation and varying fonts
+                // Define a list of distinct fonts (ensure these exist on the server)
+                string[] fontNames = { "Arial", "Verdana", "Times New Roman", "Courier New" };
+
+                // Starting X position
+                float charX = 10;
+
+                foreach (char c in code)
+                {
+                    // Pick random font and size
+                    string fontName = fontNames[random.Next(fontNames.Length)];
+                    int fontSize = random.Next(24, 30);
+                    Font font = new Font(fontName, fontSize, FontStyle.Bold);
+
+                    // Pick a random dark color for text
+                    Brush brush = new SolidBrush(Color.FromArgb(
+                        random.Next(0, 100),
+                        random.Next(0, 100),
+                        random.Next(0, 150)));
+
+                    // Determine random rotation angle (between -30 and +30 degrees)
+                    float angle = random.Next(-30, 30);
+
+                    // Save current graphic state
+                    GraphicsState state = g.Save();
+
+                    // Move to the character's position and rotate the canvas
+                    g.TranslateTransform(charX, height / 2);
+                    g.RotateTransform(angle);
+
+                    // Draw the character centered relative to its rotation point
+                    SizeF charSize = g.MeasureString(c.ToString(), font);
+                    g.DrawString(c.ToString(), font, brush, -(charSize.Width / 2), -(charSize.Height / 2));
+
+                    // Restore graphic state for the next character
+                    g.Restore(state);
+
+                    // Advance X position for next character (spacing varies slightly)
+                    charX += charSize.Width + random.Next(-5, 5);
+                }
+
+                // 4. Add Foreground Noise: Random Dots (Speckles)
+                for (int i = 0; i < 200; i++)
+                {
+                    int x = random.Next(width);
+                    int y = random.Next(height);
+                    // Draw a 2x2 pixel dot
+                    bitmap.SetPixel(x, y, Color.FromArgb(random.Next(150, 255), random.Next(150, 255), random.Next(150, 255)));
+                    if (x < width - 1 && y < height - 1) bitmap.SetPixel(x + 1, y + 1, Color.Gray);
+                }
+
+                using (var stream = new MemoryStream())
+                {
+                    bitmap.Save(stream, ImageFormat.Png);
+                    return File(stream.ToArray(), "image/png");
+                }
+            }
+        }
+
+        //=====================================
         // --- HELPER METHODS ---
-
+        //=====================================
         private User GetUserByEmail(string email, string role)
         {
             if (role == "Customer")

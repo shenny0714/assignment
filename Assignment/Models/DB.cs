@@ -96,9 +96,14 @@ public class Customer : User
     [Key, MaxLength(8)]
     public string CustomerId { get; set; }
 
-    public string PhotoURL { get; set; }
+    public string? PhotoURL { get; set; }
 
     public List<Rental> Rentals { get; set; } = [];
+
+    public int LoginRetryCount { get; set; } = 0;
+    public DateTime? LockedUntil { get; set; }
+    public string? ResetToken { get; set; }
+    public DateTime? ResetTokenExpiry { get; set; }
 }
 
 //

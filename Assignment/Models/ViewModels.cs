@@ -221,6 +221,7 @@ public class PaymentVM
     [Required]
     public string RentalId { get; set; }
 
+    public string CustomerName { get; set; }
     public string CarModel { get; set; }
 
     [Display(Name = "Payment Date")]
@@ -280,9 +281,9 @@ public class RegisterVM
     public string Email { get; set; }
 
     [Required, Phone]
-    [StringLength(20)]
-    [RegularExpression(@"^01\d-\d{7,8}$", ErrorMessage = "Invalid format (e.g. 012-3456789).")]
-    public string PhoneNumber { get; set; }
+    [StringLength(11, MinimumLength = 10, ErrorMessage = "Phone number must be 10 or 11 digits.")]
+    [RegularExpression(@"^60\d{8,9}$", ErrorMessage = "Invalid format. Use digits only (e.g. 60123456789).")]
+    public string Phone { get; set; }
 
     [Required, MinLength(5)]
     public string Password { get; set; }
@@ -335,15 +336,32 @@ public class EditUserVM
     [Required]
     public string Phone { get; set; }
     public string UserType { get; set; } // "Staff" or "Customer"
-}
 
-<<<<<<< HEAD
-=======
+
+
         [DataType(DataType.Password)]
         [Display(Name = "Confirm Password")]
         [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
         public string? ConfirmNewPassword { get; set; }
     }
+
+
+public class ResetPasswordVM
+{
+    [Required]
+    public string Token { get; set; }
+
+    [Required]
+    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters long.")]
+    [DataType(DataType.Password)]
+    [Display(Name = "New Password")]
+    public string NewPassword { get; set; }
+
+    [DataType(DataType.Password)]
+    [Display(Name = "Confirm Password")]
+    [Compare("NewPassword", ErrorMessage = "The password and confirmation password do not match.")]
+    public string ConfirmPassword { get; set; }
+}
 
 // -----------------------------
 // CarCatalog
@@ -374,4 +392,4 @@ public class VehicleCategoryViewModel
     [MaxLength(50)]
     public string? CategoryName { get; set; } // e.g., Sedan, SUV
 }
->>>>>>> a913b1d90971bbd9d7caa84884ff4d76939b5213
+

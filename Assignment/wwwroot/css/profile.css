@@ -1,17 +1,33 @@
 ﻿:root {
-    /* Light Theme Variables */
-    --bg-body: #f0f4f8; /* Light Blue-Grey Background */
-    --bg-secondary: #ffffff; /* White Card Background */
-    --text-primary: #2c3e50; /* Dark Blue-Grey Text */
-    --text-secondary: #64748b; /* Muted Grey Text */
-    --accent-color: #3b82f6; /* Bright Blue */
-    --accent-hover: #2563eb; /* Darker Blue */
-    --input-bg: #f8fafc; /* Very Light Grey Input */
-    --border-color: #e2e8f0; /* Light Border */
+    /* --- Light Theme Variables (Default) --- */
+    --bg-body: #f0f4f8;
+    --bg-secondary: #ffffff;
+    --text-primary: #2c3e50;
+    --text-secondary: #64748b;
+    --accent-color: #3b82f6;
+    --accent-hover: #2563eb;
+    --input-bg: #f8fafc;
+    --border-color: #e2e8f0;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+}
+
+/* --- Dark Theme Overrides --- */
+[data-theme="dark"] body,
+body.dark-mode {
+    --bg-body: #0f172a;
+    --bg-secondary: #1e293b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --accent-color: #60a5fa;
+    --accent-hover: #3b82f6;
+    --input-bg: #334155;
+    --border-color: #475569;
+    --shadow-color: rgba(0, 0, 0, 0.3);
 }
 
 body {
     background-color: var(--bg-body);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .profile-wrapper {
@@ -24,7 +40,7 @@ body {
 /* --- Header Section --- */
 .header-cover {
     height: 160px;
-    background: linear-gradient(to right, #195dba,#b5c6e0);
+    background: linear-gradient(to right, #195dba, #b5c6e0);
     border-radius: 12px 12px 0 0;
     position: relative;
 }
@@ -35,9 +51,10 @@ body {
     padding-bottom: 30px;
     border-radius: 0 0 12px 12px;
     margin-bottom: 30px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px -1px var(--shadow-color);
     border: 1px solid var(--border-color);
     border-top: none;
+    transition: background-color 0.3s ease;
 }
 
 .avatar-container {
@@ -45,12 +62,12 @@ body {
     height: 130px;
     margin: -65px auto 15px;
     position: relative;
-    /* [UPDATED] Changed from 50% to 15px for Square shape */
     border-radius: 15px;
     border: 5px solid var(--bg-secondary);
     background-color: var(--bg-secondary);
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: border-color 0.3s ease;
 }
 
 .avatar-image {
@@ -73,50 +90,65 @@ body {
 }
 
 /* --- Buttons --- */
-.btn-action {
-    padding: 10px 24px;
-    border-radius: 8px;
-    border: none;
+/* Base button style shared by all buttons */
+.btn-action, .btn-sm, .btn-primary, .btn-outline, .btn-outline-secondary {
+    padding: 8px 16px; /* Slightly smaller padding to match your screenshot */
+    border-radius: 6px; /* Slightly tighter radius */
+    border: 1px solid transparent;
     font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     transition: all 0.2s;
     text-decoration: none;
     font-size: 0.9rem;
+    line-height: 1.5;
 }
 
+/* Primary Blue Button (Save/Update) */
 .btn-primary {
     background-color: var(--accent-color);
-    color: white;
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    color: #ffffff;
+    border-color: var(--accent-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
     .btn-primary:hover {
         background-color: var(--accent-hover);
+        border-color: var(--accent-hover);
         transform: translateY(-1px);
     }
 
-.btn-outline {
+.btn-outline-secondary {
     background-color: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
+    border: 1px solid #cbd5e1; /* Specific light grey border */
+    color: #475569; /* Dark grey text/icon */
 }
 
-    .btn-outline:hover {
-        background-color: var(--input-bg);
-        color: var(--text-primary);
-    }
+/* Dark Mode override for Edit Button */
+[data-theme="dark"] .btn-outline-secondary,
+body.dark-mode .btn-outline-secondary {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--input-bg);
+    border-color: #94a3b8; /* Slightly darker border on hover */
+    color: var(--text-primary);
+}
 
 /* --- Form Panels --- */
 .main-content-panel {
     background-color: var(--bg-secondary);
     padding: 35px;
     border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px -1px var(--shadow-color);
     border: 1px solid var(--border-color);
     margin-bottom: 25px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .panel-title {
@@ -129,10 +161,12 @@ body {
     gap: 10px;
 }
 
+/* --- Form Grid Layout --- */
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
     gap: 25px;
+    align-items: end; /* Aligns inputs and buttons at the bottom */
 }
 
 .form-group {
@@ -153,7 +187,8 @@ body {
     letter-spacing: 0.5px;
 }
 
-.form-input {
+/* --- Input Styling --- */
+.form-input, .form-control {
     background-color: var(--input-bg);
     border: 1px solid var(--border-color);
     padding: 12px 15px;
@@ -163,20 +198,34 @@ body {
     outline: none;
     transition: all 0.2s;
     width: 100%;
+    box-sizing: border-box; /* Ensures padding doesn't break width */
 }
 
-    .form-input:focus {
+    .form-input:focus, .form-control:focus {
         border-color: var(--accent-color);
-        background-color: #fff;
+        background-color: var(--bg-secondary);
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
+    /* Read-Only Input Fix */
     .form-input[readonly] {
         background-color: transparent;
         border-color: transparent;
         padding-left: 0;
         cursor: default;
+        color: var(--text-primary);
+        font-weight: 500;
     }
+
+/* --- File Input Fix --- */
+/* This aligns the file input identically to text inputs */
+input[type="file"] {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    padding: 9px; /* Slightly less padding to match height of text inputs */
+    height: 47px; /* Force height to match text inputs */
+    line-height: 1.5;
+}
 
 .hidden {
     display: none !important;
@@ -188,9 +237,19 @@ body {
     margin-top: 4px;
 }
 
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
     .form-grid {
         grid-template-columns: 1fr;
     }
-}
 
+    .header-cover {
+        height: 120px;
+    }
+
+    .avatar-container {
+        width: 100px;
+        height: 100px;
+        margin-top: -50px;
+    }
+}

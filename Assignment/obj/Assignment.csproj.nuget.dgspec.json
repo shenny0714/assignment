@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\source\\repos\\assignment\\Assignment\\Assignment.csproj": {}
+    "C:\\Users\\user\\Source\\Repos\\assignment\\Assignment\\Assignment.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\source\\repos\\assignment\\Assignment\\Assignment.csproj": {
+    "C:\\Users\\user\\Source\\Repos\\assignment\\Assignment\\Assignment.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\source\\repos\\assignment\\Assignment\\Assignment.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Source\\Repos\\assignment\\Assignment\\Assignment.csproj",
         "projectName": "Assignment",
-        "projectPath": "C:\\Users\\user\\source\\repos\\assignment\\Assignment\\Assignment.csproj",
+        "projectPath": "C:\\Users\\user\\Source\\Repos\\assignment\\Assignment\\Assignment.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\source\\repos\\assignment\\Assignment\\obj\\",
+        "outputPath": "C:\\Users\\user\\Source\\Repos\\assignment\\Assignment\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -65,6 +65,10 @@
               "target": "Package",
               "version": "[1.7.0, )"
             },
+            "QuestPDF": {
+              "target": "Package",
+              "version": "[2025.12.0, )"
+            },
             "SixLabors.ImageSharp": {
               "target": "Package",
               "version": "[3.1.12, )"
@@ -72,6 +76,10 @@
             "Stripe.net": {
               "target": "Package",
               "version": "[50.1.0, )"
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[10.0.1, )"
             },
             "X.PagedList.Mvc.Core": {
               "target": "Package",
