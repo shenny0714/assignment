@@ -24,7 +24,7 @@ public class PickupViewModel
     public string RentalId { get; set; }
 
     [Required]
-    public DateTime PickupDateTime { get; set; } = DateTime.Today;
+    public DateTime PickupDateTime { get; set; } = DateTime.Now;
 
     // ───────────────────────────────────────────
     // Customer & Vehicle Info (for display in form)
@@ -216,6 +216,19 @@ public class ReserveVM
 // -----------------------------
 // Payment
 // -----------------------------
+public class ReturnPaymentVM
+{
+    public string RentalId { get; set; }
+    public string CustomerName { get; set; }
+
+    public decimal Amount { get; set; }
+
+    public string PaymentType { get; set; }   // ExtraCharge / Refund
+
+    [Required(ErrorMessage = "Please select payment method")]
+    public string PaymentMethod { get; set; } // Cash / TNG
+}
+
 public class PaymentVM
 {
     [Required]
@@ -274,55 +287,75 @@ public class LoginVM
 // REGISTER
 // -----------------------------
 public class RegisterVM
-    {
-        [Required, StringLength(100)]
-        public string Name { get; set; }
+{
+    [Required, StringLength(100)]
+    public string Name { get; set; }
 
-        [Required, EmailAddress]
-        public string Email { get; set; }
+    [Required, EmailAddress]
+    public string Email { get; set; }
 
-        // [New] Added to match User model
-        [Required, Phone]
-        public string PhoneNumber { get; set; }
+    [Required, Phone]
+    [StringLength(20)]
+    [RegularExpression(@"^01\d-\d{7,8}$", ErrorMessage = "Invalid format (e.g. 012-3456789).")]
+    public string PhoneNumber { get; set; }
 
-        [Required, MinLength(5)]
-        public string Password { get; set; }
+    [Required, MinLength(5)]
+    public string Password { get; set; }
 
-        [Required, Compare("Password", ErrorMessage = "Passwords do not match")]
-        public string ConfirmPassword { get; set; }
+    [Required, Compare("Password", ErrorMessage = "Passwords do not match")]
+    public string ConfirmPassword { get; set; }
 
-        public IFormFile? Photo { get; set; }
-    }
+    public IFormFile? Photo { get; set; }
+}
 // -----------------------------
 // PROFILE
 // -----------------------------
 public class UpdateProfileVM
-    {
-        public string? Email { get; set; }
+{
+    public string? Email { get; set; }
 
-        [Required]
-        public string Name { get; set; }
+    [Required]
+    public string Name { get; set; }
 
-        [Phone]
-        [Display(Name = "Phone Number")]
-        public string? PhoneNumber { get; set; }
+    [Phone]
+    [Display(Name = "Phone Number")]
+    [StringLength(20)]
+    [RegularExpression(@"^01\d-\d{7,8}$", ErrorMessage = "Invalid format (e.g. 012-3456789).")]
+    public string? PhoneNumber { get; set; }
 
-        public string? PhotoURL { get; set; }
-        public IFormFile? Photo { get; set; }
+    public string? PhotoURL { get; set; }
+    public IFormFile? Photo { get; set; }
 
-        [DataType(DataType.Password)]
-        [Display(Name = "Current Password")]
-        public string? CurrentPassword { get; set; }
+    [DataType(DataType.Password)]
+    [Display(Name = "Current Password")]
+    public string? CurrentPassword { get; set; }
 
-        [DataType(DataType.Password)]
-        [Display(Name = "New Password")]
-        public string? NewPassword { get; set; }
+    [DataType(DataType.Password)]
+    [Display(Name = "New Password")]
+    public string? NewPassword { get; set; }
 
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password")]
-        [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
-        public string? ConfirmNewPassword { get; set; }
-    }
+    [DataType(DataType.Password)]
+    [Display(Name = "Confirm Password")]
+    [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+    public string? ConfirmNewPassword { get; set; }
+}
+
+public class EditUserVM
+{
+    public string Id { get; set; } // Holds either StaffId or CustomerId
+    [Required]
+    public string Name { get; set; }
+    [Required, EmailAddress]
+    public string Email { get; set; }
+    [Required]
+    public string Phone { get; set; }
+    public string UserType { get; set; } // "Staff" or "Customer"
+
+    [DataType(DataType.Password)]
+    [Display(Name = "Confirm Password")]
+    [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+    public string? ConfirmNewPassword { get; set; }
+}
 
 // -----------------------------
 // CarCatalog

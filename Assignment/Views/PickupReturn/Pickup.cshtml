@@ -3,125 +3,285 @@
 @{
     ViewBag.Title = "Pickup Vehicle";
 }
+<link rel="stylesheet" href="~/css/pickupReturn.css" />
 
-<link rel="stylesheet" href="~/css/pickup.css" />
+<div class="pickup-container-main">
+    <h2 class="pickup-title">Pickup Vehicle</h2>
 
-<h2>Pickup Vehicle</h2>
+    <div class="pickup-form-wrapper">
 
-<div class="pickup-container">
+        <form asp-action="Pickup"
+              asp-controller="PickupReturn"
+              asp-route-rentalId="@Model.RentalId"
+              method="post"
+              enctype="multipart/form-data">
+
+            <div asp-validation-summary="ModelOnly" class="pickup-error-summary mb-2"></div>
+            <div asp-validation-for="StaffId"></div>
+
+            <input type="hidden" asp-for="RentalId" />
+            <input type="hidden" asp-for="StaffId" />
+            <input type="hidden" asp-for="ModelName" />
+            <input type="hidden" asp-for="CustomerName" />
+
+            <!-- Rental Info -->
+            <div class="pickup-card mb-section pickup-card-shadow">
+                <div class="pickup-card-header fw-bold">
+                    Rental Information
+                </div>
+                <div class="pickup-card-body">
+                    <p><strong>Rental ID:</strong> @Model.RentalId</p>
+                    <p><strong>Customer:</strong> @Model.CustomerName</p>
+                    <p><strong>Model:</strong> @Model.ModelName</p>
+                    <p><strong>Handled By Staff:</strong> @Model.StaffName</p>
+                </div>
+            </div>
+
+            <hr class="pickup-hr" />
+
+            <!-- Pickup Details -->
+            <div class="pickup-card mb-section pickup-card-shadow">
+                <div class="pickup-card-header fw-bold">
+                    Pickup Details
+                </div>
+                <div class="pickup-card-body">
+
+                    <div class="pickup-row g-gap">
+                        <div class="pickup-col-6">
+                            <label asp-for="PickupDateTime" class="pickup-label"></label>
+                            <input asp-for="PickupDateTime" type="datetime-local" step="any" autofocus class="pickup-input" />
+                            <span asp-validation-for="PickupDateTime" class="pickup-error"></span>
+                        </div>
+
+                        <div class="pickup-col-6">
+                            <label asp-for="VehicleId" class="pickup-label">Vehicle</label>
+                            <select asp-for="VehicleId" asp-items="@(ViewBag.VehicleList)" class="pickup-select">
+                                <option value="">-- Select Vehicle --</option>
+                            </select>
+                            <span asp-validation-for="VehicleId" class="pickup-error"></span>
+                        </div>
+                    </div>
+
+                    <hr class="pickup-hr" />
+
+                    <!-- Driving License Section -->
+                    <div class="mb-section p-3">
+                        <h5 class="pickup-card-title">Customer Driving License</h5>
+
+                        <!-- Upload -->
+                        <div class="mb-3">
+                            <label class="pickup-label">Upload from Device</label>
+                            <input asp-for="CustomerDrivingLicense"
+                                   type="file"
+                                   accept="image/jpeg,image/png"
+                                   id="licenseInput"
+                                   class="pickup-input" />
+                        </div>
+
+                        <!-- Camera Capture -->
+                        <div class="mb-3">
+                            <label class="pickup-label">Or Capture Using Camera</label>
+                            <div class="pickup-flex-wrap gap-2 mt-2">
+                                <button type="button" class="pickup-btn-secondary align-items-center" id="openCamBtn" onclick="openCamera()">
+                                    <span class="material-symbols-outlined me-1" style="font-size:20px;">videocam</span>
+                                    <span>Open Camera</span>
+                                </button>
+
+                                <button type="button" class="pickup-btn-success align-items-center" id="snapBtn" onclick="snapPhoto()" style="display:none;">
+                                    <span class="material-symbols-outlined me-1" style="font-size:20px;">camera_alt</span>
+                                    <span>Snap Photo</span>
+                                </button>
+
+                                <button type="button" class="pickup-btn-danger align-items-center" id="closeCamBtn" onclick="closeCamera()" style="display:none;">
+                                    <span class="material-symbols-outlined me-1" style="font-size:20px;">close</span>
+                                    <span>Close Camera</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 text-center">
+                            <video id="video" width="300" autoplay class="pickup-video-border" style="display:none;"></video>
+                            <canvas id="canvas" width="300" height="200" style="display:none;"></canvas>
+                            <img id="preview" class="pickup-img-thumbnail mt-2" style="max-width:300px; display:none;" />
+                        </div>
+                    </div>
+
+                    <span asp-validation-for="CustomerDrivingLicense" class="pickup-error"></span>
+
+                    <hr class="pickup-hr" />
+
+                    <!-- Odometer and Fuel -->
+                    <div class="pickup-row g-gap">
+                        <div class="pickup-col-4">
+                            <label asp-for="OdometerPickup" class="pickup-label"></label>
+                            <input asp-for="OdometerPickup" type="number" min="0" class="pickup-input" />
+                            <span asp-validation-for="OdometerPickup" class="pickup-error"></span>
+                        </div>
+
+                        <div class="pickup-col-4">
+                            <label asp-for="FuelLevelPickup" class="pickup-label"></label>
+                            <select asp-for="FuelLevelPickup" asp-items="@(new SelectList(ViewBag.FuelList))" class="pickup-select">
+                                <option value="">-- Select Fuel Level Pickup --</option>
+                            </select>
+                            <span asp-validation-for="FuelLevelPickup" class="pickup-error"></span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
 
-    <form asp-action="Pickup" asp-controller="PickupReturn" asp-route-rentalId="@Model.RentalId" method="post" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly"></div>
+                    <!-- Vehicle Conditions -->
+                    <!-- Vehicle Conditions as 4-column grid -->
+                    <div class="pickup-card mb-section pickup-card-shadow">
+                        <div class="pickup-card-header fw-bold">
+                            Vehicle Conditions
+                        </div>
+                        <div class="pickup-card-body">
+                            <div class="pickup-grid-4 g-gap">
+                                <div>
+                                    <label asp-for="BodyCondition" class="pickup-label"></label>
+                                    <select asp-for="BodyCondition" class="pickup-select">
+                                        <option value="">-- Select Condition --</option>
+                                        <option value="OK">OK</option>
+                                        <option value="Not OK">Not OK</option>
+                                    </select>
+                                    <span asp-validation-for="BodyCondition" class="pickup-error"></span>
+                                </div>
 
-        <input type="hidden" asp-for="RentalId" />
-        <input type="hidden" asp-for="StaffId" />
-        <input type="hidden" asp-for="ModelName" />
-        <input type="hidden" asp-for="CustomerName" />
+                                <div>
+                                    <label asp-for="InteriorCondition" class="pickup-label"></label>
+                                    <select asp-for="InteriorCondition" class="pickup-select">
+                                        <option value="">-- Select Condition --</option>
+                                        <option value="OK">OK</option>
+                                        <option value="Not OK">Not OK</option>
+                                    </select>
+                                    <span asp-validation-for="InteriorCondition" class="pickup-error"></span>
+                                </div>
 
+                                <div>
+                                    <label asp-for="TyreCondition" class="pickup-label"></label>
+                                    <select asp-for="TyreCondition" class="pickup-select">
+                                        <option value="">-- Select Condition --</option>
+                                        <option value="OK">OK</option>
+                                        <option value="Not OK">Not OK</option>
+                                    </select>
+                                    <span asp-validation-for="TyreCondition" class="pickup-error"></span>
+                                </div>
 
-        <!-- Display Data -->
-        <div class="section-box">
-            <h3>Rental Information</h3>
-            
-            <p><strong>Rental ID:</strong> @Model.RentalId</p>
-            <p><strong>Customer:</strong> @Model.CustomerName</p>
-            <p><strong>Model:</strong> @Model.ModelName</p>
-            <p><strong>Handled By Staff:</strong> @Model.StaffName</p>
+                                <div>
+                                    <label asp-for="LightsCondition" class="pickup-label"></label>
+                                    <select asp-for="LightsCondition" class="pickup-select">
+                                        <option value="">-- Select Condition --</option>
+                                        <option value="OK">OK</option>
+                                        <option value="Not OK">Not OK</option>
+                                    </select>
+                                    <span asp-validation-for="LightsCondition" class="pickup-error"></span>
+                                </div>
+                        <div class="mt-3 span-4">
+                            <label asp-for="Remarks" class="pickup-label"></label>
+                            <textarea asp-for="Remarks" class="pickup-textarea"></textarea>
+                        </div>
+                            </div>
+               
+                        </div>
 
-        </div>
-
-        <!-- Pickup Inputs -->
-        <div class="section-box">
-            <h3>Pickup Details</h3>
-
-            <label asp-for="PickupDateTime">Pickup Date Time</label>
-            <input asp-for="PickupDateTime" autofocus type="datetime-local" step="any" >
-            <span asp-validation-for="PickupDateTime"></span>
-
-            <label asp-for="VehicleId">Vehicle</label>
-            <select asp-for="VehicleId" asp-items="@(ViewBag.VehicleList)" class="form-control">
-                <option value="">-- Select Vehicle --</option>
-            </select>
-            <span asp-validation-for="VehicleId"></span>
-
-            <label asp-for="CustomerDrivingLicense">Driving License</label>
-            <input asp-for="CustomerDrivingLicense" type="file" accept="image/jpeg,image/png" />
-            <span asp-validation-for="CustomerDrivingLicense"></span>
-
-            <label asp-for="OdometerPickup">Odometer Reading</label>
-            <input asp-for="OdometerPickup" type="number" min="0"/>
-            <span asp-validation-for="OdometerPickup"></span>
-
-            <label asp-for="FuelLevelPickup">Fuel Level</label>
-            <select asp-for="FuelLevelPickup" asp-items="@(new SelectList(ViewBag.FuelList))" class="form-control">
-                <option value="">-- Select Fuel Level Pickup --</option>
-            </select>
-            <span asp-validation-for="FuelLevelPickup"></span>
-
-            <label asp-for="BodyCondition">Body Condition</label>
-            <select asp-for="BodyCondition" class="form-control">
-                <option value="">-- Select Condition --</option>
-                <option value="OK">OK</option>
-                <option value="Not OK">Not OK</option>
-            </select>
-            <span asp-validation-for="BodyCondition"></span>
-
-
-            <label asp-for="InteriorCondition">Interior Condition</label>
-            <select asp-for="InteriorCondition" class="form-control">
-                <option value="">-- Select Condition --</option>
-                <option value="OK">OK</option>
-                <option value="Not OK">Not OK</option>
-            </select>
-            <span asp-validation-for="InteriorCondition"></span>
+                    </div>
+                 
 
 
-            <label asp-for="TyreCondition">Tyre Condition</label>
-            <select asp-for="TyreCondition" class="form-control">
-                <option value="">-- Select Condition --</option>
-                <option value="OK">OK</option>
-                <option value="Not OK">Not OK</option>
-            </select>
-            <span asp-validation-for="TyreCondition"></span>
+            <hr class="pickup-hr" />
 
+            <!-- Photos -->
+            <div class="pickup-card mb-section">
+                <div class="pickup-card-header fw-bold">
+                    Photos
+                </div>
+                <div class="pickup-card-body">
+                    <div class="pickup-row g-gap">
+                        <div class="pickup-col-6">
+                            <label class="pickup-label">Exterior Photo</label>
+                            <input asp-for="ExteriorPhoto" type="file" accept="image/jpeg,image/png" class="pickup-input" />
+                            <span asp-validation-for="ExteriorPhoto" class="pickup-error"></span>
+                        </div>
 
-            <label asp-for="LightsCondition">Lights Condition</label>
-            <select asp-for="LightsCondition" class="form-control">
-                <option value="">-- Select Condition --</option>
-                <option value="OK">OK</option>
-                <option value="Not OK">Not OK</option>
-            </select>
-            <span asp-validation-for="LightsCondition"></span>
+                        <div class="pickup-col-6">
+                            <label class="pickup-label">Interior Photo</label>
+                            <input asp-for="InteriorPhoto" type="file" accept="image/jpeg,image/png" class="pickup-input" />
+                            <span asp-validation-for="InteriorPhoto" class="pickup-error"></span>
+                        </div>
 
+                        <div class="pickup-col-6">
+                            <label class="pickup-label">Odometer Photo</label>
+                            <input asp-for="OdometerPhoto" type="file" accept="image/jpeg,image/png" class="pickup-input" />
+                            <span asp-validation-for="OdometerPhoto" class="pickup-error"></span>
+                        </div>
 
-            <label asp-for="Remarks">Remarks</label>
-            <textarea asp-for="Remarks"></textarea>
-        </div>
+                        <div class="pickup-col-6">
+                            <label class="pickup-label">Fuel Photo</label>
+                            <input asp-for="FuelPhoto" type="file" accept="image/jpeg,image/png" class="pickup-input" />
+                            <span asp-validation-for="FuelPhoto" class="pickup-error"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Photo Upload -->
-        <div class="section-box">
-            <h3>Photos</h3>
+            <div class="pickup-text-end">
+                <button type="submit" class="pickup-btn-primary px-4">
+                    Submit Pickup Record
+                </button>
+            </div>
 
-            <label>Exterior Photo</label>
-            <input asp-for="ExteriorPhoto" type="file" accept="image/jpeg,image/png" />
-            <span asp-validation-for="ExteriorPhoto"></span>
-
-            <label>Interior Photo</label>
-            <input asp-for="InteriorPhoto" type="file" accept="image/jpeg,image/png" />
-            <span asp-validation-for="InteriorPhoto"></span>
-
-            <label>Odometer Photo</label>
-            <input asp-for="OdometerPhoto" type="file" accept="image/jpeg,image/png" />
-            <span asp-validation-for="OdometerPhoto"></span>
-
-            <label>Fuel Photo</label>
-            <input asp-for="FuelPhoto" type="file" accept="image/jpeg,image/png" />
-            <span asp-validation-for="FuelPhoto"></span>
-        </div>
-
-        <button type="submit" class="btn-save">Submit Pickup Record</button>
-
-    </form>
+        </form>
+    </div>
 </div>
 
+<script>
+    let stream;
+
+    function openCamera() {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(s => {
+                stream = s;
+                const video = document.getElementById("video");
+                video.srcObject = stream;
+                video.style.display = "block";
+
+                document.getElementById("snapBtn").style.display = "inline-flex";
+                document.getElementById("closeCamBtn").style.display = "inline-flex";
+                document.getElementById("openCamBtn").style.display = "none";
+            })
+            .catch(err => alert("Camera access denied"));
+    }
+
+    function snapPhoto() {
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const preview = document.getElementById("preview");
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(blob => {
+            const file = new File([blob], "license.png", { type: "image/png" });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            document.getElementById("licenseInput").files = dataTransfer.files;
+
+            preview.src = URL.createObjectURL(blob);
+            preview.style.display = "block";
+
+            closeCamera();
+        });
+    }
+
+    function closeCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        document.getElementById("video").style.display = "none";
+        document.getElementById("snapBtn").style.display = "none";
+        document.getElementById("closeCamBtn").style.display = "none";
+        document.getElementById("openCamBtn").style.display = "inline-flex";
+    }
+</script>

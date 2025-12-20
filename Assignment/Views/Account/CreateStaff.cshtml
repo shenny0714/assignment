@@ -1,0 +1,94 @@
+﻿@model Assignment.ViewModels.RegisterVM
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register New Staff</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            background-color: #f5f6f8;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+        }
+
+        .form-control {
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+        }
+
+            .form-control:focus {
+                background-color: #fff;
+                box-shadow: none;
+                border-color: #009d63;
+            }
+
+        .btn-success {
+            background-color: #009d63;
+            border-color: #009d63;
+        }
+
+            .btn-success:hover {
+                background-color: #008554;
+                border-color: #008554;
+            }
+    </style>
+</head>
+<body>
+    <div class="container mt-5" style="max-width: 550px;">
+        <div class="card p-4">
+            <div class="card-body">
+                <h3 class="text-center fw-bold mb-4" style="color: #333;">Create Staff Account</h3>
+
+                <form asp-action="CreateStaff" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 text-center"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold">Full Name</label>
+                        <input asp-for="Name" class="form-control py-2" placeholder="e.g. John Doe" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-semibold">Email Address</label>
+                        <input asp-for="Email" class="form-control py-2" placeholder="name@example.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label fw-semibold">Phone Number</label>
+                        <input asp-for="PhoneNumber" class="form-control py-2" placeholder="e.g. 0123456789" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="Password" class="form-label fw-semibold">Password</label>
+                            <input asp-for="Password" type="password" class="form-control py-2" placeholder="••••••" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold">Confirm Password</label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control py-2" placeholder="••••••" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success py-2 fw-bold">Create Account</button>
+                        <a href="/Account/AdminStaff" class="btn btn-outline-secondary py-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

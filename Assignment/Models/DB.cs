@@ -216,7 +216,8 @@ public class Rental
     [MaxLength(15)]
     public string Status { get; set; }
     public bool IsDepositRefunded { get; set; }
-    public List<Payment> Payment { get; set; } 
+
+    public List<Payment> Payment { get; set; }
     public PickupRecord PickupRecord { get; set; }
     public ReturnRecord ReturnRecord { get; set; }
 }
@@ -236,7 +237,7 @@ public class Payment
     [Precision(10, 2)]
     public decimal Amount { get; set; }
     public string PaymentType { get; set; }
-    // Deposit / Rental / ExtraCharge / Refund
+    // Full Payment / ExtraCharge / Refund
     public string PaymentMethod { get; set; }
     public string Status { get; set; }
 
