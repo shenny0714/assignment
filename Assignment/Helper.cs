@@ -1,5 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using System.Net;
+using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Net.Mail;
@@ -9,6 +11,30 @@ namespace Assignment;
 
 public class Helper(IWebHostEnvironment en, IConfiguration cf)
 {
+
+    // ──────────────────────────────────────
+    // EMAIL HELPER 
+    // ──────────────────────────────────────
+    public void SendEmail(MailMessage mail)
+    {
+        string user = cf["Smtp:User"] ?? "";
+        string pass = cf["Smtp:Pass"] ?? "";
+        string name = cf["Smtp:Name"] ?? "";
+        string host = cf["Smtp:Host"] ?? "";
+        int port = cf.GetValue<int>("Smtp:Port");
+
+        mail.From = new MailAddress(user, name);
+
+        using var smtp = new SmtpClient
+        {
+            Host = host,
+            Port = port,
+            EnableSsl = true,
+            Credentials = new NetworkCredential(user, pass)
+        };
+
+        smtp.Send(mail);
+    }
     // ------------------------------------------------------------------------
     // Photo Upload
     // ------------------------------------------------------------------------
@@ -52,6 +78,19 @@ public class Helper(IWebHostEnvironment en, IConfiguration cf)
         var path = Path.Combine(en.WebRootPath, folder, fileName);
         if (File.Exists(path)) File.Delete(path);
     }
+<<<<<<< HEAD
+    // ──────────────────────────────────────
+    // SECURITY (Strong Password)
+    // ──────────────────────────────────────
+    public bool IsStrongPassword(string password)
+    {
+        if (string.IsNullOrEmpty(password))
+        {
+            return false;
+        }
+        // Min 8 chars, 1 Upper, 1 Lower, 1 Number, 1 Special Char
+        return Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$");
+=======
 
     public void SendEmail(MailMessage mail)
     {
@@ -76,5 +115,6 @@ public class Helper(IWebHostEnvironment en, IConfiguration cf)
         // TODO
         smtp.Send(mail);
         Console.WriteLine($"{user} {pass} {name} {host} {port}");
+>>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
     }
 }

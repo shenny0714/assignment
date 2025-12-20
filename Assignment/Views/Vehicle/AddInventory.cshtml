@@ -1,0 +1,35 @@
+﻿@model Assignment.Models.Vehicle
+
+@{
+    ViewData["Title"] = "Add Inventory";
+}
+
+<div class="container mt-5">
+    <div class="card shadow" style="max-width: 600px; margin: auto;">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Step 2: Add Vehicle to Inventory</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="AddInventory">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Select Car Model</label>
+                    <select asp-for="ModelId" class="form-select" asp-items="ViewBag.ModelId">
+                        <option value="">-- Choose a Model --</option>
+                    </select>
+                    <small class="text-muted">Select the model you just created.</small>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="PlateNumber" class="form-label fw-bold">Plate Number</label>
+                    <input asp-for="PlateNumber" class="form-control" placeholder="e.g. WAA 1234" required />
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success btn-lg">Add to Inventory</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

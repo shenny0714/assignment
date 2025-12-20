@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Assignment.Models.VehicleCategory>
+
+@{
+
+    ViewData["Title"] = "Vehicle Categories";
+}
+<link rel="stylesheet" href="~/css/brand.css" />
+<div class="product-management-container">
+    <div class="top-bar">
+        <div class="d-flex align-items-center gap-2">
+            <a asp-controller="Vehicle" asp-action="Index" class="btn-back">← Back</a>
+            <p></p>
+            <h2 class="mb-0">Vehicle Categories</h2>
+        </div>
+    </div>
+
+    <table class="product-table">
+        <thead>
+            <tr>
+                <th>Category ID</th>
+                <th>Category Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@item.CategoryId</strong>
+                        </td>
+
+                        <td>
+                            @item.CategoryName
+                        </td>
+
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.CategoryId" class="btn-edit">Edit</a>
+
+                            <form asp-action="Delete" asp-route-id="@item.CategoryId" method="post" style="display:inline" onsubmit="return confirm('Are you sure you want to delete @item.CategoryName?');">
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" style="text-align:center; color:#999;">
+                        No categories found. Click "Add New Category" to create one.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <script>
+        alert('@TempData["Success"]');
+    </script>
+}

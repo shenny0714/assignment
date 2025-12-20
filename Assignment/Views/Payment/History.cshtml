@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Assignment.Models.Payment>
+@{
+    ViewData["Title"] = "Payment History";
+    Layout = "_Layout";
+}
+
+<link rel="stylesheet" href="~/css/payment.css" />
+
+<div class="pay-history-wrap">
+
+    <div class="pay-history-title">
+        Payment History
+    </div>
+
+    <div class="pay-table-wrapper">
+        <table class="pay-history-table">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Date Paid</th>
+                    <th>Car Model</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                    <th>Receipt</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int rowNumber = 1;
+                }
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(rowNumber++)</td>
+
+                        <td>@item.Date.ToString("dd MMM yyyy, HH:mm")</td>
+
+                        <td>
+                            Rental:
+                            @(item.Rental?.Model?.Brand?.BrandName ?? "")
+                            @(item.Rental?.Model?.ModelName ?? "Unknown")
+                        </td>
+
+                        <td>
+                            <span class="pay-method">
+                                @item.PaymentMethod
+                            </span>
+                        </td>
+
+                        <td class="pay-amount">
+                            RM @item.Amount.ToString("N2")
+                        </td>
+
+                        <td>
+                            <a class="pay-receipt-link"
+                               asp-controller="Rental"
+                               asp-action="Detail"
+                               asp-route-id="@item.RentalId">
+                                View Receipt
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="pay-empty">
+            No payment records found.
+        </div>
+    }
+
+</div>

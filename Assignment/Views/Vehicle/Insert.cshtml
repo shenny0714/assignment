@@ -1,0 +1,127 @@
+﻿@model Assignment.ViewModels.VehicleViewModel
+
+@{
+    ViewData["Title"] = "Insert Car Model";
+}
+<link rel="stylesheet" href="~/css/createVehicle.css" />
+<div class="container mt-4">
+   <div class="card shadow border-0">
+        <div class="card-body p-4">
+
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+               
+                <div>
+                    <a asp-action="Index" class="btn-back">← Back</a>
+                    <h2>Add New Car Model</h2>
+                </div>
+
+                <div class="row">
+                    
+                    <div class="col-md-6">
+                        <h5 class="text-muted mb-3">Basic Information</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="ModelName" class="form-label fw-bold"></label>
+                            <input asp-for="ModelName" class="form-control" placeholder="e.g. Civic, Camry, Myvi" />
+                            <span asp-validation-for="ModelName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Brand</label>
+                            <div class="card p-2 border bg-light" style="max-height: 250px; overflow-y: auto;">
+                                @if (Model.AvailableBrands != null)
+                                {
+                                    foreach (var brand in Model.AvailableBrands)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio"
+                                                   name="SelectedBrandId"
+                                                   value="@brand.BrandId"
+                                                   id="brand_@brand.BrandId"
+                                                   @(Model.SelectedBrandId == brand.BrandId ? "checked" : "")>
+                                            <label class="form-check-label" for="brand_@brand.BrandId">
+                                                @brand.BrandName
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <span asp-validation-for="SelectedBrandId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Category</label>
+                            <div class="card p-2 border bg-light">
+                                @if (Model.AvailableCategories != null)
+                                {
+                                    foreach (var cat in Model.AvailableCategories)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio"
+                                                   name="SelectedCategoryId"
+                                                   value="@cat.CategoryId"
+                                                   id="cat_@cat.CategoryId"
+                                                   @(Model.SelectedCategoryId == cat.CategoryId ? "checked" : "")>
+                                            <label class="form-check-label" for="cat_@cat.CategoryId">
+                                                @cat.CategoryName
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <span asp-validation-for="SelectedCategoryId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h5 class="text-muted mb-3">Media & Details</h5>
+
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+
+                                <div class="mb-3">
+                                    <label asp-for="PhotoFront" class="form-label fw-bold"></label>
+                                    <input asp-for="PhotoFront" type="file" class="form-control" accept="image/*" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="PhotoSide" class="form-label fw-bold"></label>
+                                    <input asp-for="PhotoSide" type="file" class="form-control" accept="image/*" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="PhotoBack" class="form-label fw-bold"></label>
+                                    <input asp-for="PhotoBack" type="file" class="form-control" accept="image/*" />
+                                </div>
+
+                                <hr class="my-4">
+
+                                <div class="mb-3">
+                                    <label asp-for="Description" class="form-label fw-bold"></label>
+                                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter vehicle description..."></textarea>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label asp-for="Price" class="form-label fw-bold"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white fw-bold">RM</span>
+                                        <input asp-for="Price" class="form-control form-control-lg" type="number" step="0.01" placeholder="0.00" />
+                                        <span class="input-group-text bg-white">/ day</span>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                                    <button type="submit" class="btn btn-primary px-5 fw-bold">Create Car Model</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+            </form>
+        </div>
+    </div>
+</div>

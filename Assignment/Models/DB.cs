@@ -96,9 +96,14 @@ public class Customer : User
     [Key, MaxLength(8)]
     public string CustomerId { get; set; }
 
-    public string PhotoURL { get; set; }
+    public string? PhotoURL { get; set; }
 
     public List<Rental> Rentals { get; set; } = [];
+
+    public int LoginRetryCount { get; set; } = 0;
+    public DateTime? LockedUntil { get; set; }
+    public string? ResetToken { get; set; }
+    public DateTime? ResetTokenExpiry { get; set; }
 }
 
 //
@@ -143,7 +148,7 @@ public class CarModel
 {
     [Key]
     public int ModelId { get; set; }
-
+    [Required]
     public int BrandId { get; set; }
     public Brand Brand { get; set; }
 
@@ -172,11 +177,13 @@ public class Vehicle
 
     [MaxLength(50)]
     public string PlateNumber { get; set; }
-
-    public int ModelId { get; set; }
-    public CarModel Model { get; set; }
-
     public bool Available { get; set; }
+    public int ModelId { get; set; }
+    public CarModel? Model { get; set; }
+    //add
+    public string? frontImage { get; set; }
+    public string? sideImage { get; set; }
+    public string? backImage { get; set; }
 
 }
 
@@ -191,7 +198,6 @@ public class Rental
 {
     [Key, MaxLength(8)]
     public string RentalId { get; set; }
-
     public string CustomerId { get; set; }
     public Customer Customer { get; set; }
 
@@ -258,7 +264,7 @@ public class PickupRecord
     public DateTime PickupDateTime { get; set; }
 
     public string CustomerDrivingLisence { get; set; }
-    public string VehicleId { get; set; } 
+    public string VehicleId { get; set; }
     public Vehicle Vehicle { get; set; }
 
     [Range(1,100000)]

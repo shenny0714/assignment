@@ -408,6 +408,7 @@ body.dark-mode .btn-social {
     transform: translate(-50%, 0);
     top: -100px;
     opacity: 0;
+    z-index: 9999;
 }
 
 .info:not(:empty) {

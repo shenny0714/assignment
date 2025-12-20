@@ -41,7 +41,7 @@ public class PickupViewModel
     [Required]
     [RegularExpression(@"VH\d{4}", ErrorMessage = "Invalid {0}.")]
     public string VehicleId { get; set; }
-    
+
     [Required]
 
     [Range(1, int.MaxValue, ErrorMessage = "Odometer must be positive.")]
@@ -227,6 +227,7 @@ public class PaymentVM
     [Required]
     public string RentalId { get; set; }
 
+    public string CustomerName { get; set; }
     public string CarModel { get; set; }
 
     [Display(Name = "Payment Date")]
@@ -257,6 +258,8 @@ public class PaymentVM
     [Display(Name = "CVV")]
     [RegularExpression(@"\d{3}", ErrorMessage = "Invalid CVV")]
     public string? CVV { get; set; }
+
+    public string CustomerName { get; set; }
 }
 
 
@@ -264,15 +267,15 @@ public class PaymentVM
 // LOGIN 
 // -----------------------------
 public class LoginVM
-    {
-        [Required, EmailAddress]
-        public string Email { get; set; }
+{
+    [Required, EmailAddress]
+    public string Email { get; set; }
 
-        [Required]
-        public string Password { get; set; }
+    [Required]
+    public string Password { get; set; }
 
-        public bool RememberMe { get; set; }
-    }
+    public bool RememberMe { get; set; }
+}
 
 // -----------------------------
 // REGISTER
@@ -286,9 +289,9 @@ public class RegisterVM
     public string Email { get; set; }
 
     [Required, Phone]
-    [StringLength(20)]
-    [RegularExpression(@"^01\d-\d{7,8}$", ErrorMessage = "Invalid format (e.g. 012-3456789).")]
-    public string PhoneNumber { get; set; }
+    [StringLength(11, MinimumLength = 10, ErrorMessage = "Phone number must be 10 or 11 digits.")]
+    [RegularExpression(@"^60\d{8,9}$", ErrorMessage = "Invalid format. Use digits only (e.g. 60123456789).")]
+    public string Phone { get; set; }
 
     [Required, MinLength(5)]
     public string Password { get; set; }
@@ -342,10 +345,38 @@ public class EditUserVM
     public string Phone { get; set; }
     public string UserType { get; set; } // "Staff" or "Customer"
 
+<<<<<<< HEAD
+
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm Password")]
+        [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+        public string? ConfirmNewPassword { get; set; }
+    }
+=======
     [DataType(DataType.Password)]
     [Display(Name = "Confirm Password")]
     [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
     public string? ConfirmNewPassword { get; set; }
+}
+>>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
+
+
+public class ResetPasswordVM
+{
+    [Required]
+    public string Token { get; set; }
+
+    [Required]
+    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters long.")]
+    [DataType(DataType.Password)]
+    [Display(Name = "New Password")]
+    public string NewPassword { get; set; }
+
+    [DataType(DataType.Password)]
+    [Display(Name = "Confirm Password")]
+    [Compare("NewPassword", ErrorMessage = "The password and confirmation password do not match.")]
+    public string ConfirmPassword { get; set; }
 }
 
 // -----------------------------

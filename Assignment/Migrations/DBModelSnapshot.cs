@@ -444,6 +444,15 @@ namespace Assignment.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("backImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("frontImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("sideImage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("VehicleId");
 
                     b.HasIndex("ModelId");

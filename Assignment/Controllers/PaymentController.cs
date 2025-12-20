@@ -3,7 +3,6 @@ using Assignment.ViewModels;
 using iText.IO.Font.Constants;
 using iText.Kernel.Colors;
 using iText.Kernel.Font;
-// NEW NAMESPACES FOR PDF
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Borders;
@@ -21,6 +20,7 @@ using System.Net.Mime;
 
 namespace Assignment.Controllers;
 
+
 [Authorize(Roles = "Customer")]
 public class PaymentController : Controller
 {
@@ -34,16 +34,27 @@ public class PaymentController : Controller
         StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
     }
 
-    // [GET] MakePayment ... (Keep your existing GET method exactly the same)
+    // =========================
+    // MAKE PAYMENT (GET)
+    // =========================
     [HttpGet]
-    public IActionResult MakePayment(int modelId, DateTime rentalDate, DateTime returnDate, decimal totalPrice, decimal deposit)
+    public IActionResult MakePayment(
+        int modelId,
+        DateTime rentalDate,
+        DateTime returnDate,
+        decimal totalPrice,
+        decimal deposit)
     {
-        var model = _db.CarModels.Find(modelId);
-        if (model == null) return RedirectToAction("Index", "Home");
+        var model = _db.CarModels
+            .Include(m => m.Brand)
+            .FirstOrDefault(m => m.ModelId == modelId);
+
+        if (model == null)
+            return RedirectToAction("Index", "Home");
 
         var vm = new PaymentVM
         {
-            CarModel = model.ModelName,
+            CarModel = $"{model.Brand?.BrandName} {model.ModelName}",
             TotalRentalPrice = totalPrice,
             DepositRequired = deposit,
             Amount = totalPrice + deposit
@@ -56,7 +67,9 @@ public class PaymentController : Controller
         return View(vm);
     }
 
-    // [POST] MakePayment
+    // =========================
+    // MAKE PAYMENT (POST)
+    // =========================
     [HttpPost]
     public IActionResult MakePayment(
         int modelId,
@@ -64,188 +77,174 @@ public class PaymentController : Controller
         DateTime returnDate,
         decimal totalPrice,
         decimal deposit,
-        string paymentMethod) // Receives "Stripe" or "StripeFPX"
+        string paymentMethod)
     {
-        var model = _db.CarModels.Find(modelId);
-        if (model == null) return RedirectToAction("Index", "Home");
+        var model = _db.CarModels
+            .Include(m => m.Brand)
+            .FirstOrDefault(m => m.ModelId == modelId);
+
+        if (model == null)
+            return RedirectToAction("Index", "Home");
 
         decimal grandTotal = totalPrice + deposit;
         long amountInCents = (long)(grandTotal * 100);
-        var domain = "https://localhost:7102";
+        string domain = "https://localhost:7102";
 
-        // 1. Determine Payment Type
-        List<string> paymentTypes;
-        if (paymentMethod == "StripeFPX")
-        {
-            paymentTypes = new List<string> { "fpx" };
-        }
-        else
-        {
-            // Default to Card if "Stripe" or anything else
-            paymentTypes = new List<string> { "card" };
-        }
+        List<string> paymentTypes =
+            paymentMethod == "StripeFPX"
+                ? new() { "fpx" }
+                : new() { "card" };
 
-        // 2. Create Stripe Session
         var options = new SessionCreateOptions
         {
             PaymentMethodTypes = paymentTypes,
-            LineItems = new List<SessionLineItemOptions>
-        {
-            new SessionLineItemOptions
+            LineItems = new()
             {
-                PriceData = new SessionLineItemPriceDataOptions
+                new SessionLineItemOptions
                 {
-                    UnitAmount = amountInCents,
-                    Currency = "myr",
-                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    PriceData = new SessionLineItemPriceDataOptions
                     {
-                        Name = $"Car Rental: {model.ModelName}",
-                        Description = "Deposit + Rental Fee",
+                        UnitAmount = amountInCents,
+                        Currency = "myr",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = $"Car Rental: {model.Brand?.BrandName} {model.ModelName}",
+                            Description = "Rental + Deposit"
+                        }
                     },
-                },
-                Quantity = 1,
+                    Quantity = 1
+                }
             },
-        },
             Mode = "payment",
-
-            // 3. IMPORTANT: Pass 'paymentMethod' to the Success URL here!
             SuccessUrl = domain + $"/Payment/Success?modelId={modelId}&rentalDate={rentalDate:yyyy-MM-dd}&returnDate={returnDate:yyyy-MM-dd}&amount={grandTotal}&method={paymentMethod}",
-
-            CancelUrl = domain + $"/Payment/MakePayment?modelId={modelId}&rentalDate={rentalDate:yyyy-MM-dd}&returnDate={returnDate:yyyy-MM-dd}&totalPrice={totalPrice}&deposit={deposit}",
+            CancelUrl = domain + $"/Payment/MakePayment?modelId={modelId}&rentalDate={rentalDate:yyyy-MM-dd}&returnDate={returnDate:yyyy-MM-dd}&totalPrice={totalPrice}&deposit={deposit}"
         };
 
         var service = new SessionService();
         Session session = service.Create(options);
+
         return Redirect(session.Url);
     }
 
-    // ============================================================
-    // 3. SUCCESS HANDLER (UPDATED)
-    // ============================================================
-    public IActionResult Success(int modelId, DateTime rentalDate, DateTime returnDate, decimal amount, string method)
+    // =========================
+    // SUCCESS
+    // =========================
+    public IActionResult Success(
+        int modelId,
+        DateTime rentalDate,
+        DateTime returnDate,
+        decimal amount,
+        string method)
     {
-        if (!User.Identity.IsAuthenticated) return RedirectToAction("Login", "Account");
-
-        string? userIdentity = User.Identity?.Name;
-        var customer = _db.Customers.FirstOrDefault(c => c.Email == userIdentity || c.Name == userIdentity);
+        string userEmail = User.Identity!.Name!;
+        var customer = _db.Customers
+            .FirstOrDefault(c => c.Email == userEmail || c.Name == userEmail);
 
         if (customer == null)
+            return RedirectToAction("Login", "Account");
+
+        string rentalId = GenerateRentalId();
+        string paymentId = GeneratePaymentId();
+
+        decimal rentalFee = Math.Round(amount / 1.2m, 2);
+        decimal deposit = amount - rentalFee;
+
+        var rental = new Rental
         {
-            TempData["Info"] = "User not found.";
-            return RedirectToAction("Index", "Home");
-        }
+            RentalId = rentalId,
+            CustomerId = customer.CustomerId,
+            ModelId = modelId,
+            RentalDate = DateTime.Now,
+            PickupDate = rentalDate,
+            ReturnDate = returnDate,
+            TotalPrice = rentalFee,
+            DepositAmount = deposit,
+            Status = "Booked",
+            Customer = customer,
+            Payment = new List<Payment>()
+        };
 
-        string loggedInCustomerId = customer.CustomerId;
-        string customerEmail = customer.Email;
-
-        // 1. DETERMINE PAYMENT METHOD LABEL
-        string nicePaymentMethod = "Credit Card"; // Default
-        if (method == "StripeFPX")
+        var payment = new Payment
         {
-            nicePaymentMethod = "Online Banking";
-        }
-        else if (method == "Stripe")
-        {
-            nicePaymentMethod = "Credit Card";
-        }
+            PaymentId = paymentId,
+            RentalId = rentalId,
+            Amount = amount,
+            PaymentType = "Full Payment",
+            PaymentMethod = method == "StripeFPX" ? "Online Banking" : "Credit Card",
+            Status = "Successful",
+            Date = DateTime.Now
+        };
 
-        try
-        {
-            string newRentalId = GenerateRentalId();
-            string newPaymentId = GeneratePaymentId();
+        // 🔥 CRITICAL FIX
+        rental.Payment.Add(payment);
 
-            decimal rentalFee = Math.Round(amount / 1.2m, 2);
-            decimal depositAmt = amount - rentalFee;
+        _db.Rentals.Add(rental);
+        _db.SaveChanges();
 
-            var rental = new Rental
-            {
-                RentalId = newRentalId,
-                CustomerId = customer.CustomerId,
-                ModelId = modelId,
-                RentalDate = DateTime.Now,
-                PickupDate = rentalDate,
-                ReturnDate = returnDate,
-                DepositAmount = depositAmt,
-                TotalPrice = rentalFee,
-                Status = "Booked"
-            };
+        // EMAIL + PDF
+        var model = _db.CarModels
+            .Include(m => m.Brand)
+            .FirstOrDefault(m => m.ModelId == modelId);
 
-            var payment = new Payment
-            {
-                PaymentId = newPaymentId,
-                RentalId = newRentalId,
-                Amount = amount,
-                PaymentType = "Full Payment",
+        rental.Model = model;
 
-                // 2. SAVE THE CORRECT NAME TO DATABASE
-                PaymentMethod = nicePaymentMethod,
+        string domain = $"{Request.Scheme}://{Request.Host}";
+        string pickupUrl = $"{domain}/PickUpReturn/Pickup?RentalId={rentalId}";
+        byte[] qr = GenerateQRCode(pickupUrl);
+        byte[] pdf = GeneratePdfReceipt(rental, qr);
 
-                Status = "Successful",
-                Date = DateTime.Now
-            };
+        SendEmail(customer.Email, rental, qr, pdf);
 
-            _db.Rentals.Add(rental);
-            _db.Payments.Add(payment);
-            _db.SaveChanges();
-
-            // === EMAIL GENERATION START ===
-            try
-            {
-                string domain = $"{Request.Scheme}://{Request.Host}";
-                string pickupUrl = $"{domain}/PickUpReturn/Pickup?RentalId={newRentalId}"; 
-                byte[] qrBytes = GenerateQRCode(pickupUrl);
-                var carModel = _db.CarModels.Find(modelId);
-                string carName = carModel != null ? carModel.ModelName : "Unknown Car";
-                byte[] pdfBytes = GeneratePdfReceipt(rental, qrBytes);
-                SendEmail(customerEmail, rental, qrBytes, pdfBytes);
-            }
-            catch (Exception emailEx)
-            {
-                Console.WriteLine("Email/PDF Error: " + emailEx.Message);
-            }
-            // === EMAIL GENERATION END ===
-
-            TempData["Info"] = "Payment Successful! Receipt has been sent to your email.";
-            return RedirectToAction("Detail", "Rental", new { id = newRentalId });
-        }
-        catch (Exception ex)
-        {
-            TempData["Info"] = "DB Error: " + ex.Message;
-            return RedirectToAction("Index", "Home");
-        }
+        TempData["Info"] = "Payment successful. Receipt sent to email.";
+        return RedirectToAction("Detail", "Rental", new { id = rentalId });
     }
 
-    // ============================================================
-    // HELPERS
-    // ============================================================
+    // =========================
+    // PAYMENT HISTORY
+    // =========================
+    public IActionResult History()
+    {
+        var email = User.Identity!.Name!;
+        var customer = _db.Customers
+            .FirstOrDefault(c => c.Email == email || c.Name == email);
 
+        var payments = _db.Payments
+            .Include(p => p.Rental)
+                .ThenInclude(r => r.Model)
+                    .ThenInclude(m => m.Brand)
+            .Where(p => p.Rental.CustomerId == customer!.CustomerId)
+            .OrderByDescending(p => p.Date)
+            .ToList();
+
+        return View(payments);
+    }
+
+    // =========================
+    // HELPERS
+    // =========================
     private string GenerateRentalId()
     {
         string? max = _db.Rentals.Max(r => r.RentalId);
-        if (max == null) return "RN0001";
-        int n = int.Parse(max.Substring(2));
-        return $"RN{(n + 1):D4}";
+        return max == null
+            ? "RN0001"
+            : $"RN{(int.Parse(max[2..]) + 1):D4}";
     }
 
     private string GeneratePaymentId()
     {
         string? max = _db.Payments.Max(p => p.PaymentId);
-        if (max == null) return "PM0001";
-        int n = int.Parse(max.Substring(2));
-        return $"PM{(n + 1):D4}";
+        return max == null
+            ? "PM0001"
+            : $"PM{(int.Parse(max[2..]) + 1):D4}";
     }
 
     private byte[] GenerateQRCode(string url)
     {
-        QRCodeGenerator qrGenerator = new QRCodeGenerator();
-        QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
-        PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
-        return qrCode.GetGraphic(20);
+        QRCodeGenerator gen = new();
+        var data = gen.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
+        return new PngByteQRCode(data).GetGraphic(20);
     }
 
-    // ------------------------------------------------------------
-    // NEW: Generate PDF Receipt using iText7
-    // ------------------------------------------------------------
     private byte[] GeneratePdfReceipt(Assignment.Models.Rental rental, byte[] qrBytes)
     {
         using (MemoryStream stream = new MemoryStream())
@@ -254,34 +253,26 @@ public class PaymentController : Controller
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 
-            // 1. Setup Fonts & Colors (Matching Bootstrap)
             PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
             PdfFont normalFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA);
 
-            Color primaryColor = new DeviceRgb(13, 110, 253); // Bootstrap Primary Blue
-            Color successColor = new DeviceRgb(25, 135, 84);  // Bootstrap Success Green
-            Color mutedColor = DeviceGray.GRAY;               // Bootstrap Muted
-            Color lightBg = new DeviceRgb(248, 249, 250);     // Light Gray Background
+            Color primaryColor = new DeviceRgb(13, 110, 253);
+            Color successColor = new DeviceRgb(25, 135, 84);
+            Color mutedColor = DeviceGray.GRAY;
+            Color lightBg = new DeviceRgb(248, 249, 250);
 
-            // 2. HEADER SECTION (Matches .card-header)
+            // HEADER
             Table headerTable = new Table(UnitValue.CreatePercentArray(new float[] { 1, 1 })).UseAllAvailableWidth();
 
-            // Left: Title & Ref
             Cell leftHeader = new Cell().SetBorder(Border.NO_BORDER);
-            leftHeader.Add(new Paragraph("RECEIPT")
-                .SetFont(boldFont).SetFontSize(18));
-            leftHeader.Add(new Paragraph($"Ref: #{rental.RentalId}")
-                .SetFont(normalFont).SetFontColor(mutedColor).SetFontSize(10));
+            leftHeader.Add(new Paragraph("RECEIPT").SetFont(boldFont).SetFontSize(18));
+            leftHeader.Add(new Paragraph($"Ref: #{rental.RentalId}").SetFont(normalFont).SetFontColor(mutedColor).SetFontSize(10));
 
-            // Right: Status & Date
             Cell rightHeader = new Cell().SetBorder(Border.NO_BORDER).SetTextAlignment(TextAlignment.RIGHT);
-
-            // Status Badge (Simulated with Green Text)
             rightHeader.Add(new Paragraph(rental.Status.ToUpper())
                 .SetFont(boldFont).SetFontColor(ColorConstants.WHITE)
-                .SetBackgroundColor(successColor) // Green Background like Badge
+                .SetBackgroundColor(successColor)
                 .SetPadding(3).SetFontSize(10));
-
             rightHeader.Add(new Paragraph(rental.RentalDate.ToString("dd MMM yyyy, hh:mm tt"))
                 .SetFont(normalFont).SetFontColor(mutedColor).SetFontSize(9).SetMarginTop(2));
 
@@ -289,51 +280,39 @@ public class PaymentController : Controller
             headerTable.AddCell(rightHeader);
             document.Add(headerTable);
 
-            document.Add(new Paragraph("\n")); // Spacing
+            document.Add(new Paragraph("\n"));
 
-            // 3. CUSTOMER SECTION (Matches .row mb-5)
-            document.Add(new Paragraph("BILLED TO")
-                .SetFont(boldFont).SetFontSize(8).SetFontColor(mutedColor));
-            document.Add(new Paragraph(rental.Customer?.Name ?? "Valued Customer")
-                .SetFont(boldFont).SetFontSize(12));
-            document.Add(new Paragraph("Valued Customer")
-                .SetFont(normalFont).SetFontSize(10).SetFontColor(mutedColor));
+            // CUSTOMER
+            document.Add(new Paragraph("BILLED TO").SetFont(boldFont).SetFontSize(8).SetFontColor(mutedColor));
+            document.Add(new Paragraph(rental.Customer?.Name ?? "Valued Customer").SetFont(boldFont).SetFontSize(12));
+            document.Add(new Paragraph("Valued Customer").SetFont(normalFont).SetFontSize(10).SetFontColor(mutedColor));
 
             document.Add(new Paragraph("\n"));
 
-            // 4. CAR SUMMARY BOX (Matches .car-summary-box)
-            // We create a table with a light gray background to mimic the box
+            // CAR SUMMARY BOX
             Table carBox = new Table(1).UseAllAvailableWidth();
             Cell carCell = new Cell();
-            carCell.SetBackgroundColor(lightBg); // Light Gray BG
-            carCell.SetBorder(new SolidBorder(DeviceGray.GRAY, 0.5f)); // Thin border
+            carCell.SetBackgroundColor(lightBg);
+            carCell.SetBorder(new SolidBorder(DeviceGray.GRAY, 0.5f));
             carCell.SetPadding(15);
 
-            // Calculate Days
             int days = (rental.ReturnDate - rental.PickupDate).Days;
             if (days < 1) days = 1;
 
-            // Content inside the box
-            string carTitle = $"Model: {rental.Model?.ModelName ?? "Unknown"}";
+            // UPDATED: Added Brand Name here
+            string carTitle = $"Car: {rental.Model?.Brand?.BrandName ?? ""} {rental.Model?.ModelName ?? "Unknown"}";
 
-            carCell.Add(new Paragraph(carTitle)
-                .SetFont(boldFont).SetFontSize(12).SetMarginBottom(5));
+            carCell.Add(new Paragraph(carTitle).SetFont(boldFont).SetFontSize(12).SetMarginBottom(5));
+            carCell.Add(new Paragraph("RENTAL PERIOD").SetFont(boldFont).SetFontSize(8).SetFontColor(mutedColor));
 
-            carCell.Add(new Paragraph("RENTAL PERIOD")
-                .SetFont(boldFont).SetFontSize(8).SetFontColor(mutedColor));
-
-            // Use a nested table for the dates/icons layout
             Table dateTable = new Table(UnitValue.CreatePercentArray(new float[] { 1, 3 })).UseAllAvailableWidth();
 
-            // Pick-up
             dateTable.AddCell(new Cell().Add(new Paragraph("Pick-up:").SetFont(boldFont).SetFontSize(10)).SetBorder(Border.NO_BORDER));
             dateTable.AddCell(new Cell().Add(new Paragraph(rental.PickupDate.ToString("dd MMM yyyy")).SetFont(normalFont).SetFontSize(10)).SetBorder(Border.NO_BORDER));
 
-            // Return
             dateTable.AddCell(new Cell().Add(new Paragraph("Return:").SetFont(boldFont).SetFontSize(10)).SetBorder(Border.NO_BORDER));
             dateTable.AddCell(new Cell().Add(new Paragraph(rental.ReturnDate.ToString("dd MMM yyyy")).SetFont(normalFont).SetFontSize(10)).SetBorder(Border.NO_BORDER));
 
-            // Duration (Blue Text)
             dateTable.AddCell(new Cell().Add(new Paragraph("Duration:").SetFont(boldFont).SetFontSize(10).SetFontColor(primaryColor)).SetBorder(Border.NO_BORDER));
             dateTable.AddCell(new Cell().Add(new Paragraph($"{days} Day(s)").SetFont(boldFont).SetFontSize(10).SetFontColor(primaryColor)).SetBorder(Border.NO_BORDER));
 
@@ -343,28 +322,22 @@ public class PaymentController : Controller
 
             document.Add(new Paragraph("\n"));
 
-            // 5. PRICE TABLE (Matches .table-responsive)
+            // PRICE TABLE
             Table priceTable = new Table(UnitValue.CreatePercentArray(new float[] { 3, 1 })).UseAllAvailableWidth();
 
-            // Header Row
             priceTable.AddHeaderCell(new Cell().Add(new Paragraph("DESCRIPTION").SetFont(boldFont).SetFontSize(9).SetFontColor(mutedColor)).SetBorder(Border.NO_BORDER));
             priceTable.AddHeaderCell(new Cell().Add(new Paragraph("AMOUNT (RM)").SetFont(boldFont).SetFontSize(9).SetFontColor(mutedColor)).SetTextAlignment(TextAlignment.RIGHT).SetBorder(Border.NO_BORDER));
 
-            // Divider Line
             priceTable.AddCell(new Cell(1, 2).SetBorderBottom(new SolidBorder(DeviceGray.GRAY, 0.5f)).SetBorderLeft(Border.NO_BORDER).SetBorderRight(Border.NO_BORDER).SetBorderTop(Border.NO_BORDER));
 
-            // Item 1: Rental Charges
             priceTable.AddCell(new Cell().Add(new Paragraph($"Rental Charges ({days} Days)").SetFont(normalFont).SetFontSize(10)).SetBorder(Border.NO_BORDER).SetPaddingTop(10));
             priceTable.AddCell(new Cell().Add(new Paragraph(rental.TotalPrice.ToString("N2")).SetFont(boldFont).SetFontSize(10)).SetTextAlignment(TextAlignment.RIGHT).SetBorder(Border.NO_BORDER).SetPaddingTop(10));
 
-            // Item 2: Security Deposit
             priceTable.AddCell(new Cell().Add(new Paragraph("Security Deposit (Refundable)").SetFont(normalFont).SetFontSize(10).SetFontColor(mutedColor)).SetBorder(Border.NO_BORDER));
             priceTable.AddCell(new Cell().Add(new Paragraph(rental.DepositAmount.ToString("N2")).SetFont(normalFont).SetFontSize(10).SetFontColor(mutedColor)).SetTextAlignment(TextAlignment.RIGHT).SetBorder(Border.NO_BORDER));
 
-            // Footer Row (Total Paid)
             decimal totalPaid = rental.TotalPrice + rental.DepositAmount;
 
-            // Add a line before total
             Cell lineCell = new Cell(1, 2).SetBorder(Border.NO_BORDER);
             lineCell.Add(new LineSeparator(new iText.Kernel.Pdf.Canvas.Draw.SolidLine(1f)).SetMarginTop(10));
             priceTable.AddCell(lineCell);
@@ -373,16 +346,13 @@ public class PaymentController : Controller
             priceTable.AddCell(new Cell().Add(new Paragraph($"RM {totalPaid:N2}").SetFont(boldFont).SetFontSize(14).SetFontColor(successColor)).SetTextAlignment(TextAlignment.RIGHT).SetBorder(Border.NO_BORDER).SetPaddingTop(5));
 
             document.Add(priceTable);
-
             document.Add(new Paragraph("\n\n"));
 
-            // 6. QR CODE SECTION
             if (qrBytes != null && qrBytes.Length > 0)
             {
                 try
                 {
-                    var qrImage = new iText.Layout.Element.Image(
-                        iText.IO.Image.ImageDataFactory.Create(qrBytes));
+                    var qrImage = new iText.Layout.Element.Image(iText.IO.Image.ImageDataFactory.Create(qrBytes));
                     qrImage.SetWidth(100);
                     qrImage.SetHorizontalAlignment(HorizontalAlignment.CENTER);
                     document.Add(qrImage);
@@ -399,25 +369,20 @@ public class PaymentController : Controller
         }
     }
 
-
-    // ------------------------------------------------------------
-    // Send Email with Attachment
-    // ------------------------------------------------------------
     private void SendEmail(string userEmail, Assignment.Models.Rental rental, byte[] qrCodeBytes, byte[] pdfBytes)
     {
-        // 1. Setup Configuration
         string host = _configuration["Smtp:Host"] ?? "smtp.gmail.com";
         int port = int.Parse(_configuration["Smtp:Port"] ?? "587");
         string senderEmail = _configuration["Smtp:User"] ?? "waixianho@gmail.com";
         string senderPass = _configuration["Smtp:Pass"] ?? "hmor krvp syey vewp";
         string senderName = _configuration["Smtp:Name"] ?? "Car Rental Admin";
 
-        // 2. Prepare Data for the Email View
         int days = (rental.ReturnDate - rental.PickupDate).Days;
         if (days < 1) days = 1;
         decimal totalPaid = rental.TotalPrice + rental.DepositAmount;
-        string brand = rental.Model?.Brand?.BrandName ?? "Unknown";
-        string model = rental.Model?.ModelName ?? "Unknown";
+
+        // UPDATED: Combined String for Email
+        string carFullTitle = $"{rental.Model?.Brand?.BrandName ?? ""} {rental.Model?.ModelName ?? "Unknown"}";
         string customerName = rental.Customer?.Name ?? "Valued Customer";
 
         string body = $@"
@@ -469,7 +434,7 @@ public class PaymentController : Controller
                             </td>
                             <td>
                                 <div style='font-size:16px; font-weight:bold; color:#0d6efd; margin-bottom:5px;'>
-                                     {model}
+                                     {carFullTitle}
                                 </div>
                                 <div style='font-size:13px; color:#555;'>
                                     <strong>Pick-up:</strong> {rental.PickupDate:dd MMM yyyy}<br>
@@ -520,7 +485,6 @@ public class PaymentController : Controller
     </body>
     </html>";
 
-        // 4. Send the Email
         var fromAddress = new MailAddress(senderEmail, senderName);
         var toAddress = new MailAddress(userEmail);
 
@@ -539,10 +503,8 @@ public class PaymentController : Controller
             message.Subject = $"Booking Receipt";
             message.IsBodyHtml = true;
 
-            // A. Create the View
             var htmlView = AlternateView.CreateAlternateViewFromString(body, null, MediaTypeNames.Text.Html);
 
-            // B. Embed the QR Code (so 'cid:QRCodeImage' works)
             if (qrCodeBytes != null)
             {
                 var qrResource = new LinkedResource(new MemoryStream(qrCodeBytes), MediaTypeNames.Image.Jpeg);
@@ -552,7 +514,6 @@ public class PaymentController : Controller
 
             message.AlternateViews.Add(htmlView);
 
-            // C. Attach the PDF
             if (pdfBytes != null)
             {
                 var pdfStream = new MemoryStream(pdfBytes);

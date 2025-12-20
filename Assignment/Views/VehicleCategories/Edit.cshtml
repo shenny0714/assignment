@@ -1,0 +1,32 @@
+﻿@model Assignment.Models.VehicleCategory
+
+@{
+    ViewData["Title"] = "Edit Category";
+}
+
+<div class="product-management-container">
+    <div class="top-bar">
+        <h2>Edit Vehicle Category</h2>
+        <div class="too-bar-btn">
+            <a asp-action="Index" class="btn-filter" style="background-color:#6c757d; text-decoration:none;">⬅ Back to List</a>
+        </div>
+    </div>
+
+    <div style="background-color: #fff; padding: 20px; border-radius: 8px; margin-top: 20px;">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="CategoryId" />
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label asp-for="CategoryName" class="control-label" style="font-weight:bold; margin-bottom:5px; display:block;">Category Name</label>
+                <input asp-for="CategoryName" class="form-control" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+                <span asp-validation-for="CategoryName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save Changes" class="btn-edit" style="cursor:pointer; border:none; padding: 10px 20px;" />
+            </div>
+        </form>
+    </div>
+</div>
