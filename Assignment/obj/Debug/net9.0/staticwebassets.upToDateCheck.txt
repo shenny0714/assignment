@@ -1,5 +1,7 @@
 wwwroot\css\admin.css
+wwwroot\css\app.css
 wwwroot\css\login.css
+wwwroot\css\portal.css
 wwwroot\css\profile.css
 wwwroot\css\staff.css
 wwwroot\images\car1.jpg
@@ -12,7 +14,7 @@ wwwroot\js\jquery.min.js
 wwwroot\js\jquery.unobtrusive-ajax.min.js
 wwwroot\js\jquery.validate.min.js
 wwwroot\js\jquery.validate.unobtrusive.min.js
-wwwroot\photos\a912ee45d12f44a488586b6ffefbd15d.jpeg
+wwwroot\photos\b63a016062554bde831987ee15825379.jpeg
 wwwroot\PickupReturn\022671fecf5e49f793ef5d01c47f33b0.jpg
 wwwroot\PickupReturn\1c5c1aa954684092aca1528b367c90a7.jpg
 wwwroot\PickupReturn\23a53a6d7dca472784c11b28d9773791.jpg
@@ -47,14 +49,14 @@ wwwroot\PickupReturn\ec010317999f4eeb927a777f1ccdcaa1.jpg
 wwwroot\PickupReturn\ed735dbae3b04fca93b7a79f4033e91f.jpg
 wwwroot\PickupReturn\f711ac1ca8da440cb288ddb1ddaf1fab.jpg
 wwwroot\PickupReturn\f875f72ab0be4063950472f4b98602ab.jpg
-wwwroot\css\app.css
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\admin.css
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\login.css
 C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\profile.css
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\staff.css
+C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\login.css
 C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\js\app.js
 C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\js\jquery.min.js
 C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\js\jquery.unobtrusive-ajax.min.js
 C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\js\jquery.validate.min.js
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\js\jquery.validate.unobtrusive.min.js
 C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\app.css
+C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\js\jquery.validate.unobtrusive.min.js
+C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\admin.css
+C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\staff.css
+C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\portal.css

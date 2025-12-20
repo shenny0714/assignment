@@ -174,3 +174,7 @@ C:\Users\user\Source\Repos\assignment\Assignment\obj\Debug\net9.0\compressed\k4w
 C:\Users\user\Source\Repos\assignment\Assignment\obj\Debug\net9.0\compressed\4fopgu4fnf-bb9jf0e3us.gz
 C:\Users\user\Source\Repos\assignment\Assignment\obj\Debug\net9.0\compressed\dv1qps2toc-yj6cx4rbtr.gz
 C:\Users\user\Source\Repos\assignment\Assignment\obj\Debug\net9.0\compressed\z099wgqt93-aizh65beuz.gz
+C:\Users\user\Source\Repos\assignment\Assignment\obj\Debug\net9.0\Assignment.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\user\Source\Repos\assignment\Assignment\bin\Debug\net9.0\X.PagedList.dll
+C:\Users\user\Source\Repos\assignment\Assignment\bin\Debug\net9.0\X.PagedList.Mvc.Core.dll
+C:\Users\user\Source\Repos\assignment\Assignment\obj\Debug\net9.0\compressed\x6stvn1b0u-21qsunhhv0.gz
