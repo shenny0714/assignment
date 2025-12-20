@@ -259,7 +259,6 @@ public class PaymentVM
     [RegularExpression(@"\d{3}", ErrorMessage = "Invalid CVV")]
     public string? CVV { get; set; }
 
-    public string CustomerName { get; set; }
 }
 
 
@@ -344,23 +343,11 @@ public class EditUserVM
     [Required]
     public string Phone { get; set; }
     public string UserType { get; set; } // "Staff" or "Customer"
-
-<<<<<<< HEAD
-
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password")]
-        [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
-        public string? ConfirmNewPassword { get; set; }
-    }
-=======
     [DataType(DataType.Password)]
     [Display(Name = "Confirm Password")]
     [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
     public string? ConfirmNewPassword { get; set; }
 }
->>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
-
 
 public class ResetPasswordVM
 {
@@ -407,4 +394,37 @@ public class VehicleCategoryViewModel
     [Display(Name = "Category Name")]
     [MaxLength(50)]
     public string? CategoryName { get; set; } // e.g., Sedan, SUV
+}
+
+public class VehicleViewModel
+{
+    [Required(ErrorMessage = "Please enter the model name")]
+    [Display(Name = "Model Name")]
+    public string ModelName { get; set; }
+
+    [Required(ErrorMessage = "Please select a brand")]
+    public int? SelectedBrandId { get; set; }
+
+    [Required(ErrorMessage = "Please select a category")]
+    public string SelectedCategoryId { get; set; }
+
+    [Display(Name = "Description")]
+    public string Description { get; set; }
+
+    [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
+    public decimal Price { get; set; }
+
+
+    [Display(Name = "Front Image")]
+    public IFormFile? PhotoFront { get; set; }
+
+    [Display(Name = "Side Image")]
+    public IFormFile? PhotoSide { get; set; }
+
+    [Display(Name = "Back Image")]
+    public IFormFile? PhotoBack { get; set; }
+
+
+    public List<Brand>? AvailableBrands { get; set; }
+    public List<VehicleCategory>? AvailableCategories { get; set; }
 }

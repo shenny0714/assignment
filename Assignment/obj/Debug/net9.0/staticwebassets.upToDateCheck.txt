@@ -1,36 +1,21 @@
 wwwroot\css\app.css
 wwwroot\css\brand.css
 wwwroot\css\catalog.css
-<<<<<<< HEAD
 wwwroot\css\createVehicle.css
 wwwroot\css\EditInventory.css
 wwwroot\css\inventory.css
-=======
-<<<<<<< HEAD
-wwwroot\css\login.css
-wwwroot\css\payment.css
-wwwroot\css\portal.css
-wwwroot\css\profile.css
-wwwroot\css\receipt.css
-=======
->>>>>>> 291f7be3e570d045930a21fb87f9bc4929e0b284
 wwwroot\css\invoice.css
 wwwroot\css\login.css
 wwwroot\css\payment.css
-wwwroot\css\return.css
+wwwroot\css\pickup.css
 wwwroot\css\pickupReturn.css
 wwwroot\css\portal.css
 wwwroot\css\profile.css
+wwwroot\css\receipt_v2.css
 wwwroot\css\rentalHistory.css
-<<<<<<< HEAD
 wwwroot\css\report.css
-wwwroot\css\pickup.css
-=======
 wwwroot\css\reserve.css
 wwwroot\css\return.css
->>>>>>> 7cd4aeff66719dd02789bbede3ad12e1207514c5
-wwwroot\css\staff.css
-<<<<<<< HEAD
 wwwroot\css\vehicle.css
 wwwroot\images\bmw_i41a.png
 wwwroot\images\bmw_i41b.png
@@ -44,9 +29,6 @@ wwwroot\images\bmw_i71c.png
 wwwroot\images\bmw_iX1a.png
 wwwroot\images\bmw_iX1b.png
 wwwroot\images\bmw_iX1c.png
-=======
->>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
->>>>>>> 291f7be3e570d045930a21fb87f9bc4929e0b284
 wwwroot\images\car1.jpg
 wwwroot\images\car2.jpg
 wwwroot\images\car3.jpg
@@ -64,15 +46,8 @@ wwwroot\js\jquery.unobtrusive-ajax.min.js
 wwwroot\js\jquery.validate.min.js
 wwwroot\js\jquery.validate.unobtrusive.min.js
 wwwroot\photos\07ec382d89984774974e2bc4b1da3ecb.jpg
-<<<<<<< HEAD
 wwwroot\photos\1b479aee96414433be6a73f7e4471383.jpeg
 wwwroot\photos\34b034fb1dcd44faa2069e7d268e854c.jpg
-wwwroot\photos\bb535dc0cc6640b792ec2fdc95387686.jpg
-wwwroot\PickupReturn\022671fecf5e49f793ef5d01c47f33b0.jpg
-wwwroot\PickupReturn\048f84711d57493ab65bee2d25d742ef.jpg
-=======
-wwwroot\photos\34b034fb1dcd44faa2069e7d268e854c.jpg
-wwwroot\photos\b63a016062554bde831987ee15825379.jpeg
 wwwroot\photos\bb535dc0cc6640b792ec2fdc95387686.jpg
 wwwroot\photos\e81df0475f024a2da6d9e6ddea59062f.jpg
 wwwroot\PickupReturn\00b1a29c8eb846ff8e4e5173083a141a.png
@@ -81,7 +56,6 @@ wwwroot\PickupReturn\03b367c02d744119ba410677e29b2aa5.png
 wwwroot\PickupReturn\048f84711d57493ab65bee2d25d742ef.jpg
 wwwroot\PickupReturn\066d752b98a44fc5a312055f12b101de.png
 wwwroot\PickupReturn\17b9039fc29d4c989479d0cc56f7037e.png
->>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
 wwwroot\PickupReturn\1c5c1aa954684092aca1528b367c90a7.jpg
 wwwroot\PickupReturn\1e585166bbfb4b32b14ee7e24b72b983.jpg
 wwwroot\PickupReturn\2011678fbaa24a09a01a401ee59b80dd.jpg
@@ -97,23 +71,14 @@ wwwroot\PickupReturn\2fb76711b59a49bfbe183e88d71f2149.jpg
 wwwroot\PickupReturn\31d66f7e2fc9427bad9032fb8a263abe.png
 wwwroot\PickupReturn\339b511d563045d48b6041709ab335ab.jpg
 wwwroot\PickupReturn\358da96695744f09b18fa2281bae12a0.jpg
-<<<<<<< HEAD
-=======
 wwwroot\PickupReturn\376317b8ae844365a9fbc75a6d923a81.png
->>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
 wwwroot\PickupReturn\3933ab173f4340e0820289f925f31ebe.jpg
 wwwroot\PickupReturn\39b9845d07e84f4e97dad1e7e1fefc04.jpg
 wwwroot\PickupReturn\3c3d69f5b73b47b790924c73e17a1f26.jpg
 wwwroot\PickupReturn\3d239048a6c74fd3ac0771ab21b3261b.jpg
 wwwroot\PickupReturn\3f3f05109b0e42bb90c2f157bcd890e7.jpg
-<<<<<<< HEAD
 wwwroot\PickupReturn\4108a07071f64c11baf4c67d45f1ff65.png
-=======
-<<<<<<< HEAD
-=======
->>>>>>> 7cd4aeff66719dd02789bbede3ad12e1207514c5
 wwwroot\PickupReturn\41f06b6882d146998095a1dc38638bfd.png
->>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
 wwwroot\PickupReturn\440515fe52a14eb9a51e252332911302.jpg
 wwwroot\PickupReturn\47863cb135934e16b36b981509af9bbf.png
 wwwroot\PickupReturn\479288ef840b4c76857bd945c8f39850.png
@@ -129,13 +94,9 @@ wwwroot\PickupReturn\6165c194ed9d4af2bb27acdb375fa4f9.png
 wwwroot\PickupReturn\63a8a2e004e44f489ddc4757bf487249.jpg
 wwwroot\PickupReturn\664b8dcc4e4443cfbbc9af63e6abd082.jpg
 wwwroot\PickupReturn\66fc4e3f8ec9428c9c52a8af5b244b94.jpg
-<<<<<<< HEAD
-wwwroot\PickupReturn\69847ab1b6e54f08acd4ea237953376f.jpg
-=======
 wwwroot\PickupReturn\683d04ad03f14837b18ba63bf844ec53.png
 wwwroot\PickupReturn\69847ab1b6e54f08acd4ea237953376f.jpg
 wwwroot\PickupReturn\6cd387b661c14fcdadd4e5f040c02cdd.png
->>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
 wwwroot\PickupReturn\6dcaa817d4c84227892a8c4fef95236a.jpg
 wwwroot\PickupReturn\6eb3c12dcba14a6bbff0915ceaeb5896.png
 wwwroot\PickupReturn\71f2907d2d634d5aa7e32482c8f37503.png
@@ -154,35 +115,23 @@ wwwroot\PickupReturn\92dcd8c9c8574a0eb030032eb52955e4.png
 wwwroot\PickupReturn\9741e8416f414c6cba4516dec90ddc42.png
 wwwroot\PickupReturn\987cc22a178245cca32ce5fa743f0089.png
 wwwroot\PickupReturn\98df162954a54e77912a56a445cd1722.jpg
-<<<<<<< HEAD
-wwwroot\PickupReturn\a1b1997ee50b491eb8f2c20f5cea08dc.jpg
-wwwroot\PickupReturn\a4e60cb5cc58400ebfca70a6f5213ea2.jpg
-wwwroot\PickupReturn\a66a9c9414fa4a47a844138a5d580eb1.jpg
-=======
 wwwroot\PickupReturn\9e6773f184c04abaa60c2ef02f5ad008.png
 wwwroot\PickupReturn\a1b1997ee50b491eb8f2c20f5cea08dc.jpg
 wwwroot\PickupReturn\a4e60cb5cc58400ebfca70a6f5213ea2.jpg
 wwwroot\PickupReturn\a66a9c9414fa4a47a844138a5d580eb1.jpg
 wwwroot\PickupReturn\abde6d1f798347e484e2b769365976f9.png
->>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
 wwwroot\PickupReturn\aecd2ebd52ef4a6590151e4ab34ae1a4.jpg
 wwwroot\PickupReturn\b3f69d9ca3a64f27a414fde722a528ea.jpg
 wwwroot\PickupReturn\b6d12cd5ba0749749a2064f1f72a984d.jpg
 wwwroot\PickupReturn\c31f81fce1ff4d7da19089798666cb6b.jpg
 wwwroot\PickupReturn\c75da347b7a642c0bb0ad275a344d349.jpg
 wwwroot\PickupReturn\c7c17d7d9dce418982f267e735ac514e.jpg
-<<<<<<< HEAD
-wwwroot\PickupReturn\d6c1ce4e686c42d4b53189289ca37e5c.jpg
-wwwroot\PickupReturn\d77d188bcd554a29b808e331950e3cd2.jpg
-wwwroot\PickupReturn\d7f4628d2c4f4cfd854fd8aa43f18b7e.jpg
-=======
 wwwroot\PickupReturn\cb3e614c6fa3483da471f5e6a87b49c8.png
 wwwroot\PickupReturn\d010bf488b69492694fb366f3ef890fb.png
 wwwroot\PickupReturn\d6c1ce4e686c42d4b53189289ca37e5c.jpg
 wwwroot\PickupReturn\d77d188bcd554a29b808e331950e3cd2.jpg
 wwwroot\PickupReturn\d7f4628d2c4f4cfd854fd8aa43f18b7e.jpg
 wwwroot\PickupReturn\d9d74649f5b346b8b50e235d6023907c.png
->>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
 wwwroot\PickupReturn\da990890c9814bf5af8bb7539e1a2494.jpg
 wwwroot\PickupReturn\e23ed15101df47688d5006bc5ba80e7d.jpg
 wwwroot\PickupReturn\e41aa0b58a8a434e820fe1869ba10ad5.jpg
@@ -193,92 +142,30 @@ wwwroot\PickupReturn\ed735dbae3b04fca93b7a79f4033e91f.jpg
 wwwroot\PickupReturn\f49cba89b5bc4c10afbf792383488ec5.jpg
 wwwroot\PickupReturn\f711ac1ca8da440cb288ddb1ddaf1fab.jpg
 wwwroot\PickupReturn\f875f72ab0be4063950472f4b98602ab.jpg
-<<<<<<< HEAD
-wwwroot\Rotativa\wkhtmltopdf.exe
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\profile.css
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\js\app.js
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\portal.css
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\payment.css
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\login.css
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\catalog.css
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\js\jquery.min.js
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\app.css
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\js\jquery.unobtrusive-ajax.min.js
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\css\receipt.css
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\js\jquery.validate.min.js
-C:\Users\user\Source\Repos\assignment\Assignment\wwwroot\js\jquery.validate.unobtrusive.min.js
-=======
 wwwroot\PickupReturn\fa282b6b4a834de0a7463c84f473e834.png
 wwwroot\PickupReturn\faeab84677eb43c682d6808156f2d821.png
 wwwroot\Rotativa\wkhtmltopdf.exe
-<<<<<<< HEAD
-wwwroot\css\receipt_v2.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\app.css
+C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\brand.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\catalog.css
+C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\createVehicle.css
+C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\EditInventory.css
+C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\inventory.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\invoice.css
-C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\js\jquery.validate.unobtrusive.min.js
+C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\login.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\payment.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\pickup.css
+C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\pickupReturn.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\portal.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\profile.css
-C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\admin.css
-C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\login.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\receipt_v2.css
+C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\rentalHistory.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\report.css
+C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\reserve.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\return.css
-C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\staff.css
+C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\vehicle.css
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\js\app.js
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\js\jquery.min.js
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\js\jquery.unobtrusive-ajax.min.js
 C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\js\jquery.validate.min.js
-C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\pickupReturn.css
-C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\css\rentalHistory.css
-=======
-<<<<<<< HEAD
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\admin.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\app.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\brand.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\catalog.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\createVehicle.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\EditInventory.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\inventory.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\invoice.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\login.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\payment.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\pickupReturn.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\portal.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\profile.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\receipt.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\rentalHistory.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\reserve.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\return.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\staff.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\css\vehicle.css
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\js\app.js
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\js\jquery.min.js
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\js\jquery.unobtrusive-ajax.min.js
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\js\jquery.validate.min.js
-C:\Users\User\Source\Repos\assignment\Assignment\wwwroot\js\jquery.validate.unobtrusive.min.js
-=======
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\admin.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\app.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\catalog.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\invoice.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\login.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\payment.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\pickupReturn.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\portal.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\profile.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\receipt.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\rentalHistory.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\reserve.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\return.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\css\staff.css
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\js\app.js
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\js\jquery.min.js
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\js\jquery.unobtrusive-ajax.min.js
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\js\jquery.validate.min.js
-C:\Users\User\source\repos\assignment\Assignment\wwwroot\js\jquery.validate.unobtrusive.min.js
->>>>>>> e42b2132c6d9ffabe98d206be2171cba2c0ee975
->>>>>>> 291f7be3e570d045930a21fb87f9bc4929e0b284
->>>>>>> 7cd4aeff66719dd02789bbede3ad12e1207514c5
+C:\Users\USER\source\repos\Assignment\Assignment\wwwroot\js\jquery.validate.unobtrusive.min.js
