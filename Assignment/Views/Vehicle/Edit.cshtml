@@ -1,0 +1,143 @@
+﻿@model Assignment.ViewModels.VehicleViewModel
+
+@{
+    ViewData["Title"] = "Edit Car Model";
+}
+
+<!-- Add reference to custom CSS in the head section or _Layout -->
+<link rel="stylesheet" href="~/css/createVehicle.css" />
+
+<div class="container vehicle-edit-container">
+    <div class="card vehicle-card">
+       
+        
+        <div class="card-body vehicle-card-body">
+            <div class="card-header text-white">
+          
+                <a asp-action="Index" class="btn-back">← Back</a>
+                <h2>Edit Car Model</h2>
+            </div>
+            <form asp-action="EditFunction" asp-route-id="@ViewBag.ModelId" enctype="multipart/form-data">
+                
+
+                <div class="row">
+                    <!-- Left Column: Basic Information -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="ModelName" class="form-label"></label>
+                            <input asp-for="ModelName" class="form-control" placeholder="Enter model name" />
+                            <span asp-validation-for="ModelName" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Brand</label>
+                                <select asp-for="SelectedBrandId"
+                                        asp-items="@(new SelectList(Model.AvailableBrands, "BrandId", "BrandName"))"
+                                        class="form-select">
+                                    <option value="">-- Select Brand --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Category</label>
+                                <select asp-for="SelectedCategoryId"
+                                        asp-items="@(new SelectList(Model.AvailableCategories, "CategoryId", "CategoryName"))"
+                                        class="form-select">
+                                    <option value="">-- Select Category --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Price" class="form-label"></label>
+                            <div class="input-group price-input-group">
+                                <span class="input-group-text">RM</span>
+                                <input asp-for="Price" class="form-control" type="number" step="0.01" placeholder="0.00" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter vehicle description..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Photo Uploads -->
+                    <div class="col-md-6">
+                        <h5 class="form-section-title">Update Photos</h5>
+
+                        <!-- Front View -->
+                        <div class="photo-upload-card">
+                            <label class="form-label">Front View</label>
+                            <div class="photo-upload-wrapper">
+                                <div class="image-preview-box">
+                                    @if (ViewBag.CurrentFront != null)
+                                    {
+                                        <img style="width:50%;" src="@ViewBag.CurrentFront" alt="Front view" />
+                                    }
+                                    else
+                                    {
+                                        <small>No Image</small>
+                                    }
+                                </div>
+                                <div class="photo-input-container">
+                                    <input asp-for="PhotoFront" type="file" class="form-control" accept="image/*" />
+                                    <small class="photo-helper-text">Leave empty to keep current photo</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Side View -->
+                        <div class="photo-upload-card">
+                            <label class="form-label">Side View</label>
+                            <div class="photo-upload-wrapper">
+                                <div class="image-preview-box">
+                                    @if (ViewBag.CurrentSide != null)
+                                    {
+                                        <img style="width:50%;"  src="@ViewBag.CurrentSide" alt="Side view" />
+                                    }
+                                    else
+                                    {
+                                        <small>No Image</small>
+                                    }
+                                </div>
+                                <div class="photo-input-container">
+                                    <input asp-for="PhotoSide" type="file" class="form-control" accept="image/*" />
+                                    <small class="photo-helper-text">Leave empty to keep current photo</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Back View -->
+                        <div class="photo-upload-card">
+                            <label class="form-label">Back View</label>
+                            <div class="photo-upload-wrapper">
+                                <div class="image-preview-box">
+                                    @if (ViewBag.CurrentBack != null)
+                                    {
+                                        <img style="width:50%;" src="@ViewBag.CurrentBack" alt="Back view" />
+                                    }
+                                    else
+                                    {
+                                        <small>No Image</small>
+                                    }
+                                </div>
+                                <div class="photo-input-container">
+                                    <input asp-for="PhotoBack" type="file" class="form-control" accept="image/*" />
+                                    <small class="photo-helper-text">Leave empty to keep current photo</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="border-top d-flex justify-content-end gap-2 mt-4 pt-3">
+                    <button type="submit" class="btn btn-primary">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

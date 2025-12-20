@@ -1,0 +1,96 @@
+﻿/* Page background */
+body {
+    background-color: #f4f6f9;
+}
+
+/* Main container */
+.container {
+    max-width: 1200px;
+}
+
+/* Card */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+/* Header */
+.card-header {
+    background: linear-gradient(135deg, #0d6efd, #3b82f6);
+    border-bottom: none;
+    padding: 18px 24px;
+}
+
+    .card-header h4 {
+        font-weight: 600;
+    }
+
+/* Body */
+.card-body {
+    padding: 30px 32px;
+}
+
+/* Labels */
+.form-label {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Inputs */
+.form-control,
+.form-select {
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    border: 1px solid #ddd;
+    transition: 0.2s;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.15rem rgba(13,110,253,.15);
+    }
+
+/* Info box (right side) */
+.text-muted.border.bg-light {
+    border-radius: 12px !important;
+    background: #f8f9fa !important;
+    padding: 30px 25px !important;
+}
+
+    .text-muted.border.bg-light i {
+        color: #0d6efd;
+    }
+
+/* Divider */
+hr {
+    margin: 30px 0;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: #0d6efd;
+    border: none;
+}
+
+    .btn-primary:hover {
+        background: #0b5ed7;
+    }
+
+.btn-secondary {
+    background: #6c757d;
+    border: none;
+}
+
+    .btn-secondary:hover {
+        background: #5c636a;
+    }

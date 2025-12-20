@@ -1,5 +1,5 @@
 ﻿using Assignment.Models;
-using Assignment.ViewModels; 
+using Assignment.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -80,6 +80,7 @@ namespace Assignment.Controllers
                 {
                     _context.Update(vehicleCategory);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = "Edit successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -101,6 +102,7 @@ namespace Assignment.Controllers
             {
                 _context.VehicleCategories.Remove(vehicleCategory);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Delete successfully!";
             }
             return RedirectToAction(nameof(Index));
         }

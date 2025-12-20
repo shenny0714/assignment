@@ -44,7 +44,7 @@ public class PickupViewModel
     [Required]
     [RegularExpression(@"VH\d{4}", ErrorMessage = "Invalid {0}.")]
     public string VehicleId { get; set; }
-    
+
     [Required]
 
     [Range(1, int.MaxValue, ErrorMessage = "Odometer must be positive.")]
@@ -273,15 +273,15 @@ public class PaymentVM
 // LOGIN 
 // -----------------------------
 public class LoginVM
-    {
-        [Required, EmailAddress]
-        public string Email { get; set; }
+{
+    [Required, EmailAddress]
+    public string Email { get; set; }
 
-        [Required]
-        public string Password { get; set; }
+    [Required]
+    public string Password { get; set; }
 
-        public bool RememberMe { get; set; }
-    }
+    public bool RememberMe { get; set; }
+}
 
 // -----------------------------
 // REGISTER
@@ -385,4 +385,37 @@ public class VehicleCategoryViewModel
     [Display(Name = "Category Name")]
     [MaxLength(50)]
     public string? CategoryName { get; set; } // e.g., Sedan, SUV
+}
+
+public class VehicleViewModel
+{
+    [Required(ErrorMessage = "Please enter the model name")]
+    [Display(Name = "Model Name")]
+    public string ModelName { get; set; }
+
+    [Required(ErrorMessage = "Please select a brand")]
+    public int? SelectedBrandId { get; set; }
+
+    [Required(ErrorMessage = "Please select a category")]
+    public string SelectedCategoryId { get; set; }
+
+    [Display(Name = "Description")]
+    public string Description { get; set; }
+
+    [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
+    public decimal Price { get; set; }
+
+    
+    [Display(Name = "Front Image")]
+    public IFormFile? PhotoFront { get; set; }
+
+    [Display(Name = "Side Image")]
+    public IFormFile? PhotoSide { get; set; }
+
+    [Display(Name = "Back Image")]
+    public IFormFile? PhotoBack { get; set; }
+
+    
+    public List<Brand>? AvailableBrands { get; set; }
+    public List<VehicleCategory>? AvailableCategories { get; set; }
 }

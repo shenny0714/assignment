@@ -255,10 +255,6 @@ namespace Assignment.Migrations
                     b.Property<int>("ModelId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PaymentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("PickupDate")
                         .HasColumnType("datetime2");
 
@@ -450,6 +446,15 @@ namespace Assignment.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("backImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("frontImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("sideImage")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("VehicleId");
 

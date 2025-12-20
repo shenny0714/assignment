@@ -1,0 +1,450 @@
+﻿/* Car Model Management - Admin Table Layout */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: #f5f7fa;
+    color: #374151;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* Admin Container */
+.admin-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+}
+
+/* Header Section */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-title {
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.admin-subtitle {
+    font-size: 0.9375rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Header Actions */
+.admin-header-actions {
+    display: flex;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+}
+
+/* Button Styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    font-family: inherit;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: #ffffff;
+    border: 1px solid #2563eb;
+}
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+.btn-secondary {
+    background: #ffffff;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+    .btn-secondary:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+    }
+
+/* Table Container */
+.table-container {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Admin Table */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+    .admin-table thead {
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+        .admin-table thead th {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-weight: 500;
+            font-size: 0.8125rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+    .admin-table tbody tr {
+        border-bottom: 1px solid #f3f4f6;
+        transition: background-color 0.15s ease;
+    }
+
+        .admin-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .admin-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+    .admin-table tbody td {
+        padding: 1.25rem 1.25rem;
+        vertical-align: middle;
+        color: #374151;
+    }
+
+/* Table Image */
+.table-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+}
+
+    .table-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.no-image {
+    color: #d1d5db;
+    font-size: 1.5rem;
+}
+
+/* Model Name */
+.model-name {
+    font-weight: 500;
+    color: #111827;
+    font-size: 0.9375rem;
+}
+
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    white-space: nowrap;
+}
+
+.badge-brand {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.badge-category {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+}
+
+/* Price */
+.price {
+    font-weight: 600;
+    color: #059669;
+    font-size: 0.9375rem;
+}
+
+/* Stock Badge */
+.stock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+    .stock-badge i {
+        color: #6b7280;
+        font-size: 0.75rem;
+    }
+
+/* Description */
+.description {
+    color: #6b7280;
+    font-size: 0.875rem;
+    max-width: 300px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+}
+
+/* Table Actions */
+.text-end {
+    text-align: right;
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 0.375rem;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    font-size: 0.875rem;
+}
+
+    .btn-action:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+        color: #374151;
+    }
+
+.btn-edit:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #2563eb;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 5rem 2rem;
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+}
+
+.empty-state-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: #d1d5db;
+}
+
+.empty-state h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    font-size: 0.9375rem;
+    color: #6b7280;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .admin-container {
+        padding: 2rem 1.5rem;
+    }
+
+    .description {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 992px) {
+    .admin-header {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .admin-header-actions {
+        width: 100%;
+    }
+
+    .btn {
+        flex: 1;
+    }
+
+    /* Make table scrollable on smaller screens */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .admin-table {
+        min-width: 900px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 1.5rem 1rem;
+    }
+
+    .admin-title {
+        font-size: 1.5rem;
+    }
+
+    .admin-header-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .admin-table thead th {
+        padding: 0.875rem 1rem;
+    }
+
+    .admin-table tbody td {
+        padding: 1rem;
+    }
+
+    .description {
+        max-width: 150px;
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-container {
+        padding: 1rem 0.75rem;
+    }
+
+    .table-image {
+        width: 48px;
+        height: 48px;
+    }
+
+    .admin-table {
+        font-size: 0.8125rem;
+    }
+
+        .admin-table thead th {
+            padding: 0.75rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .admin-table tbody td {
+            padding: 0.875rem 0.75rem;
+        }
+}
+
+/* Focus States for Accessibility */
+.btn:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.btn-action:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* Smooth Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-table tbody tr {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+    .admin-table tbody tr:nth-child(1) {
+        animation-delay: 0.05s;
+    }
+
+    .admin-table tbody tr:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+
+    .admin-table tbody tr:nth-child(3) {
+        animation-delay: 0.15s;
+    }
+
+    .admin-table tbody tr:nth-child(4) {
+        animation-delay: 0.2s;
+    }
+
+    .admin-table tbody tr:nth-child(5) {
+        animation-delay: 0.25s;
+    }

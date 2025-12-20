@@ -1,0 +1,63 @@
+﻿@model Assignment.Models.Vehicle
+<link rel="stylesheet" href="~/css/EditInventory.css" />
+<div class="product-management-container">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Edit Vehicle Inventory</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="EditInventory" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="VehicleId" />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="PlateNumber" class="form-label fw-bold">Plate Number</label>
+                            <input asp-for="PlateNumber" class="form-control" />
+                            <span asp-validation-for="PlateNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Car Model</label>
+                            <select asp-for="ModelId" asp-items="ViewBag.ModelId" class="form-select"></select>
+                            <span asp-validation-for="ModelId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Availability Status</label>
+                            <select asp-for="Available" class="form-select">
+                                <option value="true">Available</option>
+                                <option value="false">Unavailable</option>
+                            </select>
+                            <small class="text-muted">Change whether this specific car is ready for rent.</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-center justify-content-center">
+                        @*<div class="text-center text-muted border p-4 rounded bg-light w-75">
+                            <i class="fas fa-info-circle fa-3x mb-3 text-primary"></i>
+                            <h5>Vehicle Info</h5>
+                            <p><strong>ID:</strong> @Model.VehicleId</p>
+                            <p class="small">Update the plate number or change the rental status here.</p>
+                        </div>*@
+                        <div class="col-md-6 d-flex align-items-center justify-content-center">
+                            <div class="text-center text-muted border p-4 rounded bg-light">
+                                <i class="fas fa-car fa-5x mb-3"></i>
+                                <h5>Vehicle Info</h5>
+                                <p><strong>ID:</strong> @Model.VehicleId</p>
+                                <p class="small">Update the plate number or change the rental status here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Inventory" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

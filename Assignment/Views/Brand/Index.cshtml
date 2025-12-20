@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Assignment.Models.Brand>
+
+@{
+    ViewData["Title"] = "Vehicle Brands";
+}
+<link rel="stylesheet" href="~/css/brand.css" />
+
+<div class="product-management-container">
+    <div class="top-bar">
+        <div class="d-flex align-items-center gap-2">
+            <a asp-controller="Vehicle" asp-action="Index" class="btn-back">← Back</a>
+            <br />
+            <br />
+            <br />
+
+            <h2 class="mb-0">Vehicle Categories</h2>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn-back" style="background-color:#28a745; text-decoration:none; color:white;">+ Add New Brand</a>
+        </div>
+    </div>
+
+    <table class="product-table">
+        <thead>
+            <tr>
+                <th>Brand ID</th>
+                <th>Brand Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@item.BrandId</strong>
+                        </td>
+                        <td>
+                            @item.BrandName
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.BrandId" class="btn-edit">Edit</a>
+
+                            <form asp-action="Delete" asp-route-id="@item.BrandId" method="post" style="display:inline" onsubmit="return confirm('Are you sure you want to delete @item.BrandName?');">
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" style="text-align:center; color:#999;">
+                        No brands found. Click "Add New Brand" to create one.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <script>
+        alert('@TempData["Success"]');
+    </script>
+}
