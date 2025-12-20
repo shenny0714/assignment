@@ -1,5 +1,11 @@
 ﻿# SQL Server database files
-*.mdf
-*.ldf
 bin/
 obj/
+.vs/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.json
+*.mdf
+*.ldf
