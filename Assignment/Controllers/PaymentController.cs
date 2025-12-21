@@ -296,7 +296,7 @@ public class PaymentController : Controller
             carCell.SetBorder(new SolidBorder(DeviceGray.GRAY, 0.5f));
             carCell.SetPadding(15);
 
-            int days = (rental.ReturnDate - rental.PickupDate).Days;
+            int days = (rental.ReturnDate - rental.PickupDate).Days + 1;
             if (days < 1) days = 1;
 
             // UPDATED: Added Brand Name here
@@ -377,7 +377,7 @@ public class PaymentController : Controller
         string senderPass = _configuration["Smtp:Pass"] ?? "hmor krvp syey vewp";
         string senderName = _configuration["Smtp:Name"] ?? "Car Rental Admin";
 
-        int days = (rental.ReturnDate - rental.PickupDate).Days;
+        int days = (rental.ReturnDate - rental.PickupDate).Days + 1;
         if (days < 1) days = 1;
         decimal totalPaid = rental.TotalPrice + rental.DepositAmount;
 
