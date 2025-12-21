@@ -373,7 +373,7 @@ public class VehicleCatalogViewModel
     public string SelectedCategory { get; set; }
     public string SelectedBrandId { get; set; }
     // ===================================
-
+    public string UserSearchDate { get; set; }
     public string SearchTerm { get; set; }
     public SelectList CategoryList { get; set; }
     public SelectList BrandList { get; set; }
