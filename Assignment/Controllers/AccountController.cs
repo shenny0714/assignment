@@ -252,7 +252,7 @@ namespace Assignment.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             TempData["Info"] = "Logout successfully.";
-            return RedirectToAction("Home","Index");
+            return RedirectToAction("Login");
         }
         [AllowAnonymous]
         public IActionResult AccessDenied()
