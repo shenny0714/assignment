@@ -2,6 +2,7 @@
 using Assignment.Models;
 using Assignment.PDF;
 using Assignment.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,6 +11,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 using System.Net.Mail;
 using System.Reflection.Metadata;
+using System.Security.Claims;
 
 
 
@@ -41,6 +43,7 @@ public class PickupReturnController : Controller
                   .OrderByDescending(r => r.PickupDate);
     }
 
+    [Authorize(Roles = "Staff")]
     public IActionResult Index(string tab, bool todayOnly, string? search = null)
     {
         ViewBag.ActiveTab = tab ?? "All";
@@ -107,6 +110,7 @@ public class PickupReturnController : Controller
     }
 
     // GET: Pickup page
+    [Authorize(Roles = "Staff")]
     public IActionResult Pickup(string rentalId)
     {
 
@@ -134,6 +138,7 @@ public class PickupReturnController : Controller
         // Get available vehicles of this model
         var availableVehicles = _db.Vehicles
             .Where(v => v.ModelId == rental.ModelId
+                        && v.Available
                         && !occupiedVehicleIds.Contains(v.VehicleId));
             
         ViewBag.VehicleList = new SelectList(availableVehicles, "VehicleId", "PlateNumber");
@@ -145,8 +150,8 @@ public class PickupReturnController : Controller
             RentalId = rentalId,
             CustomerName = rental.Customer.Name,
             ModelName = rental.Model.ModelName,
-            StaffId = "ST0001",      // for testing; replace with session user
-            StaffName = "John Staff"
+            StaffId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+            StaffName = User.Identity?.Name
         };
 
         return View(vm);
@@ -154,6 +159,7 @@ public class PickupReturnController : Controller
 
     // POST: Pickup
     [HttpPost]
+    [Authorize(Roles = "Staff")]
     public IActionResult Pickup(PickupViewModel vm)
     {
         // rental id exist in Rentals but not exist in PickupRecord
@@ -263,8 +269,8 @@ public class PickupReturnController : Controller
         vm.RentalId = vm.RentalId;
         vm.CustomerName = rental.Customer.Name;
         vm.ModelName = rental.Model.ModelName;
-        vm.StaffId = "ST0001";
-        vm.StaffName = "John Staff";
+        vm.StaffId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        vm.StaffName = User.Identity?.Name;
 
         // selection list
         // get available vehicles
@@ -280,6 +286,7 @@ public class PickupReturnController : Controller
         // Get available vehicles of this model
         var availableVehicles = _db.Vehicles
             .Where(v => v.ModelId == rental.ModelId
+                        && v.Available
                         && !occupiedVehicleIds.Contains(v.VehicleId));
         ViewBag.VehicleList = new SelectList(availableVehicles, "VehicleId", "PlateNumber");
         ViewBag.FuelList = new[] { "Full", "Half", "Low" };
@@ -296,6 +303,7 @@ public class PickupReturnController : Controller
     }
 
     // GET: Return
+    [Authorize(Roles = "Staff")]
     public IActionResult Return(string rentalId)
     {
         bool isValid = _db.Rentals
@@ -334,7 +342,7 @@ public class PickupReturnController : Controller
             ModelName = rental.Model.ModelName,
             PlateNumber = vehicle.PlateNumber,
             PickupDateTime = pickup.PickupDateTime,
-            StaffId = "ST0001"
+            StaffId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
         };
 
         ViewBag.FuelList = new[] { "Full", "Half", "Low" };
@@ -344,6 +352,7 @@ public class PickupReturnController : Controller
 
     // POST: Return
     [HttpPost]
+    [Authorize(Roles = "Staff")]
     public IActionResult Return(ReturnRecordVM vm)
     {
         foreach (var entry in ModelState)
@@ -553,7 +562,7 @@ public class PickupReturnController : Controller
         vm.ModelName = rtn.Model.ModelName;
         vm.PlateNumber = vehicle.PlateNumber;
         vm.PickupDateTime = pickup.PickupDateTime;
-        vm.StaffId = "STF0001";
+        vm.StaffId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         ViewBag.FuelList = new[] { "Full", "Half", "Low" };
 
@@ -561,6 +570,7 @@ public class PickupReturnController : Controller
     }
 
     // GET: Invoice
+    [Authorize(Roles = "Staff")]
     public IActionResult Invoice(string rentalId)
     {
         if (string.IsNullOrEmpty(rentalId))
@@ -613,6 +623,7 @@ public class PickupReturnController : Controller
     }
 
     // GET: Payment
+    [Authorize(Roles = "Staff")]
     public IActionResult ProceedPayment(string rentalId)
     {
         if (string.IsNullOrEmpty(rentalId))
@@ -670,6 +681,7 @@ public class PickupReturnController : Controller
 
     // POST: Payment
     [HttpPost]
+    [Authorize(Roles = "Staff")]
     public IActionResult ProceedPayment(ReturnPaymentVM vm)
     {
         if (!ModelState.IsValid)
@@ -712,6 +724,7 @@ public class PickupReturnController : Controller
     }
 
     // GET: Receipt
+    [Authorize(Roles = "Staff")]
     public IActionResult Receipt(string paymentId)
     {
         var payment = _db.Payments
@@ -740,6 +753,7 @@ public class PickupReturnController : Controller
 
     // POST: EmailReceipt
     [HttpPost]
+    [Authorize(Roles = "Staff")]
     public async Task<IActionResult> EmailReceipt(string paymentId)
     {
         var payment = _db.Payments
@@ -796,7 +810,7 @@ public class PickupReturnController : Controller
 
         return RedirectToAction("Index");
     }
-
+    [Authorize(Roles = "Staff")]
     public IActionResult DownloadReceiptPDF(string paymentId)
     {
         var payment = _db.Payments.Include(p => p.Rental).ThenInclude(r => r.Customer)

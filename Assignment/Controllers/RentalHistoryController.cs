@@ -1,12 +1,14 @@
 ﻿using Assignment;
 using Assignment.Models;
 using Assignment.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
+using System.Security.Claims;
 
 namespace Assignment.Controllers;
 
@@ -25,7 +27,6 @@ public class RentalHistoryController : Controller
         _db = db;
     }
 
-    // Central base query (includes common navigation props)
     private IQueryable<Rental> BaseQuery()
     {
         return _db.Rentals
@@ -38,6 +39,7 @@ public class RentalHistoryController : Controller
     }
 
     // Index: RentalHistory
+    [Authorize]
     public IActionResult Index(string tab, 
                                string? search = null,
                                DateTime? pickupFrom = null,
@@ -48,15 +50,13 @@ public class RentalHistoryController : Controller
         ViewBag.ActiveTab = tab ?? "All";
 
         var today = DateTime.Today;
-
-        // 1. Start with base
         IQueryable<Rental> q = BaseQuery();
 
         // filter by role (see whether customer)
         // User.IsInRole("Customer")
-        if (true)
+        if (User.IsInRole("Customer"))
         {
-            string id = "CU0001";
+            string id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             q = q.Where(r => r.Customer.CustomerId == id);
         }
 
@@ -99,9 +99,8 @@ public class RentalHistoryController : Controller
         // search input
         if (!string.IsNullOrWhiteSpace(search))
         {
-            search = search?.Trim() ?? "";
-            // User.IsInRole("Customer")
-            if (true)
+            search = search?.Trim() ?? ""; 
+            if (User.IsInRole("Customer"))
                 q = q.Where(r => r.RentalId.Contains(search) || r.Model.ModelName.Contains(search) || r.PickupRecord.Vehicle.PlateNumber.Contains(search));
             else
                 q = q.Where(r => r.RentalId.Contains(search) || r.Model.ModelName.Contains(search) || r.PickupRecord.Vehicle.PlateNumber.Contains(search) || r.Customer.Name.Contains(search));
@@ -127,14 +126,14 @@ public class RentalHistoryController : Controller
         }
 
         ViewBag.ActiveTab = tab;
-        // User.IsInRole("Admin")
-        // ViewBag.IsAdmin = null;
+        ViewBag.IsAdmin = User.IsInRole("Staff");
 
         return View(q.ToList());
     }
 
 
     // GET: Details
+    [Authorize]
     public IActionResult Details(string id)
     {
         if (string.IsNullOrEmpty(id))
@@ -159,7 +158,7 @@ public class RentalHistoryController : Controller
 
         if (!isStaff)
         {
-            var customerId = "CU0001"; // replace with real login later
+            var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (rental.CustomerId != customerId)
                 return RedirectToAction("Index");
         }
@@ -176,6 +175,7 @@ public class RentalHistoryController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles ="Customer")]
     public IActionResult Cancel(string id)
     {
         var rental = _db.Rentals
@@ -193,17 +193,15 @@ public class RentalHistoryController : Controller
 
         decimal refundAmount = 0m;
 
-        decimal bookingFee = rental.TotalPrice - rental.DepositAmount;
-
         if (hoursBeforePickup > 48)
         {
             // Refund deposit + booking fee
-            refundAmount = rental.DepositAmount + bookingFee;
+            refundAmount = rental.DepositAmount + rental.TotalPrice;
         }
         else
         {
             // Refund booking fee only
-            refundAmount = bookingFee;
+            refundAmount = rental.TotalPrice;
         }
 
         // Insert refund payment record
@@ -220,20 +218,87 @@ public class RentalHistoryController : Controller
         _db.Payments.Add(refundPayment);
 
         rental.Status = "Cancelled";
-        SendCancellationEmail(rental.Customer.Email,rental);
+        if(hoursBeforePickup > 48)
+        {
+            SendCancellationEmail(rental.Customer.Email, rental, true);
+        }
+        else
+        {
+            SendCancellationEmail(rental.Customer.Email, rental, false);
+        }
+
 
         _db.SaveChanges();
-
-        TempData["Success"] = $"Booking cancelled. Refund amount: RM {refundAmount:N2}";
-
         return RedirectToAction("Details", new { id });
     }
 
-    public void SendCancellationEmail(string email, Assignment.Models.Rental rental)
+    public void SendCancellationEmail(string email, Assignment.Models.Rental rental, Boolean refundable)
     {
         string customerName = rental.Customer?.Name ?? "Customer";
+        string body = "";
+        if (refundable)
+        {
+            body = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{
+            font-family: Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }}
+        .title {{
+            font-size: 18px;
+            font-weight: bold;
+            color: #212529;
+            margin-bottom: 15px;
+        }}
+        .text {{
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }}
+        .footer {{
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+        }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='title'>Booking Cancellation Confirmation</div>
 
-        string body = $@"
+        <div class='text'>
+            Dear {customerName},<br><br>
+
+            Your booking (<strong>Ref: {rental.RentalId}</strong>) has been cancelled.<br><br>
+
+            The <strong>booking fee and deposit will be refunded</strong> accordance with our policy.<br><br>
+
+            Refund processing may take <strong>3–5 working days</strong>.
+        </div>
+
+        <div class='footer'>
+            Regards,<br>
+            Car Rental Admin
+        </div>
+    </div>
+</body>
+</html>";
+        }
+        else
+        {
+             body = $@"
 <!DOCTYPE html>
 <html>
 <head>
@@ -291,13 +356,15 @@ public class RentalHistoryController : Controller
     </div>
 </body>
 </html>";
+        }
 
-        var mail = new MailMessage
-        {
-            Subject = "Booking Cancellation Confirmation",
-            Body = body,
-            IsBodyHtml = true
-        };
+
+            var mail = new MailMessage
+            {
+                Subject = "Booking Cancellation Confirmation",
+                Body = body,
+                IsBodyHtml = true
+            };
 
         mail.To.Add(new MailAddress(email, customerName));
 

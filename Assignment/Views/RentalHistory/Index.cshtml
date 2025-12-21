@@ -1,13 +1,9 @@
-﻿
-
-@model IEnumerable<Assignment.Models.Rental>
+﻿@model IEnumerable<Assignment.Models.Rental>
 
 @{
     ViewData["Title"] = "Rental History";
     var active = (ViewBag.ActiveTab ?? "All").ToString();
     bool isAdmin = false;
-    // ViewBag.IsAdmin ??
-    // change after security added
 }
 
 <link rel="stylesheet" href="~/css/rentalHistory.css" />
@@ -20,23 +16,25 @@
     <div class="search-section">
         <form asp-action="Index"
               asp-controller="RentalHistory"
-              data-ajax="true"
-              data-ajax-update="#target"
-              data-ajax-loading="#loader"
+              method="get"
               class="search-form">
             <input type="hidden" name="tab" value="@active" />
             <div class="search-box">
-                @Html.TextBox("search", "", new { type = "search", id = "search", autofocus = "", placeholder = "Search rentals...", @class = "search-input" })
+                @Html.TextBox("search", "", new {
+                type = "search",
+                                id = "search",
+                                autofocus = "",
+                                placeholder = "Search rentals...",
+                                @class = "search-input"
+                                })
                 <button type="submit" class="search-btn">Search</button>
             </div>
-            <img src="/images/loader.gif" id="loader" class="loader" style="display: none">
         </form>
     </div>
 
     <div class="filter-section">
-        <form data-ajax="true"
-              data-ajax-update="#target"
-              data-ajax-loading="#loader"
+        <form asp-action="Index"
+              asp-controller="RentalHistory"
               method="get"
               class="filter-form">
             <input type="hidden" name="tab" id="tabInput" value="@active" />
@@ -83,18 +81,8 @@
             @foreach (var tabItem in tabs)
             {
                 bool isActive = active == tabItem.Key;
-
-                if ((tabItem.Key == "LateDue" && active == "LateDue") ||
-                (tabItem.Key == "LateReturned" && active == "LateReturned"))
-                {
-                    isActive = true;
-                }
-
                 <li class="nav-item">
                     <a class="nav-link @(isActive ? "active" : "")"
-                       data-ajax="true"
-                       data-ajax-update="#target"
-                       data-ajax-loading="#loader"
                        href="@Url.Action("Index", "RentalHistory", new { tab = tabItem.Key })">
                         @tabItem.Label
                     </a>
@@ -110,27 +98,60 @@
 
 @section foot {
     <script>
-        let timer = null;
+        // ========= AJAX FETCH HELPER =========
+        function ajaxFetch(url) {
+            return fetch(url, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            }).then(r => r.text());
+        }
 
-        $('#search').on('input', e => {
+        // ========= SEARCH (debounced) =========
+        let timer = null;
+        document.getElementById('search').addEventListener('input', e => {
             clearTimeout(timer);
-            timer = setTimeout(() => $(e.target.form).submit(), 500);
+            timer = setTimeout(() => {
+                const form = e.target.form;
+                const params = new URLSearchParams(new FormData(form));
+                const url = form.action + '?' + params.toString();
+
+                ajaxFetch(url).then(html => {
+                    document.getElementById('target').innerHTML = html;
+                });
+            }, 400);
         });
 
-        document.querySelectorAll('.nav-link[data-ajax="true"]').forEach(link => {
-            link.addEventListener('click', function(e) {
+        // ========= FILTER =========
+        document.querySelector('.filter-form').addEventListener('submit', e => {
+            e.preventDefault();
+
+            const form = e.target;
+            const params = new URLSearchParams(new FormData(form));
+            const url = form.action + '?' + params.toString();
+
+            ajaxFetch(url).then(html => {
+                document.getElementById('target').innerHTML = html;
+            });
+        });
+
+        // ========= TABS =========
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', e => {
                 e.preventDefault();
 
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
+                const tab = new URL(link.href).searchParams.get('tab');
 
-                const tab = new URL(this.href).searchParams.get('tab');
-
-                document.querySelectorAll('input[name="tab"]').forEach(inp => inp.value = tab);
-
-                $.get(this.href, function(data) {
-                    $('#target').html(data);
+                document.querySelectorAll('input[name="tab"]').forEach(i => {
+                    i.value = tab;
                 });
+
+                ajaxFetch(link.href).then(html => {
+                    document.getElementById('target').innerHTML = html;
+                });
+
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
             });
         });
     </script>

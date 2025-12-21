@@ -95,11 +95,8 @@ public class Customer : User
 {
     [Key, MaxLength(8)]
     public string CustomerId { get; set; }
-
     public string? PhotoURL { get; set; }
-
     public List<Rental> Rentals { get; set; } = [];
-
     public int LoginRetryCount { get; set; } = 0;
     public DateTime? LockedUntil { get; set; }
     public string? ResetToken { get; set; }
@@ -191,7 +188,6 @@ public class Vehicle
 // ──────────────────────────────────────
 // RENTAL
 //  Customer chooses Model first
-//  Vehicle assigned later (nullable)
 // ──────────────────────────────────────
 //
 public class Rental
@@ -241,9 +237,11 @@ public class Payment
 
     [Precision(10, 2)]
     public decimal Amount { get; set; }
+    [RegularExpression("Full Payment|ExtraCharge|Refund")]
     public string PaymentType { get; set; }
     // Full Payment / ExtraCharge / Refund
     public string PaymentMethod { get; set; }
+    [RegularExpression("Paid|Unpaid")]
     public string Status { get; set; }
 
     public DateTime Date { get; set; }
@@ -262,22 +260,24 @@ public class PickupRecord
     public string RentalId { get; set; }
     public Rental Rental { get; set; }
     public DateTime PickupDateTime { get; set; }
-
     public string CustomerDrivingLisence { get; set; }
     public string VehicleId { get; set; }
     public Vehicle Vehicle { get; set; }
 
     [Range(1,100000)]
     public int OdometerPickup { get; set; }
+    [RegularExpression("Full|Half|Low")]
     public string FuelLevelPickup { get; set; }
-
+    [RegularExpression("OK|Not OK")]
     public string BodyCondition { get; set; }
+    [RegularExpression("OK|Not OK")]
     public string InteriorCondition { get; set; }
+    [RegularExpression("OK|Not OK")]
     public string TyreCondition { get; set; }
+    [RegularExpression("OK|Not OK")]
     public string LightsCondition { get; set; }
-
+    [MaxLength(200)]
     public string? Remarks { get; set; }
-
     public string StaffId { get; set; }
     public Staff Staff { get; set; }
 
@@ -302,21 +302,26 @@ public class ReturnRecord
 
     [Range(1, 100000)]
     public int OdometerReturn { get; set; }
+    [RegularExpression("Full|Half|Low")]
     public string FuelLevelReturn { get; set; }
-
+    [RegularExpression("OK|Not OK")]
     public string BodyCondition { get; set; }
+    [RegularExpression("OK|Not OK")]
     public string InteriorCondition { get; set; }
+    [RegularExpression("OK|Not OK")]
     public string TyreCondition { get; set; }
+    [RegularExpression("OK|Not OK")]
     public string LightsCondition { get; set; }
+    [RegularExpression("Clean|Dirty")]
     public string CleanlinessCondition { get; set; }
 
     public bool HasDamage { get; set; }
+    [MaxLength(200)]
     public string? DamageDescription { get; set; }
     [Precision(10, 2)]
     public decimal? DamageCost { get; set; }
     [Precision(10, 2)]
     public decimal? FuelCharge { get; set; }
-
     public int? LateReturnDay { get; set; }
     [Precision(10, 2)]
     public decimal? LateFee { get; set; }
@@ -325,7 +330,7 @@ public class ReturnRecord
     public decimal? ExtraCharges { get; set; }
     [Precision(10, 2)]
     public decimal? TotalReturnCost { get; set; }
-
+    [MaxLength(100)]
     public string? Remarks { get; set; }
 
     public string StaffId { get; set; }

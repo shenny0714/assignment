@@ -1,10 +1,12 @@
 ﻿using Assignment.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 namespace Assignment.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class ReportController : Controller
 {
     private readonly DB _db;

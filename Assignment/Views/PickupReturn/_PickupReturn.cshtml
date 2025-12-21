@@ -58,7 +58,7 @@
                 </td>
 
                         <td class="action-cell">
-                    @if (r.Status == "Booked")
+                    @if (r.Status == "Booked" && r.PickupDate == DateTime.Today)
                             {
                                 <a class="action-btn pickup-btn"
                                    href="@Url.Action("Pickup", "PickupReturn", new { rentalId = r.RentalId })">

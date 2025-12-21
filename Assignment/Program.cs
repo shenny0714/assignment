@@ -8,6 +8,7 @@ using System.Globalization;
 var culture = new CultureInfo("ms-MY");
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
