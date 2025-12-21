@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Contact Us";
+    Layout = "_Layout";
+}
+
+<style>
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .contact-card, .about-card {
+        background-color: var(--bg-card);
+        color: var(--text-main);
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .title {
+        font-size: 2.25rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        color: var(--text-main);
+    }
+
+    p {
+        font-size: 1rem;
+        line-height: 1.8;
+        color: var(--text-main);
+        margin-bottom: 1rem;
+    }
+
+    a {
+        color: var(--text-link);
+        text-decoration: none;
+    }
+
+    body.dark .contact-card,
+    body.dark .about-card {
+        background-color: var(--bg-card-dark);
+        color: var(--text-main-dark);
+    }
+
+    /* Optional: make contact info bold */
+    .contact-info {
+        font-weight: 500;
+    }
+
+    /* Optional spacing for icons or items */
+    .contact-item {
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="contact-card">
+        <h1 class="title">Contact Drivolo</h1>
+
+        <p>We’re here to help! Reach out to us anytime using the information below.</p>
+
+        <div class="contact-item">
+            <span class="contact-info">Address:</span> 77, Lorong Lembah Permai 3, 11200 Tanjung Bungah, Pulau Pinang
+        </div>
+
+        <div class="contact-item">
+            <span class="contact-info">Phone:</span> 012-456 7890
+        </div>
+
+        <div class="contact-item">
+            <span class="contact-info">Email: support@gmail.com</span>
+        </div>
+
+        <p>
+            We aim to respond to all inquiries promptly and make your experience with Drivolo smooth and enjoyable.
+        </p>
+    </div>
+</div>

@@ -23,7 +23,7 @@ public class ReceiptPdf : IDocument
             page.Margin(40);
             page.DefaultTextStyle(x => x.FontSize(12));
 
-            page.Header().AlignCenter().Text("XYZ Car Rental").FontSize(24).Bold();
+            page.Header().AlignCenter().Text("Drivolo Car Rental").FontSize(24).Bold();
             page.Content().Column(col =>
             {
                 // Receipt title
@@ -87,7 +87,7 @@ public class ReceiptPdf : IDocument
                 // Footer / Note
                 col.Item().PaddingTop(20)
                    .AlignCenter()
-                   .Text("Thank you for choosing XYZ Car Rental!")
+                   .Text("Thank you for choosing Divolo Car Rental!")
                    .Italic();
             });
 
