@@ -343,10 +343,6 @@ public class EditUserVM
     [Required]
     public string Phone { get; set; }
     public string UserType { get; set; } // "Staff" or "Customer"
-    [DataType(DataType.Password)]
-    [Display(Name = "Confirm Password")]
-    [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
-    public string? ConfirmNewPassword { get; set; }
 }
 
 public class ResetPasswordVM
@@ -377,7 +373,7 @@ public class VehicleCatalogViewModel
     public string SelectedCategory { get; set; }
     public string SelectedBrandId { get; set; }
     // ===================================
-    public string UserSearchDate { get; set; }
+
     public string SearchTerm { get; set; }
     public SelectList CategoryList { get; set; }
     public SelectList BrandList { get; set; }

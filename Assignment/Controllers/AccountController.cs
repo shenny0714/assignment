@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -100,7 +101,7 @@ namespace Assignment.Controllers
                 {
                     string cacheKey = $"FailTime_{cust.Email}";
 
-                    // ✅ AUTO-RESET Check
+                    // AUTO-RESET Check
                     if (!_cache.TryGetValue(cacheKey, out DateTime _))
                     {
                         if (cust.LoginRetryCount > 0)
@@ -181,10 +182,10 @@ namespace Assignment.Controllers
             if (string.IsNullOrEmpty(captchaInput) || captchaInput != sessionCaptcha)
             {
                 ModelState.AddModelError("Captcha", "Invalid Captcha code.");
-                return View(vm);
+
             }
 
-            /* =========================
+            /* ==========================
              * 3️. PASSWORD STRENGTH CHECK
              * ========================= */
             if (!_hp.IsStrongPassword(vm.Password))
@@ -193,7 +194,7 @@ namespace Assignment.Controllers
                     "Password",
                     "Password must be at least 8 characters, contain 1 uppercase, 1 lowercase, 1 number, and 1 special character."
                 );
-                return View(vm);
+
             }
 
             /* =========================
@@ -252,7 +253,7 @@ namespace Assignment.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             TempData["Info"] = "Logout successfully.";
-            return RedirectToAction("Login");
+            return RedirectToAction("Index", "Home");
         }
         [AllowAnonymous]
         public IActionResult AccessDenied()
@@ -312,7 +313,7 @@ namespace Assignment.Controllers
                 {
                     ModelState.AddModelError("CurrentPassword", "Incorrect current password.");
                     if (u is Customer c) vm.PhotoURL = c.PhotoURL;
-                    return View(vm);
+
                 }
                 u.HashPassword = HashPassword(vm.NewPassword);
                 hasChanges = true;
@@ -385,8 +386,9 @@ namespace Assignment.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateStaff(RegisterVM vm)
         {
-            ModelState.Remove("Photo"); // Not needed for staff
+            ModelState.Remove("Photo"); // Photo is not used for staff accounts
 
+            // 1. Check for duplicate emails across both Staff and Customer tables
             if (_db.Staffs.Any(s => s.Email == vm.Email) || _db.Customers.Any(c => c.Email == vm.Email))
             {
                 ModelState.AddModelError("Email", "Email already registered.");
@@ -394,37 +396,38 @@ namespace Assignment.Controllers
 
             if (ModelState.IsValid)
             {
-                // Generate ID: S001, S002...
-                string newId = "S001";
-                var lastStaff = _db.Staffs
-                    .AsEnumerable()
-                    .OrderByDescending(s => s.StaffId.Length)
-                    .ThenByDescending(s => s.StaffId)
-                    .FirstOrDefault();
+                // 2. DYNAMIC ID GENERATION
+                // We fetch only IDs starting with "ST" and use AsNoTracking to avoid EF memory conflicts
+                var staffIds = _db.Staffs.AsNoTracking()
+                                 .Where(s => s.StaffId.StartsWith("ST"))
+                                 .Select(s => s.StaffId)
+                                 .ToList();
 
-                if (lastStaff != null)
-                {
-                    string numPart = lastStaff.StaffId.Substring(1);
-                    if (int.TryParse(numPart, out int lastNum))
-                    {
-                        newId = "S" + (lastNum + 1).ToString("D3");
-                    }
-                }
+                // Extract the numeric part (starting from index 2 for "ST") and find the maximum
+                int maxIdNum = staffIds
+                    .Select(id => int.TryParse(id.Substring(2), out int n) ? n : 0)
+                    .DefaultIfEmpty(0)
+                    .Max();
 
+                // Increment the highest number found and format it as ST + 4 digits
+                string nextId = "ST" + (maxIdNum + 1).ToString("D4");
+
+                // 3. CREATE STAFF OBJECT
                 var s = new Staff
                 {
-                    StaffId = newId,
+                    StaffId = nextId,
                     Name = vm.Name,
                     Email = vm.Email,
                     Phone = vm.Phone,
-                    HashPassword = HashPassword(vm.Password),
-                    Type = "Staff" // Explicitly create as Staff
+                    HashPassword = HashPassword(vm.Password), // Hashes the new password
+                    Type = "Staff"
                 };
 
+                // 4. SAVE TO DATABASE
                 _db.Staffs.Add(s);
-                _db.SaveChanges();
+                _db.SaveChanges(); // This will now use the calculated ST0007 (or higher)
 
-                TempData["Success"] = "New staff account created successfully!";
+                TempData["Success"] = $"Staff {s.Name} (ID: {nextId}) created successfully!";
                 return RedirectToAction(nameof(AdminStaff));
             }
 
@@ -594,6 +597,12 @@ namespace Assignment.Controllers
                 return RedirectToAction(null, new { name, sort, dir, page = model.PageCount });
             }
 
+            if (Request.IsAjax())
+            {
+                //  Return the SAME view file. The view will handle what to show.
+                return PartialView("Staff", model);
+            }
+
             return View(model);
         }
         // ──────────────────────────────────────
@@ -626,6 +635,11 @@ namespace Assignment.Controllers
             var model = sorted.ToPagedList(page, 8);
             if (page > model.PageCount && model.PageCount > 0) return RedirectToAction(null, new { name, sort, dir, page = model.PageCount });
 
+            if (Request.IsAjax())
+            {
+                // ✅ Return the SAME view file. The view will handle what to show.
+                return PartialView("Admin", model);
+            }
             return View(model);
         }
 
@@ -659,6 +673,11 @@ namespace Assignment.Controllers
             var model = sorted.ToPagedList(page, 8);
             if (page > model.PageCount && model.PageCount > 0) return RedirectToAction(null, new { name, sort, dir, page = model.PageCount });
 
+            if (Request.IsAjax())
+            {
+                // Return the SAME view file. The view will handle what to show.
+                return PartialView("AdminStaff", model);
+            }
             return View(model);
         }
 
@@ -699,7 +718,7 @@ namespace Assignment.Controllers
             return View();
         }
 
-        // Helper to construct the email (Similar to Demo)
+        // Helper to construct the email
         private void SendResetLinkEmail(string toEmail, string name, string link)
         {
             var mail = new MailMessage();
@@ -711,12 +730,12 @@ namespace Assignment.Controllers
             mail.Body = $@"
         <div style='font-family: Arial, sans-serif; padding: 20px;'>
             <h2 style='color: #5d5fef;'>Password Reset</h2>
-            <p>Dear {name},</p>
+            <p>Dear <b>{name}</b>,</p>
             <p>We received a request to reset your password.</p>
             <p>Please click the button below to reset it (valid for 15 minutes):</p>
             <a href='{link}' style='background-color: #5d5fef; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;'>Reset Password</a>
             <p style='margin-top: 20px;'>If you did not request this, please ignore this email.</p>
-            <p>From,<br>Car Rental Admin</p>
+            <p>From,<br><b>Car Rental Admin<b></p>
         </div>
     ";
 
