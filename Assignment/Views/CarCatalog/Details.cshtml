@@ -193,10 +193,14 @@
 
                 <div class="action-area">
                     <a asp-action="Index" class="link-back">
-                        Back to Catalog
+                        <i class="fa-solid fa-arrow-left"></i> Back to Catalog
                     </a>
 
-                    <a asp-controller="Booking" asp-action="Create" asp-route-modelId="@Model.ModelId" class="btn btn-primary btn-rent text-white">
+                    <a asp-controller="Rental"
+                       asp-action="Reserve"
+                       asp-route-modelId="@Model.ModelId"
+                       asp-route-pickedDate="@Context.Request.Query["pickedDate"]"
+                       class="btn btn-primary btn-rent text-white">
                         Rent This Car Now
                     </a>
                 </div>

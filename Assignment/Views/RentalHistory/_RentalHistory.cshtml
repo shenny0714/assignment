@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Assignment.Models.Rental>
 
 @{
-    bool isAdmin = ViewBag.isAdmin;
+    bool isAdmin = ViewBag.isAdmin == null ? false : true;
 }
 
 <div class="table-container">
