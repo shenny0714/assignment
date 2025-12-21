@@ -1,11 +1,9 @@
-﻿/* Tally-Inspired Return Form Styles */
-
+﻿
 .pickup-container-header {
     display: flex;
     flex-direction: row;
     align-items:center;
 }
-/* Main Container */
 .pickup-container-main {
     max-width: 900px;
     margin: 40px auto;
@@ -38,19 +36,17 @@
     cursor: pointer;
 }
 
-    .btn-secondary:hover {
-        background: #6b46c1;
-        color: white;
-        transform: translateX(-4px);
-        box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
-    }
+.btn-secondary:hover {
+    background: #6b46c1;
+    color: white;
+    transform: translateX(-4px);
+    box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
+}
 
-/* Form Wrapper */
 .pickup-form-wrapper {
     width: 100%;
 }
 
-/* Card Styles */
 .pickup-card {
     background: white;
     border-radius: 12px;
@@ -79,25 +75,24 @@
     padding: 24px;
 }
 
-    .pickup-card-body p {
-        margin: 0 0 12px 0;
-        font-size: 15px;
-        color: #4a5568;
-        line-height: 1.6;
-    }
+.pickup-card-body p {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+    color: #4a5568;
+    line-height: 1.6;
+}
 
-        .pickup-card-body p:last-child {
-            margin-bottom: 0;
-        }
+.pickup-card-body p:last-child {
+    margin-bottom: 0;
+}
 
-        .pickup-card-body p strong {
-            color: #2d3748;
-            font-weight: 600;
-            display: inline-block;
-            min-width: 130px;
-        }
+.pickup-card-body p strong {
+    color: #2d3748;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 130px;
+}
 
-/* Grid Layouts */
 .pickup-grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -122,7 +117,6 @@
     grid-column: span 2;
 }
 
-/* Form Elements */
 .pickup-label {
     display: block;
     font-size: 14px;
@@ -147,19 +141,19 @@
     box-sizing: border-box;
 }
 
-    .pickup-input:focus,
-    .pickup-select:focus,
-    .pickup-textarea:focus {
-        outline: none;
-        border-color: #6b46c1;
-        box-shadow: 0 0 0 3px rgba(107, 70, 193, 0.1);
-    }
+.pickup-input:focus,
+.pickup-select:focus,
+.pickup-textarea:focus {
+    outline: none;
+    border-color: #6b46c1;
+    box-shadow: 0 0 0 3px rgba(107, 70, 193, 0.1);
+}
 
-    .pickup-input:hover,
-    .pickup-select:hover,
-    .pickup-textarea:hover {
-        border-color: #cbd5e0;
-    }
+.pickup-input:hover,
+.pickup-select:hover,
+.pickup-textarea:hover {
+    border-color: #cbd5e0;
+}
 
 .pickup-textarea {
     min-height: 100px;
@@ -176,7 +170,6 @@
     padding-right: 40px;
 }
 
-/* Checkbox */
 .pickup-checkbox {
     width: 20px;
     height: 20px;
@@ -213,7 +206,7 @@
     font-weight: 500;
 }
 
-/* Submit Button */
+/* button */
 .pickup-text-end {
     text-align: right;
     margin-top: 32px;
@@ -237,26 +230,24 @@
     letter-spacing: 0.3px;
 }
 
-    .pickup-btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(107, 70, 193, 0.5);
-    }
+.pickup-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(107, 70, 193, 0.5);
+}
 
-    .pickup-btn-primary:active {
-        transform: translateY(0);
-    }
+.pickup-btn-primary:active {
+    transform: translateY(0);
+}
 
 .px-4 {
     padding-left: 32px;
     padding-right: 32px;
 }
 
-/* Utility Classes */
 .fw-bold {
     font-weight: 700;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .pickup-container-main {
         padding: 0 16px;

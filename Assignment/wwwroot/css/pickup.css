@@ -1,5 +1,4 @@
-﻿/* Tally-inspired Pickup Form Styles */
-
+﻿
 * {
     margin: 0;
     padding: 0;
@@ -19,7 +18,6 @@ body {
     align-items: center;
 }
 
-/* Main Container */
 .pickup-container-main {
     max-width: 900px;
     margin: 40px auto;
@@ -34,7 +32,6 @@ body {
     letter-spacing: -0.5px;
 }
 
-/* Form Wrapper */
 .pickup-form-wrapper {
     background: #ffffff;
     border-radius: 16px;
@@ -42,7 +39,6 @@ body {
     box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
 }
 
-/* Card Styles */
 .pickup-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
@@ -73,17 +69,17 @@ body {
     padding: 24px;
 }
 
-    .pickup-card-body p {
-        margin-bottom: 12px;
-        font-size: 15px;
-        color: #4a5568;
-    }
+.pickup-card-body p {
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #4a5568;
+}
 
-        .pickup-card-body p strong {
-            color: #2d3748;
-            font-weight: 600;
-            margin-right: 8px;
-        }
+.pickup-card-body p strong {
+    color: #2d3748;
+    font-weight: 600;
+    margin-right: 8px;
+}
 
 .pickup-card-title {
     font-size: 18px;
@@ -92,16 +88,15 @@ body {
     margin-bottom: 16px;
 }
 
-/* Grid & Layout */
 .pickup-row {
     display: grid;
     grid-template-columns: 1fr;
     width: 100%;
 }
 
-    .pickup-row.g-gap {
-        gap: 20px;
-    }
+.pickup-row.g-gap {
+    gap: 20px;
+}
 
 .pickup-col-6 {
     grid-column: span 1;
@@ -117,15 +112,14 @@ body {
     width: 100%;
 }
 
-    .pickup-grid-4.g-gap {
-        gap: 20px;
-    }
+.pickup-grid-4.g-gap {
+    gap: 20px;
+}
 
 .span-4 {
     grid-column: span 1;
 }
 
-/* Responsive Grid */
 @media (min-width: 768px) {
     .pickup-row {
         grid-template-columns: repeat(2, 1fr);
@@ -146,7 +140,6 @@ body {
     }
 }
 
-/* Form Elements */
 .pickup-label {
     display: block;
     font-size: 14px;
@@ -169,18 +162,18 @@ body {
     font-family: inherit;
 }
 
-    .pickup-input:focus,
-    .pickup-select:focus {
-        outline: none;
-        background: #ffffff;
-        border-color: #6366f1;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-    }
+.pickup-input:focus,
+.pickup-select:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
 
-    .pickup-input:hover,
-    .pickup-select:hover {
-        border-color: #cbd5e0;
-    }
+.pickup-input:hover,
+.pickup-select:hover {
+    border-color: #cbd5e0;
+}
 
 .pickup-textarea {
     width: 100%;
@@ -197,18 +190,17 @@ body {
     line-height: 1.6;
 }
 
-    .pickup-textarea:focus {
-        outline: none;
-        background: #ffffff;
-        border-color: #6366f1;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-    }
+.pickup-textarea:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
 
-    .pickup-textarea:hover {
-        border-color: #cbd5e0;
-    }
+.pickup-textarea:hover {
+    border-color: #cbd5e0;
+}
 
-/* Buttons */
 .pickup-btn-primary {
     background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     color: #ffffff;
@@ -224,29 +216,29 @@ body {
     overflow: hidden;
 }
 
-    .pickup-btn-primary::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: left 0.5s ease;
-    }
+.pickup-btn-primary::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
 
-    .pickup-btn-primary:hover::before {
-        left: 100%;
-    }
+.pickup-btn-primary:hover::before {
+    left: 100%;
+}
 
-    .pickup-btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-    }
+.pickup-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
 
-    .pickup-btn-primary:active {
-        transform: translateY(0);
-    }
+.pickup-btn-primary:active {
+    transform: translateY(0);
+}
 
 .pickup-btn-secondary {
     background: linear-gradient(135deg, #64748b 0%, #475569 100%);
@@ -263,10 +255,10 @@ body {
     gap: 6px;
 }
 
-    .pickup-btn-secondary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
-    }
+.pickup-btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+}
 
 .pickup-btn-success {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
@@ -283,10 +275,10 @@ body {
     gap: 6px;
 }
 
-    .pickup-btn-success:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    }
+.pickup-btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
 
 .pickup-btn-danger {
     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
@@ -303,12 +295,11 @@ body {
     gap: 6px;
 }
 
-    .pickup-btn-danger:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-    }
+.pickup-btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
 
-/* Button Container */
 .pickup-flex-wrap {
     display: flex;
     flex-wrap: wrap;
@@ -319,7 +310,6 @@ body {
         gap: 12px;
     }
 
-/* Validation & Errors */
 .pickup-error {
     display: block;
     color: #ef4444;
@@ -338,14 +328,12 @@ body {
     margin-bottom: 20px;
 }
 
-/* Divider */
 .pickup-hr {
     border: none;
     border-top: 1px solid #e2e8f0;
     margin: 24px 0;
 }
 
-/* Spacing */
 .mb-section {
     margin-bottom: 24px;
 }
@@ -375,7 +363,6 @@ body {
     padding-right: 32px;
 }
 
-/* Text Alignment */
 .pickup-text-end {
     text-align: right;
     margin-top: 30px;
@@ -385,7 +372,6 @@ body {
     text-align: center;
 }
 
-/* Media Elements */
 .pickup-video-border {
     border: 3px solid #6366f1;
     border-radius: 12px;
@@ -398,7 +384,6 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Utility Classes */
 .fw-bold {
     font-weight: 700;
 }
@@ -411,7 +396,6 @@ body {
     align-items: center;
 }
 
-/* Responsive Design */
 @media (max-width: 767px) {
     .pickup-form-wrapper {
         padding: 24px 20px;
@@ -447,7 +431,6 @@ body {
     }
 }
 
-/* Animation for cards */
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -465,7 +448,6 @@ body {
 }
 
 
-/* Back Button */
 .btn-secondary {
     display: inline-flex;
     align-items: center;
@@ -482,9 +464,9 @@ body {
     cursor: pointer;
 }
 
-    .btn-secondary:hover {
-        background: #6b46c1;
-        color: white;
-        transform: translateX(-4px);
-        box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
-    }
+.btn-secondary:hover {
+    background: #6b46c1;
+    color: white;
+    transform: translateX(-4px);
+    box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
+}

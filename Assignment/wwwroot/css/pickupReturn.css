@@ -23,13 +23,13 @@
     background: linear-gradient(to right, #4a90e2, #357abd) bottom / 100% 3px no-repeat;
 }
 
-    .page-header h2 {
-        font-size: 32px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin: 0;
-        letter-spacing: -0.5px;
-    }
+.page-header h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
 
 /* top action bar */
 .top-action-bar {
@@ -60,17 +60,17 @@
     background: #fafbfc;
 }
 
-    .search-input:focus {
-        outline: none;
-        border-color: #4a90e2;
-        background: #ffffff;
-        box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
-        transform: translateY(-1px);
-    }
+.search-input:focus {
+    outline: none;
+    border-color: #4a90e2;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
+    transform: translateY(-1px);
+}
 
-    .search-input::placeholder {
-        color: #9ca3af;
-    }
+.search-input::placeholder {
+    color: #9ca3af;
+}
 
 /* toggle */
 .today-toggle-btn {
@@ -88,43 +88,43 @@
     overflow: hidden;
 }
 
-    .today-toggle-btn::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, #4caf50, #45a049);
-        opacity: 0;
-        transition: opacity 0.3s;
-        z-index: -1;
-    }
+.today-toggle-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: -1;
+}
 
-    .today-toggle-btn:hover {
-        border-color: #4a90e2;
-        color: #4a90e2;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
-    }
+.today-toggle-btn:hover {
+    border-color: #4a90e2;
+    color: #4a90e2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
 
-    .today-toggle-btn.active {
-        background: linear-gradient(135deg, #4caf50, #45a049);
-        color: white;
-        border-color: #4caf50;
-        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-    }
+.today-toggle-btn.active {
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    color: white;
+    border-color: #4caf50;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
 
-        .today-toggle-btn.active::before {
-            opacity: 1;
-        }
+.today-toggle-btn.active::before {
+    opacity: 1;
+}
 
-        .today-toggle-btn.active:hover {
-            background: linear-gradient(135deg, #45a049, #388e3c);
-            border-color: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.35);
-        }
+.today-toggle-btn.active:hover {
+    background: linear-gradient(135deg, #45a049, #388e3c);
+    border-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.35);
+}
 
 /* scanner */
 .scanner-controls {
@@ -221,7 +221,7 @@
     }
 }
 
-/* Modern tabs with active state indicator */
+/* tabs */
 .tabs-section {
     margin-bottom: 25px;
 }
@@ -283,7 +283,6 @@
     transform: scaleX(1);
 }
 
-/* Enhanced table with modern styling and hover effects */
 .table-container {
     overflow-x: auto;
     background: white;
@@ -402,7 +401,6 @@
     color: #757575;
 }
 
-/* Enhanced success message with modern design */
 .success-message {
     padding: 16px 24px;
     background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
@@ -428,7 +426,6 @@
     }
 }
 
-/* axtion cell */
 .action-cell {
     text-align: center;
 }

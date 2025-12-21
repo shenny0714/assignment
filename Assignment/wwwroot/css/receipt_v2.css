@@ -1,6 +1,4 @@
-﻿/* Receipt Page Styles - Tally Inspired Purple Theme */
-
-* {
+﻿* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -19,7 +17,6 @@
     align-items: start;
 }
 
-/* Left Side - Receipt Details */
 .receipt-left {
     background: white;
     border-radius: 16px;
@@ -34,12 +31,12 @@
     text-align: center;
 }
 
-    .receipt-header h1 {
-        color: white;
-        font-size: 2rem;
-        font-weight: 600;
-        letter-spacing: -0.5px;
-    }
+.receipt-header h1 {
+    color: white;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
 
 .receipt-details {
     padding: 2rem;
@@ -54,18 +51,18 @@
     transition: all 0.3s ease;
 }
 
-    .detail-row:hover {
-        background: #f8f9ff;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        margin-left: -1rem;
-        margin-right: -1rem;
-        border-radius: 8px;
-    }
+.detail-row:hover {
+    background: #f8f9ff;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-radius: 8px;
+}
 
-    .detail-row:last-child {
-        border-bottom: none;
-    }
+.detail-row:last-child {
+    border-bottom: none;
+}
 
 .detail-label {
     color: #64748b;
@@ -79,23 +76,22 @@
     font-weight: 600;
 }
 
-    .detail-value.amount {
-        color: #667eea;
-        font-size: 1.5rem;
-        font-weight: 700;
-    }
+.detail-value.amount {
+    color: #667eea;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
 
-    .detail-value.status {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        padding: 0.5rem 1.25rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    }
+.detail-value.status {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
 
-/* Right Side - Actions Card */
 .receipt-right {
     animation: slideInRight 0.5s ease;
 }
@@ -109,14 +105,14 @@
     top: 2rem;
 }
 
-    .actions-card h3 {
-        color: #1e293b;
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #f0f0f0;
-    }
+.actions-card h3 {
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
 
 .action-buttons {
     display: flex;
@@ -124,9 +120,9 @@
     gap: 1rem;
 }
 
-    .action-buttons form {
-        width: 100%;
-    }
+.action-buttons form {
+    width: 100%;
+}
 
 .action-btn {
     width: 100%;
@@ -144,23 +140,23 @@
     overflow: hidden;
 }
 
-    .action-btn::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-    }
+.action-btn::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
 
-    .action-btn:hover::before {
-        width: 300px;
-        height: 300px;
-    }
+.action-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
 
 .btn-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -168,10 +164,10 @@
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 28px rgba(102, 126, 234, 0.5);
-    }
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(102, 126, 234, 0.5);
+}
 
 .btn-info {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
@@ -179,10 +175,10 @@
     box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
 }
 
-    .btn-info:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 28px rgba(59, 130, 246, 0.5);
-    }
+.btn-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(59, 130, 246, 0.5);
+}
 
 .btn-secondary {
     background: linear-gradient(135deg, #64748b 0%, #475569 100%);
@@ -190,10 +186,10 @@
     box-shadow: 0 8px 20px rgba(100, 116, 139, 0.4);
 }
 
-    .btn-secondary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 28px rgba(100, 116, 139, 0.5);
-    }
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(100, 116, 139, 0.5);
+}
 
 .success-message {
     margin-top: 1.5rem;
@@ -244,7 +240,6 @@
     }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     body {
         padding: 1rem;
@@ -279,7 +274,6 @@
     }
 }
 
-/* Print Styles */
 @media print {
     body {
         background: white;

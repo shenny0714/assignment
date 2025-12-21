@@ -52,12 +52,16 @@ public class RentalHistoryController : Controller
         var today = DateTime.Today;
         IQueryable<Rental> q = BaseQuery();
 
-        // filter by role (see whether customer)
-        // User.IsInRole("Customer")
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+        _logger.LogInformation("Logged in userId = {UserId}", userId);
+        _logger.LogInformation("Total rentals BEFORE filter = {Count}", q.Count());
+
         if (User.IsInRole("Customer"))
         {
-            string id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            q = q.Where(r => r.Customer.CustomerId == id);
+            q = q.Where(r => r.Customer.CustomerId == userId);
+            _logger.LogInformation("Total rentals AFTER customer filter = {Count}", q.Count());
         }
 
         // tab filtering

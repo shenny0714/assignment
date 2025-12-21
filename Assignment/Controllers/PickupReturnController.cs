@@ -801,7 +801,7 @@ public class PickupReturnController : Controller
             // send email
             _hp.SendEmail(mail);
 
-            TempData["Info"] = "Receipt sent to customer via email.";
+            TempData["Success"] = "Receipt sent to customer via email.";
         }
         catch (Exception ex)
         {
