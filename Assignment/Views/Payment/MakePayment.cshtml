@@ -5,7 +5,7 @@
 
     DateTime start = Convert.ToDateTime(ViewBag.RentalDate);
     DateTime end = Convert.ToDateTime(ViewBag.ReturnDate);
-    int days = (end - start).Days;
+    int days = (end.Date - start.Date).Days + 1;
     if (days < 1) days = 1;
 }
 

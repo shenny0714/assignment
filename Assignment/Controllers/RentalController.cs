@@ -79,11 +79,8 @@ public class RentalController(DB db) : Controller
         // SUCCESS -> REDIRECT TO PAYMENT
         if (ModelState.IsValid)
         {
-            int days = (vm.ReturnDate - vm.RentalDate).Days;
-
-            // Allow same-day return (0 days diff = 1 day charge)
+            int days = (vm.ReturnDate.Date - vm.RentalDate.Date).Days + 1;
             if (days < 0) days = 1;
-            if (days == 0) days = 1;
 
             decimal finalTotal = days * model.Price;
             decimal finalDeposit = finalTotal * 0.2m;
