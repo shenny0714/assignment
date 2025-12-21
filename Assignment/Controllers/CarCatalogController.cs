@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+
 namespace Assignment.Controllers
 {
     public class CarCatalogController : Controller
@@ -14,42 +15,40 @@ namespace Assignment.Controllers
             _context = context;
         }
 
-
+        // Modified: SelectedBrandId is now int? (nullable integer) to match your search page
         public async Task<IActionResult> Index(string SelectedCategory, int? SelectedBrandId, string SearchTerm, string pickedDate)
         {
             bool isStaff = false;
             ViewBag.IsStaff = isStaff;
-            // -----------------------------------------------------------
+
             // 1. HANDLE DATE LOGIC
-            // -----------------------------------------------------------
             if (string.IsNullOrEmpty(pickedDate))
             {
                 pickedDate = DateTime.Today.ToString("yyyy-MM-dd");
             }
+            // We still keep this for ViewBag, but we also add it to the ViewModel below
             ViewBag.UserSearchDate = pickedDate;
             DateTime searchDate = DateTime.Parse(pickedDate);
 
-            // -----------------------------------------------------------
             // 2. QUERY DATABASE
-            // -----------------------------------------------------------
             if (!isStaff)
             {
                 var carsQuery = _context.CarModels
                 .Include(c => c.Brand)
                 .Include(c => c.Category)
-                .Include(c => c.Vehicles) // Important: Needed to count Total Fleet
+                .Include(c => c.Vehicles)
                 .AsQueryable();
 
-                // Category 
+                // [FIXED] Category: Compare 'CategoryName' (string) instead of 'CategoryId' (int)
+                // This matches the "City", "Sedan" links from your home page.
                 if (!string.IsNullOrEmpty(SelectedCategory))
                 {
-                    carsQuery = carsQuery.Where(c => c.CategoryId == SelectedCategory);
+                    carsQuery = carsQuery.Where(c => c.Category.CategoryName == SelectedCategory);
                 }
 
-
+                // [MODIFIED] Brand: Checks if the integer has a value
                 if (SelectedBrandId.HasValue && SelectedBrandId > 0)
                 {
-
                     carsQuery = carsQuery.Where(c => c.BrandId == SelectedBrandId);
                 }
 
@@ -61,11 +60,7 @@ namespace Assignment.Controllers
 
                 var filteredCars = await carsQuery.ToListAsync();
 
-                // -----------------------------------------------------------
-                // 3. [UPDATED] CHECK AVAILABILITY LOGIC (Count by Model)
-                // -----------------------------------------------------------
-                // Step A: Get a list of ALL Model IDs that are booked on this date
-                // We ignore Cancelled/Rejected bookings.
+                // 3. CHECK AVAILABILITY LOGIC
                 var bookedModelIds = _context.Rentals
                     .Where(r => r.Status != "Cancelled" &&
                                 r.Status != "Rejected" &&
@@ -78,40 +73,35 @@ namespace Assignment.Controllers
                 {
                     if (car.Vehicles != null)
                     {
-                        // Total cars you own of this model
                         int totalFleet = car.Vehicles.Count;
-
-                        // Total active bookings for this model
                         int bookedCount = bookedModelIds.Count(id => id == car.ModelId);
-
-                        // Available = Fleet - Booked
                         int availableCount = totalFleet - bookedCount;
 
-                        // Step B: Update the list to reflect availability
                         if (availableCount > 0)
                         {
-                            // We strictly limit the list to the available number
-                            // So @item.Vehicles.Count in the View shows the correct number
                             car.Vehicles = car.Vehicles.Take(availableCount).ToList();
                         }
                         else
                         {
-                            // If 0 or negative, it means Fully Booked
                             car.Vehicles = new List<Assignment.Models.Vehicle>();
                         }
                     }
                 }
 
-                // -----------------------------------------------------------
                 // 4. PREPARE VIEW MODEL
-                // -----------------------------------------------------------
                 var viewModel = new VehicleCatalogViewModel
                 {
                     CarModels = filteredCars,
+                    // [ADDED] Pass the date to the ViewModel to fix the "UserSearchDate" error
+                    UserSearchDate = pickedDate,
+
                     SelectedCategory = SelectedCategory,
-                    SelectedBrandId = SelectedBrandId?.ToString(), // Safety check
+                    // [MODIFIED] Convert the int back to string if your ViewModel property is a string
+                    SelectedBrandId = SelectedBrandId?.ToString(),
                     SearchTerm = SearchTerm,
-                    CategoryList = new SelectList(_context.VehicleCategories, "CategoryId", "CategoryName"),
+
+                    // [FIXED] Ensure dropdown uses CategoryName for value to match the Home Page links
+                    CategoryList = new SelectList(_context.VehicleCategories, "CategoryName", "CategoryName"),
                     BrandList = new SelectList(_context.Brands, "BrandId", "BrandName")
                 };
 
@@ -129,7 +119,6 @@ namespace Assignment.Controllers
             }
         }
 
-        // Details 
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();

@@ -6,15 +6,20 @@
 
     var carModel = ViewBag.SelectedModel as Assignment.Models.CarModel;
 
-
     string minStart = DateTime.Today.ToString("yyyy-MM-dd");
-
-    // Max booking
     string maxStart = DateTime.Today.AddDays(90).ToString("yyyy-MM-dd");
 }
 
 <link rel="stylesheet" href="~/css/reserve.css" asp-append-version="true" />
 
+<style>
+    .day-past {
+        background-color: #e9ecef; /* Light Gray */
+        color: #adb5bd;            /* Muted Text */
+        cursor: not-allowed;
+        pointer-events: none;      /* Prevent clicking */
+    }
+</style>
 
 <div class="reserve-container-grid">
     <div class="row">
@@ -93,6 +98,7 @@
                 </div>
                 <br>
                 <div class="mt-3 text-center">
+                    <span class="badge" style="background-color: #e9ecef; color: #6c757d;">Past</span>
                     <span class="badge" style="background-color: #d1e7dd; color: #0f5132;">Available</span>
                     <span class="badge" style="background-color: #f8d7da; color: #842029;">Booked</span>
                 </div>
@@ -142,6 +148,7 @@
                     });
             }
 
+            // [CHANGE 3] Updated renderGrid to check for Past Dates
             function renderGrid(year, month, busyDays) {
                 const daysContainer = $('#calendarDays');
                 daysContainer.empty();
@@ -149,15 +156,29 @@
                 const daysInMonth = new Date(year, month, 0).getDate();
                 const firstDayIndex = new Date(year, month - 1, 1).getDay();
 
+                // Get today's date with time stripped for accurate comparison
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
                 for (let i = 0; i < firstDayIndex; i++) {
                     daysContainer.append('<div class="day-empty"></div>');
                 }
 
                 for (let day = 1; day <= daysInMonth; day++) {
                     let className = "day-box";
-                    if (busyDays.includes(day)) {
+                    
+                    // Create specific date object for this cell
+                    const cellDate = new Date(year, month - 1, day);
+
+                    if (cellDate < today) {
+                        // If date is in the past
+                        className += " day-past";
+                    } 
+                    else if (busyDays.includes(day)) {
+                        // If date is booked
                         className += " day-busy";
                     }
+                    
                     daysContainer.append(`<div class="${className}">${day}</div>`);
                 }
             }
@@ -249,7 +270,6 @@
                     const ms = co.valueAsDate - ci.valueAsDate;
 
                     // Calculation to match "20 to 21 is 2 days" rule 
- 
                     let days = Math.floor(ms / (24 * 60 * 60 * 1000)) + 1;
 
                     if (days <= 0) days = 1; 

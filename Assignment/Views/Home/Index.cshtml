@@ -1,6 +1,7 @@
 ﻿@{
     ViewBag.Title = "Home";
     Layout = "_Layout";
+    var today = DateTime.Today.ToString("yyyy-MM-dd");
 }
 
 <div class="container-2">
@@ -16,64 +17,82 @@
     </section>
 
     <section class="widget-box">
-        <div class="form-grid">
+        <form action="/CarCatalog" method="get">
 
-            <div class="input-group">
-                <label>Pick-up Date</label>
-                <input class="form-input" type="date" value="2025-12-10" />
+            <div class="form-grid">
+
+                <div class="input-group">
+                    <label>Pick-up Date</label>
+                    <input class="form-input"
+                           type="date"
+                           name="pickedDate"
+                           value="@today"
+                           min="@today"
+                           required />
+                </div>
+
+                <div class="input-group">
+                    <label>Car Type</label>
+                    <select class="form-input" name="SelectedCategory">
+                        <option value="">All Types</option>
+                        <option value="City">City</option>
+                        <option value="Sedan">Sedan</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Luxury">Luxury</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary btn-search">Search Cars</button>
             </div>
 
-            <div class="input-group">
-                <label>Drop-off Date</label>
-                <input class="form-input" type="date" value="2025-12-12" />
-            </div>
-
-            <button class="btn-primary btn-search">Search Cars</button>
-        </div>
+        </form>
     </section>
 
     <section>
-        <h2 class="section-header">Featured Cars</h2>
+        <h2 class="section-header">Browse by Category</h2>
         <div class="car-grid">
 
             <div class="car-card">
-                <img src="~/images/car3.jpg" alt="Economy Sedan" class="car-img" />
+                <img src="~/images/car3.jpg" alt="City Car" class="car-img" />
                 <div class="car-details">
-                    <h3 class="car-title">Economy Sedan</h3>
+                    <h3 class="car-title">City</h3>
                     <div class="car-features">
-                        <span>5 Seats</span> | <span>A/C</span> | <span>Auto</span>
+                        <span>Easy Parking</span> | <span>Fuel Efficient</span>
                     </div>
                     <div class="price-row">
-                        <p class="price-tag">RM100<span class="price-suffix">/day</span></p>
-                        <button class="btn-primary btn-rent">Rent Now</button>
+                        <p class="price-tag">Best for<span class="price-suffix"> Commute</span></p>
+
+                        <a href="/CarCatalog?SelectedCategory=City" class="btn-primary btn-rent">View Cars</a>
                     </div>
                 </div>
             </div>
 
             <div class="car-card">
-                <img src="~/images/car2.jpg" alt="Luxury Coupe" class="car-img" />
+                <img src="~/images/car2.jpg" alt="Sedan" class="car-img" />
                 <div class="car-details">
-                    <h3 class="car-title">Luxury Coupe</h3>
+                    <h3 class="car-title">Sedan</h3>
                     <div class="car-features">
-                        <span>2 Seats</span> | <span>A/C</span> | <span>Auto</span>
+                        <span>Comfort</span> | <span>Spacious</span> | <span>Style</span>
                     </div>
                     <div class="price-row">
-                        <p class="price-tag">RM100<span class="price-suffix">/day</span></p>
-                        <button class="btn-primary btn-rent">Rent Now</button>
+                        <p class="price-tag">Best for<span class="price-suffix"> Business</span></p>
+
+                        <a href="/CarCatalog?SelectedCategory=Sedan" class="btn-primary btn-rent">View Cars</a>
                     </div>
                 </div>
             </div>
 
             <div class="car-card">
-                <img src="~/images/car1.jpg" alt="Premium SUV" class="car-img" />
+                <img src="~/images/car1.jpg" alt="SUV" class="car-img" />
                 <div class="car-details">
-                    <h3 class="car-title">Premium SUV</h3>
+                    <h3 class="car-title">SUV</h3>
                     <div class="car-features">
-                        <span>7 Seats</span> | <span>A/C</span> | <span>Auto</span>
+                        <span>Family Size</span> | <span>Large Boot</span>
                     </div>
                     <div class="price-row">
-                        <p class="price-tag">RM100<span class="price-suffix">/day</span></p>
-                        <button class="btn-primary btn-rent">Rent Now</button>
+                        <p class="price-tag">Best for<span class="price-suffix"> Travel</span></p>
+
+                        <a href="/CarCatalog?SelectedCategory=SUV" class="btn-primary btn-rent">View Cars</a>
                     </div>
                 </div>
             </div>

@@ -3,13 +3,16 @@
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Vehicle Categories";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <link rel="stylesheet" href="~/css/brand.css" />
 <div class="product-management-container">
     <div class="top-bar">
         <div class="d-flex align-items-center gap-2">
             <a asp-controller="Vehicle" asp-action="Index" class="btn-back">← Back</a>
-            <p></p>
+            <a asp-action="Create" class="btn btn-success btn-sm">
+                <i class="bi bi-plus-lg me-1"></i> Add New Category
+            </a>
             <h2 class="mb-0">Vehicle Categories</h2>
         </div>
     </div>

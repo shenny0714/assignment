@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Car Rental</title>
     <link href="~/css/receipt.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
     <link rel="stylesheet" href="~/css/app.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
 </head>
 @{
@@ -32,16 +32,15 @@
                     <div class="text-accent">
                         <span class="material-symbols-outlined" style="font-size: 24px; color: #007BFF;">directions_car</span>
                     </div>
-                    <h2>Title</h2>
+                    <h2>Drivolo</h2>
                 </a>
 
                 <div style="display:flex; align-items:center; gap: 1.5rem;">
                     <nav class="nav-links">
                         <a href="/">Home</a>
                         <a href="/CarCatalog">Cars</a>
-                        <a href="/About">About</a>
-                        <a href="/Contact">Contact</a>
-                        <a href="/RentalHistory">Rental History</a>
+                        <a href="/Home/About">About</a>
+                        <a href="/Home/Contact">Contact</a>
                         @if (User.IsInRole("Staff"))
                         {
                             <a href="/PickupReturn">Pickup Return</a>
@@ -52,11 +51,6 @@
                         }
                     </nav>
                     <div style="display:flex; gap: 0.5rem;">
-                        <button id="theme-toggle" class="btn-theme-toggle" title="Toggle Dark Mode">
-                            <span class="material-symbols-outlined">dark_mode</span>
-                        </button>
-                        
-
                         @if (isLoggedIn)
                         {
                             <div class="user-profile-container">
@@ -114,7 +108,7 @@
             <div class="container-2">
                 <div class="footer-grid">
                     <div>
-                        <h3 style="font-weight:bold; margin-bottom:1rem;">Title</h3>
+                        <h3 style="font-weight:bold; margin-bottom:1rem;">Drivolo</h3>
                         <p style="font-size:0.875rem; color:#4b5563;">Your journey, our priority. Rent premium cars effortlessly.</p>
                     </div>
                     <div class="footer-links">
@@ -122,15 +116,13 @@
                         <ul>
                             <li><a href="#">Home</a></li>
                             <li><a href="/CarCatalog">Cars</a></li>
-                            <li><a href="#">About Us</a></li>
                         </ul>
                     </div>
                     <div class="footer-links">
                         <h3 style="font-weight:bold; margin-bottom:1rem;">Support</h3>
                         <ul>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Terms</a></li>
-                            <li><a href="#">Privacy</a></li>
+                            <li><a href="/Home/Contact">Contact Us</a></li>
+                            <li><a href="/Home/About">About Us</a></li>
                         </ul>
                     </div>
                     <div class="footer-links">
@@ -143,8 +135,6 @@
                     </div>
                 </div>
                 <div style="border-top:1px solid var(--border-color); margin-top:2rem; padding-top:1.5rem; text-align:center; font-size:0.875rem; color:var(--text-muted);">
-                    <p>© 2025 Title. All Rights Reserved.</p>
-
                     <div class="social-links" style="margin-top: 1rem; display: flex; justify-content: center; gap: 1rem;">
                         <a class="btn-social" href="#!" aria-label="Twitter">
                             <i class="fab fa-twitter"></i>
@@ -156,7 +146,8 @@
                             <i class="fab fa-instagram"></i>
                         </a>
                     </div>
-
+                    <br />
+                    <p>© 2025 Drivolo. All Rights Reserved.</p>
                 </div>
             </div>
         </footer>

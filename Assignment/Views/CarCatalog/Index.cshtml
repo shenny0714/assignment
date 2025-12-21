@@ -2,16 +2,12 @@
 
 @{
     ViewData["Title"] = "Find Your Drive";
-    // 1. Get the Date to show in the box (Default to Today if null)
-    string currentSearchDate = ViewBag.UserSearchDate as string ?? DateTime.Today.ToString("yyyy-MM-dd");
 
-    // 2. Logic: Calculate Minimum Allowed Date (12PM Rule)
+    string currentSearchDate = ViewBag.UserSearchDate as string
+        ?? DateTime.Today.ToString("yyyy-MM-dd");
+    // 2. Logic: Calculate Minimum Allowed Date (12PM Rule) 
     string minDate = DateTime.Today.ToString("yyyy-MM-dd");
-    if (DateTime.Now.Hour >= 12)
-    {
-        minDate = DateTime.Today.AddDays(1).ToString("yyyy-MM-dd");
-    }
-    }
+}
 
 <style>
     /* ===== Page Title ===== */
@@ -19,51 +15,45 @@
         letter-spacing: 0.5px;
     }
 
+    /* ===== Search Container ===== */
     .search-container {
-        background: #ffffff;
         border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         padding: 20px;
         margin-bottom: 30px;
+        border: 1px solid var(--border-color, #dee2e6);
     }
 
+        /* Inputs inherit theme */
+        .search-container .form-control,
         .search-container .form-select,
-        .search-container .form-control {
+        .search-container .input-group-text {
+            background-color: inherit;
+            color: inherit;
+            border: 1px solid var(--border-color, #dee2e6);
             border-radius: 10px;
-            padding: 10px 14px;
-        }
-
-        .search-container .btn-primary {
-            border-radius: 10px;
-            padding: 10px 0;
-            font-weight: 600;
+            height: 44px;
         }
 
     /* ===== Card ===== */
     .car-card {
-        transition: transform 0.2s, box-shadow 0.2s;
-        border: none;
         border-radius: 12px;
         overflow: hidden;
-        background: #fff;
-        transition: all 0.3s ease;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--border-color, #dee2e6);
+        background-color: inherit;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
         .car-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
         }
 
     /* ===== Image ===== */
     .image-frame {
         height: 200px;
-        background-color: #f8f9fa;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-bottom: 1px solid #eee;
-        position: relative;
+        border-bottom: 1px solid var(--border-color, #dee2e6);
     }
 
         .image-frame img {
@@ -73,18 +63,15 @@
             padding: 10px;
         }
 
-    .car-card:hover .image-frame img {
-        transform: scale(1.08);
-    }
-
     /* ===== Badge ===== */
     .badge {
+        background-color: inherit;
+        color: inherit;
+        border: 1px solid var(--border-color, #dee2e6);
         border-radius: 50px;
         padding: 6px 14px;
         font-size: 0.75rem;
         font-weight: 600;
-        background: #eef2ff !important;
-        color: #3b5bdb !important;
     }
 
     /* ===== Card Body ===== */
@@ -92,46 +79,26 @@
         padding: 18px 20px 20px;
     }
 
-    .card-title {
-        font-size: 1.15rem;
-        line-height: 1.3;
-    }
-
-    .card-text {
-        font-size: 0.9rem;
-        color: #6c757d;
-    }
-
     /* ===== Price ===== */
     .price-tag {
-        color: #0d6efd;
         font-weight: 700;
-        color: #2563eb;
     }
 
-    /* ===== Button ===== */
+    /* ===== Buttons ===== */
     .btn-outline-primary {
         border-radius: 50px;
         padding: 6px 18px;
         font-size: 0.9rem;
         font-weight: 600;
-        transition: all 0.25s ease;
     }
-
-        .btn-outline-primary:hover {
-            background: #2563eb;
-            border-color: #2563eb;
-            color: #fff;
-        }
 
     /* ===== Empty State ===== */
     .bg-light.rounded-3 {
-        background: #ffffff !important;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        background-color: inherit !important;
+        border: 1px solid var(--border-color, #dee2e6);
     }
 
-    /* ===== Responsive ===== */
-    @@media (max-width: 768px) {
+    /* ===== Responsive ===== */ @@media (max-width: 768px) {
         .image-frame {
             height: 180px;
         }
@@ -140,8 +107,9 @@
             padding: 20px;
         }
     }
+
+    }
 </style>
-<link rel="stylesheet" href="~/css/catalog.css" asp-append-version="true" />
 
 <div class="container py-5">
 
@@ -149,126 +117,144 @@
         <h1 class="fw-bold">Find Your Perfect Car</h1>
     </div>
 
-    <div class="search-container border">
+    <!-- ===== Search Bar ===== -->
+    <div class="search-container">
         <form asp-action="Index" method="get">
-            <div class="row g-3 align-items-center">
+            <div class="row g-3 align-items-end">
 
                 <div class="col-md-3">
-                    <input type="date" name="pickedDate" value="@currentSearchDate"
-                           min="@minDate" class="form-control bg-light border-0"
-                           onchange="this.form.submit()" />
+                    <input type="date"
+                           name="pickedDate"
+                           value="@currentSearchDate"
+                           min="@minDate"
+                           class="form-control" />
                 </div>
 
                 <div class="col-md-3">
-                    <select asp-for="SelectedCategory" asp-items="Model.CategoryList" class="form-select bg-light border-0">
+                    <select asp-for="SelectedCategory"
+                            asp-items="Model.CategoryList"
+                            class="form-select">
                         <option value="">All Categories</option>
                     </select>
                 </div>
 
                 <div class="col-md-3">
-                    <select asp-for="SelectedBrandId" asp-items="Model.BrandList" class="form-select bg-light border-0">
+                    <select asp-for="SelectedBrandId"
+                            asp-items="Model.BrandList"
+                            class="form-select">
                         <option value="">All Brands</option>
                     </select>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
-                        <input asp-for="SearchTerm" class="form-control bg-light border-0" placeholder="e.g. Civic, Camry..." />
+                        <span class="input-group-text">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input asp-for="SearchTerm"
+                               class="form-control"
+                               placeholder="e.g. Civic, Camry..." />
                     </div>
                 </div>
 
-                <div class="col-md-2 text-end">
-                    <label class="form-label d-none d-md-block">&nbsp;</label> <button type="submit" class="btn btn-primary w-100 fw-bold">
+                <div class="col-md-12 text-end mt-2">
+                    <button type="submit" class="btn btn-primary fw-bold px-5">
                         Search
                     </button>
                 </div>
+
             </div>
         </form>
     </div>
 
+    <!-- ===== Vehicle Cards ===== -->
     <div class="row g-4">
-                @if (Model.CarModels.Any())
-                {
-                    @foreach (var item in Model.CarModels)
-                    {
-                // Logic: Count stock from the 'Vehicles' list populated by Controller
-                int stock = item.Vehicles != null ? item.Vehicles.Count : 0;
+        @if (Model.CarModels.Any())
+        {
+            foreach (var item in Model.CarModels)
+            {
+                int stock = item.Vehicles?.Count ?? 0;
                 bool isAvailable = stock > 0;
 
                 <div class="col-md-4 col-sm-6">
-                            <div class="card car-card h-100 shadow-sm">
+                    <div class="card car-card h-100">
 
-                                <div class="image-frame">
-                                    @if (!string.IsNullOrEmpty(item.ImagePathFront))
-                                    {
-                                <img src="@item.ImagePathFront" alt="@item.ModelName" onerror="this.src='/images/default-car.png'; this.onerror=null;" />
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted"><i class="bi bi-car-front fs-1"></i><br>No Image</span>
-                                    }
+                        <div class="image-frame">
+                            @if (!string.IsNullOrEmpty(item.ImagePathFront))
+                            {
+                                <img src="@item.ImagePathFront"
+                                     alt="@item.ModelName"
+                                     onerror="this.src='/images/default-car.png'; this.onerror=null;" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">
+                                    <i class="bi bi-car-front fs-1"></i><br />No Image
+                                </span>
+                            }
+                        </div>
 
-                                </div>
+                        <div class="card-body d-flex flex-column">
 
-                                <div class="card-body d-flex flex-column">
-                                    <div class="mb-2">
-                                        <span class="badge bg-light text-dark border">
-                                            @item.Category?.CategoryName
-                                        </span>
-                                    </div>
+                            <div class="mb-2">
+                                <span class="badge">
+                                    @item.Category?.CategoryName
+                                </span>
+                            </div>
 
-                            <h5 class="card-title fw-bold text-dark mb-1">
-                                        @item.Brand?.BrandName @item.ModelName
+                            <h5 class="fw-bold mb-1">
+                                @item.Brand?.BrandName @item.ModelName
                             </h5>
 
-                                    <p class="card-text text-muted small flex-grow-1 text-truncate">
-                                        @item.Description
-                                    </p>
+                            <p class="small flex-grow-1 text-truncate">
+                                @item.Description
+                            </p>
 
-                                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-                                        <div>
-                                            <span class="price-tag">RM @item.Price</span>
-                                            <span class="text-muted small">/ day</span>
-                                        </div>
-                                        <a asp-action="Details" asp-route-id="@item.ModelId" class="btn btn-outline-primary rounded-pill px-4">
-                                            Details
-                                        </a>
+                            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                                <div>
+                                    <span class="price-tag">RM @item.Price</span>
+                                    <span class="small">/ day</span>
+                                </div>
+
+                                <a asp-action="Details"
+                                   asp-route-id="@item.ModelId"
+                                   class="btn btn-outline-primary">
+                                    Details
+                                </a>
                             </div>
-                            <div class="d-grid">
+
+                            <div class="d-grid mt-3">
                                 @if (isAvailable)
                                 {
                                     <a asp-controller="Rental"
                                        asp-action="Reserve"
                                        asp-route-modelId="@item.ModelId"
                                        asp-route-pickedDate="@currentSearchDate"
-                                       class="btn btn-primary fw-bold py-2" style="display: flex; float: right;">
+                                       class="btn btn-primary fw-bold">
                                         Book for @DateTime.Parse(currentSearchDate).ToString("MMM dd")
                                     </a>
                                 }
                                 else
                                 {
-                                    <button class="btn btn-secondary py-2" disabled>
-                                        Unavailable on @DateTime.Parse(currentSearchDate).ToString("MMM dd")
+                                    <button class="btn btn-secondary" disabled>
+                                        Fully booked on @DateTime.Parse(currentSearchDate).ToString("MMM dd")
                                     </button>
                                 }
-                                    </div>
-                                </div>
-
                             </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="col-12 text-center py-5">
-                        <div class="py-5 bg-light rounded-3">
-                            <h3 class="text-muted">No vehicles found.</h3>
-                            <a asp-action="Index" class="btn btn-link text-decoration-none">Clear Filters</a>
+
                         </div>
                     </div>
-                }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <div class="py-5 rounded-3">
+                    <h3 class="text-muted">No vehicles found.</h3>
+                    <a asp-action="Index" class="btn btn-link">Clear Filters</a>
+                </div>
             </div>
-        </div>
-    </section>
+        }
+    </div>
 </div>

@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "About Us";
+    Layout = "_Layout";
+}
+
+<style>
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .about-card, .contact-card {
+        background-color: var(--bg-card);
+        color: var(--text-main);
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .title {
+        font-size: 2.25rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        color: var(--text-main);
+    }
+
+    p {
+        font-size: 1rem;
+        line-height: 1.8;
+        color: var(--text-main);
+        margin-bottom: 1rem;
+    }
+
+    ul {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    li {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Links inside content */
+    a {
+        color: var(--text-link);
+        text-decoration: none;
+    }
+
+    /* Dark mode */
+    body.dark .about-card,
+    body.dark .contact-card {
+        background-color: var(--bg-card-dark);
+        color: var(--text-main-dark);
+    }
+</style>
+
+<div class="container py-5">
+    <div class="about-card">
+        <h1 class="title">About Drivolo</h1>
+
+        <p>
+            Welcome to <strong>Drivolo</strong>, your trusted car rental platform. Founded with the vision to make mobility simple, flexible, and accessible, Drivolo offers a wide range of vehicles for business trips, weekend getaways, and everyday needs.
+        </p>
+
+        <p>
+            Our mission is to provide a seamless car rental experience by combining cutting-edge technology, reliable service, and customer-centric policies. Whether you need a compact car for city driving or a spacious SUV for family trips, we have the perfect ride for you.
+        </p>
+
+        <h3>Our Core Values</h3>
+        <ul>
+            <li><strong>Trust:</strong> Transparent pricing, verified vehicles, and secure bookings.</li>
+            <li><strong>Convenience:</strong> Easy-to-use platform and flexible rental options.</li>
+            <li><strong>Customer Satisfaction:</strong> Friendly support and responsive service at every step.</li>
+            <li><strong>Innovation:</strong> Continuously improving our platform to meet your needs.</li>
+        </ul>
+
+        <h3>What We Offer</h3>
+        <ul>
+            <li>Wide variety of well-maintained vehicles for all occasions.</li>
+            <li>Easy online booking with instant confirmation.</li>
+        </ul>
+
+        <p>
+            At Drivolo, we believe that renting a car should be stress-free and enjoyable. Our team is committed to delivering exceptional service and creating memorable driving experiences for all our customers.
+        </p>
+
+        <p>
+            Join thousands of satisfied drivers who trust <strong>Drivolo</strong> for their transportation needs. Your journey starts here!
+        </p>
+    </div>
+</div>
