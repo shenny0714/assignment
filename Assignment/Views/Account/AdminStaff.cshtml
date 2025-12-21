@@ -2,197 +2,151 @@
 @using X.PagedList.Mvc.Core
 @model IPagedList<Assignment.Models.Staff>
 @{
-    Layout = null;
+    Layout = "_AdminLayout";
     var adminName = User.Identity.Name;
+    ViewData["Title"] = "Staff Management";
 
     // Helper functions for Sorting logic
     string GetSortDir(string col) => col == ViewBag.Sort ? (ViewBag.Dir == "des" ? "asc" : "des") : "asc";
     string GetSortClass(string col) => col == ViewBag.Sort ? (ViewBag.Dir == "des" ? "sort-desc" : "sort-asc") : "";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin - Staff Management</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="~/css/portal.css" />
-</head>
-<body>
 
-    <div class="admin-container">
 
-        <aside class="sidebar">
-            <div class="user-widget">
-                <div class="user-info-row">
-                    <div class="user-avatar">
-                        <i class="fa-solid fa-user-secret"></i>
-                    </div>
-                    <div class="user-details">
-                        <span class="user-name">@adminName</span>
-                        <span class="user-role">Administrator</span>
-                    </div>
-                </div>
+<main class="main-content">
+         
+
+    <div class="content-area">
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert-box alert-success">
+                <span><i class="fa-solid fa-check-circle"></i> @TempData["Success"]</span>
+                <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert-box alert-error">
+                <span><i class="fa-solid fa-triangle-exclamation"></i> @TempData["Error"]</span>
+                <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+        }
+
+        <form class="toolbar" method="get">
+            <div class="search-group">
+                <i class="fas fa-search"></i>
+                @Html.TextBox("name", (string)ViewBag.Name, new { placeholder = "Search Staff...", autocomplete = "off" })
             </div>
 
-            <nav class="side-nav">
-                <div class="nav-label">ADMIN PANEL</div>
-                <ul>
-                    <li>
-                        <a href="/Account/Admin"><i class="fas fa-users"></i><span>Customers</span></a>
-                    </li>
-                    <li class="active">
-                        <a href="/Account/AdminStaff"><i class="fas fa-user-tie"></i><span>Staff</span></a>
-                    </li>
-                    <li><a href="#"><i class="fas fa-car"></i><span>Rentals</span></a></li>
-                    <li><a href="#"><i class="fas fa-chart-line"></i><span>Reports</span></a></li>
-                </ul>
-            </nav>
+            @Html.Hidden("sort", (string)ViewBag.Sort)
+            @Html.Hidden("dir", (string)ViewBag.Dir)
 
-            <div class="logout-wrap">
-                <a href="/Account/Logout" class="logout-btn"><i class="fas fa-power-off"></i> Logout</a>
-            </div>
-        </aside>
+            <button type="submit" class="btn-search">Search</button>
 
-        <main class="main-content">
-            <header class="top-bar">
-                <h1>Staff Management</h1>
-            </header>
+            <a href="/Account/AdminStaff" class="btn-reset" title="Reset">
+                <i class="fa-solid fa-rotate-right"></i>
+            </a>
 
-            <div class="content-area">
+            <a href="/Account/CreateStaff" class="btn-add">
+                <i class="fas fa-plus" style="margin-right:8px;"></i> Add Staff
+            </a>
+        </form>
 
-                @if (TempData["Success"] != null)
-                {
-                    <div class="alert-box alert-success">
-                        <span><i class="fa-solid fa-check-circle"></i> @TempData["Success"]</span>
-                        <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
-                    </div>
-                }
-                @if (TempData["Error"] != null)
-                {
-                    <div class="alert-box alert-error">
-                        <span><i class="fa-solid fa-triangle-exclamation"></i> @TempData["Error"]</span>
-                        <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
-                    </div>
-                }
+        <p class="record-info">
+            Showing @Model.Count() of @Model.TotalItemCount record(s) | Page @Model.PageNumber of @Model.PageCount
+        </p>
 
-                <form class="toolbar" method="get">
-                    <div class="search-group">
-                        <i class="fas fa-search"></i>
-                        @Html.TextBox("name", (string)ViewBag.Name, new { placeholder = "Search Staff...", autocomplete = "off" })
-                    </div>
-
-                    @Html.Hidden("sort", (string)ViewBag.Sort)
-                    @Html.Hidden("dir", (string)ViewBag.Dir)
-
-                    <button type="submit" class="btn-search">Search</button>
-
-                    <a href="/Account/AdminStaff" class="btn-reset" title="Reset">
-                        <i class="fa-solid fa-rotate-right"></i>
-                    </a>
-
-                    <a href="/Account/CreateStaff" class="btn-add">
-                        <i class="fas fa-plus" style="margin-right:8px;"></i> Add Staff
-                    </a>
-                </form>
-
-                <p class="record-info">
-                    Showing @Model.Count() of @Model.TotalItemCount record(s) | Page @Model.PageNumber of @Model.PageCount
-                </p>
-
-                <div class="table-card">
-                    <table class="styled-table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <a href="?name=@ViewBag.Name&sort=Id&dir=@GetSortDir("Id")" class="@GetSortClass("Id")">
-                                        ID <i class="fa-solid fa-sort"></i>
+        <div class="table-card">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>
+                            <a href="?name=@ViewBag.Name&sort=Id&dir=@GetSortDir("Id")" class="@GetSortClass("Id")">
+                                ID <i class="fa-solid fa-sort"></i>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?name=@ViewBag.Name&sort=Name&dir=@GetSortDir("Name")" class="@GetSortClass("Name")">
+                                Name <i class="fa-solid fa-sort"></i>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?name=@ViewBag.Name&sort=Email&dir=@GetSortDir("Email")" class="@GetSortClass("Email")">
+                                Email <i class="fa-solid fa-sort"></i>
+                            </a>
+                        </th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th style="text-align:center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="id-cell">#@item.StaffId</td>
+                            <td class="name-cell">@item.Name</td>
+                            <td>@item.Email</td>
+                            <td>@item.Phone</td>
+                            <td>
+                                <span class="badge @(item.Type == "Admin" ? "badge-admin" : "badge-staff")">
+                                    @item.Type
+                                </span>
+                            </td>
+                            <td style="text-align:center;">
+                                @if (item.Type != "Admin")
+                                {
+                                    <a href="/Account/EditUser/@item.StaffId" class="btn-edit">
+                                        <i class="fas fa-pen"></i> Edit
                                     </a>
-                                </th>
-                                <th>
-                                    <a href="?name=@ViewBag.Name&sort=Name&dir=@GetSortDir("Name")" class="@GetSortClass("Name")">
-                                        Name <i class="fa-solid fa-sort"></i>
-                                    </a>
-                                </th>
-                                <th>
-                                    <a href="?name=@ViewBag.Name&sort=Email&dir=@GetSortDir("Email")" class="@GetSortClass("Email")">
-                                        Email <i class="fa-solid fa-sort"></i>
-                                    </a>
-                                </th>
-                                <th>Phone</th>
-                                <th>Role</th>
-                                <th style="text-align:center;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td class="id-cell">#@item.StaffId</td>
-                                    <td class="name-cell">@item.Name</td>
-                                    <td>@item.Email</td>
-                                    <td>@item.Phone</td>
-                                    <td>
-                                        <span class="badge @(item.Type == "Admin" ? "badge-admin" : "badge-staff")">
-                                            @item.Type
-                                        </span>
-                                    </td>
-                                    <td style="text-align:center;">
-                                        @if (item.Type != "Admin")
-                                        {
-                                            <a href="/Account/EditUser/@item.StaffId" class="btn-edit">
-                                                <i class="fas fa-pen"></i> Edit
-                                            </a>
 
-                                            <form asp-action="DeleteStaff" asp-route-id="@item.StaffId" method="post" onsubmit="return confirm('Delete this staff member?');" style="display:inline;">
-                                                <button type="submit" class="btn-delete">
-                                                    <i class="fas fa-trash"></i> Delete
-                                                </button>
-                                            </form>
-                                        }
-                                        else
-                                        {
-                                            <span style="color:#ccc; font-size:0.85rem; font-style:italic;">
-                                                <i class="fa-solid fa-lock"></i> Protected
-                                            </span>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                            @if (!Model.Any())
-                            {
-                                <tr>
-                                    <td colspan="6" style="text-align:center; padding: 40px; color:#888;">
-                                        <i class="fa-solid fa-folder-open" style="font-size:2rem; margin-bottom:10px;"></i>
-                                        <p>No staff records found.</p>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                                    <form asp-action="DeleteStaff" asp-route-id="@item.StaffId" method="post" onsubmit="return confirm('Delete this staff member?');" style="display:inline;">
+                                        <button type="submit" class="btn-delete">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span style="color:#ccc; font-size:0.85rem; font-style:italic;">
+                                        <i class="fa-solid fa-lock"></i> Protected
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" style="text-align:center; padding: 40px; color:#888;">
+                                <i class="fa-solid fa-folder-open" style="font-size:2rem; margin-bottom:10px;"></i>
+                                <p>No staff records found.</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
 
-                <div class="pagination-wrapper">
-                    <a href="@Url.Action("AdminStaff", new { page = Model.PageNumber - 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })"
-                       class="btn-page @(Model.HasPreviousPage ? "" : "disabled")">
-                        &laquo; Prev
-                    </a>
+        <div class="pagination-wrapper">
+            <a href="@Url.Action("AdminStaff", new { page = Model.PageNumber - 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })"
+                class="btn-page @(Model.HasPreviousPage ? "" : "disabled")">
+                &laquo; Prev
+            </a>
 
-                    <span class="page-info-box">
-                        @Model.PageNumber of @Model.PageCount
-                    </span>
+            <span class="page-info-box">
+                @Model.PageNumber of @Model.PageCount
+            </span>
 
-                    <a href="@Url.Action("AdminStaff", new { page = Model.PageNumber + 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })"
-                       class="btn-page @(Model.HasNextPage ? "" : "disabled")">
-                        Next &raquo;
-                    </a>
-                </div>
+            <a href="@Url.Action("AdminStaff", new { page = Model.PageNumber + 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })"
+                class="btn-page @(Model.HasNextPage ? "" : "disabled")">
+                Next &raquo;
+            </a>
+        </div>
 
 
-            </div>
-        </main>
     </div>
-</body>
-</html>
+</main>
+  

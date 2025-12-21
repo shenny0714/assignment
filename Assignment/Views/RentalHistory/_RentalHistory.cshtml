@@ -1,9 +1,7 @@
 ﻿@model IEnumerable<Assignment.Models.Rental>
 
 @{
-    bool isAdmin = false;
-    // ViewBag.IsAdmin ??
-    // change after security added
+    bool isAdmin = ViewBag.isAdmin;
 }
 
 <div class="table-container">

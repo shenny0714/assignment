@@ -43,7 +43,7 @@ public class PickupReturnController : Controller
                   .OrderByDescending(r => r.PickupDate);
     }
 
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff,Admin")]
     public IActionResult Index(string tab, bool todayOnly, string? search = null)
     {
         ViewBag.ActiveTab = tab ?? "All";
@@ -110,7 +110,7 @@ public class PickupReturnController : Controller
     }
 
     // GET: Pickup page
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff,Admin")]
     public IActionResult Pickup(string rentalId)
     {
 
@@ -159,7 +159,7 @@ public class PickupReturnController : Controller
 
     // POST: Pickup
     [HttpPost]
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff,Admin")]
     public IActionResult Pickup(PickupViewModel vm)
     {
         // rental id exist in Rentals but not exist in PickupRecord
@@ -303,7 +303,7 @@ public class PickupReturnController : Controller
     }
 
     // GET: Return
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff,Admin")]
     public IActionResult Return(string rentalId)
     {
         bool isValid = _db.Rentals
@@ -352,7 +352,7 @@ public class PickupReturnController : Controller
 
     // POST: Return
     [HttpPost]
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff,Admin")]
     public IActionResult Return(ReturnRecordVM vm)
     {
         foreach (var entry in ModelState)
@@ -570,7 +570,7 @@ public class PickupReturnController : Controller
     }
 
     // GET: Invoice
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff,Admin")]
     public IActionResult Invoice(string rentalId)
     {
         if (string.IsNullOrEmpty(rentalId))
@@ -623,7 +623,7 @@ public class PickupReturnController : Controller
     }
 
     // GET: Payment
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff,Admin")]
     public IActionResult ProceedPayment(string rentalId)
     {
         if (string.IsNullOrEmpty(rentalId))
@@ -681,7 +681,7 @@ public class PickupReturnController : Controller
 
     // POST: Payment
     [HttpPost]
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff,Admin")]
     public IActionResult ProceedPayment(ReturnPaymentVM vm)
     {
         if (!ModelState.IsValid)
@@ -724,7 +724,7 @@ public class PickupReturnController : Controller
     }
 
     // GET: Receipt
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff,Admin")]
     public IActionResult Receipt(string paymentId)
     {
         var payment = _db.Payments
@@ -753,7 +753,7 @@ public class PickupReturnController : Controller
 
     // POST: EmailReceipt
     [HttpPost]
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff,Admin")]
     public async Task<IActionResult> EmailReceipt(string paymentId)
     {
         var payment = _db.Payments
@@ -810,7 +810,7 @@ public class PickupReturnController : Controller
 
         return RedirectToAction("Index");
     }
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Staff,Admin")]
     public IActionResult DownloadReceiptPDF(string paymentId)
     {
         var payment = _db.Payments.Include(p => p.Rental).ThenInclude(r => r.Customer)

@@ -3,8 +3,9 @@
 @{
     ViewData["Title"] = "Rental Details";
 
-    bool isStaff = ViewBag.IsStaff ?? false;
     var status = Model.Status?.ToLower();
+    bool isAdmin = ViewBag.isAdmin;
+    Layout = isAdmin ? "_AdminLayout" : "_Layout";
 }
 
 <link rel="stylesheet" href="~/css/rentalHistory.css" />
@@ -14,7 +15,10 @@
         <a asp-action="Index" asp-controller="RentalHistory" class="btn btn-secondary">
             &larr; Back
         </a>
-        <h2>Rental Details</h2>
+        @if (!isAdmin)
+        {
+            < h2 > Rental Details </ h2 >
+        }
     </div>
 
     <div class="card">
@@ -33,7 +37,7 @@
             <p><strong>Deposit:</strong> @Model.DepositAmount.ToString("C")</p>
             <p><strong>Total Price:</strong> @Model.TotalPrice.ToString("C")</p>
 
-            @if (!isStaff && status == "booked")
+            @if (!isAdmin && status == "booked")
             {
                 <form asp-action="Cancel"
                       asp-controller="RentalHistory"
@@ -57,11 +61,15 @@
                     <strong>Pickup Date:</strong>
                     @Model.PickupRecord.PickupDateTime.ToString("yyyy-MM-dd HH:mm")
                 </p>
-                @if (isStaff)
+                @if (isAdmin)
                 {
                     <p>
+                        <strong>Customer Name:</strong>
+                        @Model.Customer.Name
+                    </p>
+                    <p>
                         <strong>Customer License:</strong>
-                        @Model.PickupRecord.CustomerDrivingLisence
+                        <img src="~/PickupReturn/@Model.PickupRecord.CustomerDrivingLisence" class="detail-img" />
                     </p>
 
                     <p>
@@ -91,12 +99,32 @@
                     <li>Lights: @Model.PickupRecord.LightsCondition</li>
                 </ul>
 
+                @if (isAdmin)
+                {
+                    <p>
+                        <strong>Exterior Photo:</strong>
+                        <img src="~/PickupReturn/@Model.PickupRecord.ExteriorPhotoPath" class="detail-img" />
+                    </p>
+                    <p>
+                        <strong>Interior Photo:</strong>
+                        <img src="~/PickupReturn/@Model.PickupRecord.InteriorPhotoPath" class="detail-img" />
+                    </p>
+                    <p>
+                        <strong>Fuel Photo:</strong>
+                        <img src="~/PickupReturn/@Model.PickupRecord.FuelPhotoPath" class="detail-img" />
+                    </p>
+                    <p>
+                        <strong>Odometer Photo:</strong>
+                        <img src="~/PickupReturn/@Model.PickupRecord.OdometerPhotoPath" class="detail-img" />
+                    </p>
+                  
+                }
                 @if (!string.IsNullOrEmpty(Model.PickupRecord.Remarks))
                 {
                     <p><strong>Remarks:</strong> @Model.PickupRecord.Remarks</p>
                 }
 
-                @if (isStaff)
+                @if (isAdmin)
                 {
                     <hr />
                     <p><strong>Handled By:</strong> @Model.PickupRecord.Staff?.Name</p>
@@ -148,7 +176,7 @@
                     @Model.ReturnRecord.TotalReturnCost
                 </h5>
 
-                @if (isStaff)
+                @if (isAdmin)
                 {
                     <hr />
                     <p><strong>Handled By:</strong> @Model.ReturnRecord.Staff?.Name</p>

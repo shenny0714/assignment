@@ -1,6 +1,7 @@
 ﻿@model Assignment.ViewModels.ReturnPaymentVM
 
 @{
+    Layout = "_AdminLayout";
     ViewData["Title"] = Model.PaymentType == "Refund" ? "Refund Payment" : "Proceed Payment";
 
     var paymentMethods = new List<SelectListItem>

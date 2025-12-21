@@ -130,7 +130,7 @@ public class RentalHistoryController : Controller
         }
 
         ViewBag.ActiveTab = tab;
-        ViewBag.IsAdmin = User.IsInRole("Staff");
+        ViewBag.IsAdmin = User.IsInRole("Staff") || User.IsInRole("Admin");
 
         return View(q.ToList());
     }
@@ -140,6 +140,8 @@ public class RentalHistoryController : Controller
     [Authorize]
     public IActionResult Details(string id)
     {
+
+
         if (string.IsNullOrEmpty(id))
             return RedirectToAction("Index");
 
@@ -157,13 +159,13 @@ public class RentalHistoryController : Controller
         if (rental == null)
             return RedirectToAction("Index");
 
-        bool isStaff = false;
-        ViewBag.IsStaff = isStaff;
+        bool isStaff = User.IsInRole("Staff") || User.IsInRole("Admin");
+        ViewBag.isAdmin = isStaff;
 
         if (!isStaff)
         {
-            var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (rental.CustomerId != customerId)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (rental.CustomerId != userId)
                 return RedirectToAction("Index");
         }
 

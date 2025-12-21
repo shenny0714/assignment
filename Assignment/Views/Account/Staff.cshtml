@@ -3,7 +3,8 @@
 @model IPagedList<Assignment.Models.Customer>
 
 @{
-    Layout = null;
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Customer Records";
     var staffName = User.Identity.Name;
     var staffPhoto = User.FindFirst("PhotoURL")?.Value;
 
@@ -23,161 +24,103 @@
     }
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Staff Portal - Customer Records</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="~/css/portal.css" />
-</head>
-<body>
 
-    <div class="staff-container">
+<div class="content-area">
 
-        <aside class="sidebar">
-            <div class="user-widget">
-                <div class="user-info-row">
-                    <div class="user-avatar">
-                        @if (!string.IsNullOrEmpty(staffPhoto))
-                        {
-                            <img src="~/photos/@staffPhoto" alt="Profile" />
-                        }
-                        else
-                        {
+    <form class="toolbar" method="get">
+        <div class="search-group">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            @Html.TextBox("name", (string)ViewBag.Name, new { placeholder = "Enter Keywords...", autocomplete = "off" })
+        </div>
 
-                            <span>@staffName.Substring(0, 1).ToUpper()</span>
-                        }
-                    </div>
-                    <div class="user-details">
-                        <span class="user-name">@staffName</span>
-                        <span class="user-role">Staff</span>
-                    </div>
-                </div>
-            </div>
+        @Html.Hidden("sort", (string)ViewBag.Sort)
+        @Html.Hidden("dir", (string)ViewBag.Dir)
 
-            <nav class="side-nav">
-                <div class="nav-label">MAIN NAVIGATION</div>
-                <ul>
-                    <li><a href="#"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a></li>
-                    <li class="active"><a href="/Account/Staff"><i class="fa-solid fa-users"></i><span>Customers</span></a></li>
-                    <li><a href="#"><i class="fa-solid fa-car"></i><span>Cars</span></a></li>
-                    <li><a href="#"><i class="fa-solid fa-file-invoice"></i><span>Rentals</span></a></li>
-                    <li><a href="#"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
-                </ul>
-            </nav>
+        <button type="submit" class="btn-search">Search</button>
 
-            <div class="logout-wrap">
-                <a href="/Account/Logout" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
-            </div>
-        </aside>
+        <a href="/Account/Staff" class="btn-reset" title="Reset"><i class="fa-solid fa-rotate-right"></i></a>
+    </form>
 
-        <main class="main-content">
-            <header class="top-bar">
-                <h1>Customer Records</h1>
-                <div class="date-display">@DateTime.Now.ToString("dddd, dd MMMM yyyy")</div>
-            </header>
+    <p class="record-info">
+        Showing @Model.Count() of @Model.TotalItemCount record(s) | Page @Model.PageNumber of @Model.PageCount
+    </p>
 
-            <div class="content-area">
+    <div class="table-card">
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>
+                        <a href="?name=@ViewBag.Name&sort=Id&dir=@GetSortDir("Id")" class="@GetSortClass("Id")">
+                            ID <i class="fa-solid fa-sort"></i>
+                        </a>
+                    </th>
+                    <th>Photo</th>
+                    <th>
+                        <a href="?name=@ViewBag.Name&sort=Name&dir=@GetSortDir("Name")" class="@GetSortClass("Name")">
+                            Full Name <i class="fa-solid fa-sort"></i>
+                        </a>
+                    </th>
 
-                <form class="toolbar" method="get">
-                    <div class="search-group">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        @Html.TextBox("name", (string)ViewBag.Name, new { placeholder = "Enter Keywords...", autocomplete = "off" })
-                    </div>
-
-                    @Html.Hidden("sort", (string)ViewBag.Sort)
-                    @Html.Hidden("dir", (string)ViewBag.Dir)
-
-                    <button type="submit" class="btn-search">Search</button>
-
-                    <a href="/Account/Staff" class="btn-reset" title="Reset"><i class="fa-solid fa-rotate-right"></i></a>
-                </form>
-
-                <p class="record-info">
-                    Showing @Model.Count() of @Model.TotalItemCount record(s) | Page @Model.PageNumber of @Model.PageCount
-                </p>
-
-                <div class="table-card">
-                    <table class="styled-table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <a href="?name=@ViewBag.Name&sort=Id&dir=@GetSortDir("Id")" class="@GetSortClass("Id")">
-                                        ID <i class="fa-solid fa-sort"></i>
-                                    </a>
-                                </th>
-                                <th>Photo</th>
-                                <th>
-                                    <a href="?name=@ViewBag.Name&sort=Name&dir=@GetSortDir("Name")" class="@GetSortClass("Name")">
-                                        Full Name <i class="fa-solid fa-sort"></i>
-                                    </a>
-                                </th>
-
-                                <th>
-                                    <a href="?name=@ViewBag.Name&sort=Email&dir=@GetSortDir("Email")" class="@GetSortClass("Email")">
-                                        Email Address <i class="fa-solid fa-sort"></i>
-                                    </a>
-                                </th>
-                                <th>Phone Number</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td class="id-cell">#@item.CustomerId</td>
-                                    <td>
-                                        <div class="table-img-wrap">
-                                            @if (!string.IsNullOrEmpty(item.PhotoURL))
-                                            {
-                                                <img src="~/photos/@item.PhotoURL" alt="User" />
-                                            }
-                                            else
-                                            {
-                                                <div class="table-avatar-placeholder"><i class="fa-solid fa-user"></i></div>
-                                            }
-                                        </div>
-                                    </td>
-                                    <td class="name-cell">@item.Name</td>
-                                    <td class="email-cell">@item.Email</td>
-                                    <td>@item.Phone</td>
-                                </tr>
-                            }
-                            @if (!Model.Any())
-                            {
-                                <tr>
-                                    <td colspan="5" class="empty-state">
-                                        <i class="fa-solid fa-folder-open"></i>
-                                        <p>No records found matching "@ViewBag.Name".</p>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pagination-wrapper">
-
-                    <a href="@Url.Action("Staff", new { page = Model.PageNumber - 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })"
-                       class="btn-page @(Model.HasPreviousPage ? "" : "disabled")">
-                        &laquo; Prev
-                    </a>
-
-                    <span class="page-info-box">
-                        @Model.PageNumber of @Model.PageCount
-                    </span>
-
-                    <a href="@Url.Action("Staff", new { page = Model.PageNumber + 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })"
-                       class="btn-page @(Model.HasNextPage ? "" : "disabled")">
-                        Next &raquo;
-                    </a>
-
-                </div>
-
-            </div>
-        </main>
+                    <th>
+                        <a href="?name=@ViewBag.Name&sort=Email&dir=@GetSortDir("Email")" class="@GetSortClass("Email")">
+                            Email Address <i class="fa-solid fa-sort"></i>
+                        </a>
+                    </th>
+                    <th>Phone Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="id-cell">#@item.CustomerId</td>
+                        <td>
+                            <div class="table-img-wrap">
+                                @if (!string.IsNullOrEmpty(item.PhotoURL))
+                                {
+                                    <img src="~/photos/@item.PhotoURL" alt="User" />
+                                }
+                                else
+                                {
+                                    <div class="table-avatar-placeholder"><i class="fa-solid fa-user"></i></div>
+                                }
+                            </div>
+                        </td>
+                        <td class="name-cell">@item.Name</td>
+                        <td class="email-cell">@item.Email</td>
+                        <td>@item.Phone</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <p>No records found matching "@ViewBag.Name".</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
-</body>
-</html>
+
+    <div class="pagination-wrapper">
+
+        <a href="@Url.Action("Staff", new { page = Model.PageNumber - 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })"
+            class="btn-page @(Model.HasPreviousPage ? "" : "disabled")">
+            &laquo; Prev
+        </a>
+
+        <span class="page-info-box">
+            @Model.PageNumber of @Model.PageCount
+        </span>
+
+        <a href="@Url.Action("Staff", new { page = Model.PageNumber + 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })"
+            class="btn-page @(Model.HasNextPage ? "" : "disabled")">
+            Next &raquo;
+        </a>
+
+    </div>
+
+</div>
+   
