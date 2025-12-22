@@ -1,151 +1,164 @@
-﻿@using X.PagedList
+@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<Assignment.Models.Customer>
 @{
-    Layout = "_AdminLayout";
-    var adminName = User.Identity.Name;
-    ViewData["Title"] = "Customer Management";
 
-    // Helper functions for Sorting logic
+    bool isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    ViewData["Title"] = "Customer Management";
+    Layout = isAjax ? null : "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.ActivePage = "Customers";
+    var adminName = User.Identity.Name;
+
+    // Sorting Helpers
     string GetSortDir(string col) => col == ViewBag.Sort ? (ViewBag.Dir == "des" ? "asc" : "des") : "asc";
     string GetSortClass(string col) => col == ViewBag.Sort ? (ViewBag.Dir == "des" ? "sort-desc" : "sort-asc") : "";
+
+    // Ajax Attributes Helper
+    var ajaxOpts = "data-ajax='true' data-ajax-update='#target' data-ajax-loading='#loader'";
+
 }
 
+@*  2. OUTER SHELL (Only if NOT Ajax) *@
+@if (!isAjax)
+{
+    @Html.Raw("<!DOCTYPE html>")
+    @Html.Raw("<html lang='en'>")
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin - Customer Management</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="~/css/portal.css" />
+        <script src="~/js/jquery.min.js"></script>
+        <script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
+    </head>
+    @Html.Raw("<body>")
 
-<div class="admin-container">
+    @Html.Raw("<div class='admin-container'>")
 
-        <main class="main-content">
-          
 
-        <div class="content-area">
 
-            @if (TempData["Success"] != null)
-            {
-                <div class="alert-box alert-success">
-                    <span><i class="fa-solid fa-check-circle"></i> @TempData["Success"]</span>
-                    <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
-                </div>
-            }
+    @Html.Raw("<main class='main-content'>")
 
-            @if (TempData["Error"] != null)
-            {
-                <div class="alert-box alert-error">
-                    <span><i class="fa-solid fa-triangle-exclamation"></i> @TempData["Error"]</span>
-                    <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
-                </div>
-            }
 
-            <form class="toolbar" method="get">
-                <div class="search-group">
-                    <i class="fas fa-search"></i>
-                    @Html.TextBox("name", (string)ViewBag.Name, new { placeholder = "Search Customers...", autocomplete = "off" })
-                </div>
 
-                @Html.Hidden("sort", (string)ViewBag.Sort)
-                @Html.Hidden("dir", (string)ViewBag.Dir)
+    @Html.Raw("<div class='content-area'>")
 
-                <button type="submit" class="btn-search">Search</button>
-
-                <a href="/Account/Admin" class="btn-reset" title="Reset">
-                    <i class="fa-solid fa-rotate-right"></i>
-                </a>
-            </form>
-
-            <p class="record-info">
-                Showing @Model.Count() of @Model.TotalItemCount record(s) | Page @Model.PageNumber of @Model.PageCount
-            </p>
-
-            <div class="table-card">
-                <table class="styled-table">
-                    <thead>
-                        <tr>
-                            <th>
-                                <a href="?name=@ViewBag.Name&sort=Id&dir=@GetSortDir("Id")" class="@GetSortClass("Id")">
-                                    ID <i class="fa-solid fa-sort"></i>
-                                </a>
-                            </th>
-                            <th>Photo</th>
-                            <th>
-                                <a href="?name=@ViewBag.Name&sort=Name&dir=@GetSortDir("Name")" class="@GetSortClass("Name")">
-                                    Name <i class="fa-solid fa-sort"></i>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="?name=@ViewBag.Name&sort=Email&dir=@GetSortDir("Email")" class="@GetSortClass("Email")">
-                                    Email <i class="fa-solid fa-sort"></i>
-                                </a>
-                            </th>
-                            <th>Phone</th>
-                            <th style="text-align:center;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td class="id-cell">#@item.CustomerId</td>
-                                <td>
-                                    <div class="table-img-wrap">
-                                        @if (!string.IsNullOrEmpty(item.PhotoURL))
-                                        {
-                                            <img src="~/photos/@item.PhotoURL" alt="User" />
-                                        }
-                                        else
-                                        {
-                                            <div class="table-avatar-placeholder">
-                                                @item.Name.Substring(0, 1).ToUpper()
-                                            </div>
-                                        }
-                                    </div>
-                                </td>
-                                <td class="name-cell">@item.Name</td>
-                                <td>@item.Email</td>
-                                <td>@item.Phone</td>
-                                <td style="text-align:center;">
-                                    <a href="/Account/EditUser/@item.CustomerId" class="btn-edit">
-                                        <i class="fas fa-pen"></i> Edit
-                                    </a>
-
-                                    <form asp-action="DeleteCustomer" asp-route-id="@item.CustomerId" method="post" onsubmit="return confirm('Are you sure you want to delete this customer?');" style="display:inline;">
-                                        <button type="submit" class="btn-delete">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
-                        @if (!Model.Any())
-                        {
-                            <tr>
-                                <td colspan="6" style="text-align:center; padding: 40px; color:#888;">
-                                    <i class="fa-solid fa-folder-open" style="font-size:2rem; margin-bottom:10px;"></i>
-                                    <p>No customers found.</p>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-
-            @*if (Model.PageCount > 1)*@
-            @*{*@
-            <div class="pagination-wrapper">
-                <a href="@Url.Action("Admin", new { page = Model.PageNumber - 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })"
-                    class="btn-page @(Model.HasPreviousPage ? "" : "disabled")">
-                    &laquo; Prev
-                </a>
-
-                <span class="page-info-box">
-                    @Model.PageNumber of @Model.PageCount
-                </span>
-
-                <a href="@Url.Action("Admin", new { page = Model.PageNumber + 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })"
-                    class="btn-page @(Model.HasNextPage ? "" : "disabled")">
-                    Next &raquo;
-                </a>
-            </div>
-            @*}*@
-
+    // -- ALERTS --
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert-box alert-success">
+            <span><i class="fa-solid fa-check-circle"></i> @TempData["Success"]</span>
+            <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
         </div>
-    </main>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert-box alert-error">
+            <span><i class="fa-solid fa-triangle-exclamation"></i> @TempData["Error"]</span>
+            <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+    }
+
+    // -- AJAX TOOLBAR --
+    <form class="toolbar" method="get" action="/Account/Admin"
+          data-ajax="true" data-ajax-update="#target" data-ajax-loading="#loader" id="searchForm">
+
+        <div class="search-group">
+            <i class="fas fa-search"></i>
+            @Html.TextBox("name", (string)ViewBag.Name, new { placeholder = "Search Customers...", autocomplete = "off", id = "searchInput" })
+        </div>
+
+        @Html.Hidden("sort", (string)ViewBag.Sort)
+        @Html.Hidden("dir", (string)ViewBag.Dir)
+
+        <button type="submit" class="btn-search">Search</button>
+        <a href="/Account/Admin" class="btn-reset" title="Reset"><i class="fa-solid fa-rotate-right"></i></a>
+        <img src="~/images/loader.gif" id="loader" style="display:none; height:30px; margin-left:10px;" />
+    </form>
+
+    <p class="record-info">
+        Showing @Model.Count() of @Model.TotalItemCount record(s) | Page @Model.PageNumber of @Model.PageCount
+    </p>
+
+    // -- OPEN TARGET DIV --
+    @Html.Raw("<div id='target'>")
+}
+
+@*  3. SHARED TABLE & PAGINATION (Always Rendered) *@
+<div class="table-card">
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th><a href="@Url.Action("Admin", new { name = ViewBag.Name, sort = "Id", dir = GetSortDir("Id") })" class="@GetSortClass("Id")" @Html.Raw(ajaxOpts)>ID <i class="fa-solid fa-sort"></i></a></th>
+                <th>Photo</th>
+                <th><a href="@Url.Action("Admin", new { name = ViewBag.Name, sort = "Name", dir = GetSortDir("Name") })" class="@GetSortClass("Name")" @Html.Raw(ajaxOpts)>Name <i class="fa-solid fa-sort"></i></a></th>
+                <th><a href="@Url.Action("Admin", new { name = ViewBag.Name, sort = "Email", dir = GetSortDir("Email") })" class="@GetSortClass("Email")" @Html.Raw(ajaxOpts)>Email <i class="fa-solid fa-sort"></i></a></th>
+                <th>Phone</th>
+                <th style="text-align:center;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="id-cell">#@item.CustomerId</td>
+                    <td>
+                        <div class="table-img-wrap">
+                            @if (!string.IsNullOrEmpty(item.PhotoURL))
+                            {
+                                <img src="~/photos/@item.PhotoURL" alt="User" />
+                            }
+                            else
+                            {
+
+                                <div class="table-avatar-placeholder">@item.Name.Substring(0, 1).ToUpper()</div>
+                            }
+                        </div>
+                    </td>
+                    <td class="name-cell">@item.Name</td>
+                    <td>@item.Email</td>
+                    <td>@item.Phone</td>
+                    <td style="text-align:center;">
+                        <a href="/Account/EditUser/@item.CustomerId" class="btn-edit"><i class="fas fa-pen"></i> Edit</a>
+                        <form asp-action="DeleteCustomer" asp-route-id="@item.CustomerId" method="post" onsubmit="return confirm('Delete customer?');" style="display:inline;">
+                            <button type="submit" class="btn-delete"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="6" style="text-align:center; padding: 40px; color:#888;">
+                        <i class="fa-solid fa-folder-open" style="font-size:2rem; margin-bottom:10px;"></i>
+                        <p>No customers found.</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
+
+<div class="pagination-wrapper">
+    <a href="@Url.Action("Admin", new { page = Model.PageNumber - 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })" class="btn-page @(Model.HasPreviousPage ? "" : "disabled")" @Html.Raw(ajaxOpts)>&laquo; Prev</a>
+    <span class="page-info-box">@Model.PageNumber of @Model.PageCount</span>
+    <a href="@Url.Action("Admin", new { page = Model.PageNumber + 1, name = ViewBag.Name, sort = ViewBag.Sort, dir = ViewBag.Dir })" class="btn-page @(Model.HasNextPage ? "" : "disabled")" @Html.Raw(ajaxOpts)>Next &raquo;</a>
+</div>
+
+@* 4. CLOSE OUTER SHELL *@
+@if (!isAjax)
+{
+    @Html.Raw("</div>") @Html.Raw("</div>") @Html.Raw("</main>")
+    @Html.Raw("</div>")
+
+    <script>
+        let timer = null;
+        $('#searchInput').on('input', e => {
+            clearTimeout(timer);
+            timer = setTimeout(() => $(e.target.form).submit(), 500);
+        });
+    </script>
+    @Html.Raw("</body>")
+    @Html.Raw("</html>")
+}
