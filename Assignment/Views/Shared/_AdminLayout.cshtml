@@ -50,11 +50,15 @@
                             <a href="/PickupReturn/Index"><i class="fas fa-car"></i><span>Pickup Return</span></a>
                         </li>
                         <li class="@(Context.Request.Path.ToString().Contains("/Account/Admin") ? "active" : "")">
-                            <a href="/Account/Admin"><i class="fas fa-users"></i><span>Customers</span></a>
-                        </li>
-                        <li class="@(Context.Request.Path.ToString().Contains("AdminStaff") ? "active" : "")">
-                            <a href="/Account/AdminStaff"><i class="fas fa-user-tie"></i><span>Staff</span></a>
-                        </li>
+<li class="@(ViewBag.ActivePage == "Customers" ? "active" : "")">
+    <a href="/Account/Admin"><i class="fas fa-users"></i><span>Customers</span></a>
+</li>
+</li>
+<li class="@(Context.Request.Path.ToString().Contains("/Account/AdminStaff") ? "active" : "")">
+<li class="@(ViewBag.ActivePage == "Staff" ? "active" : "")">
+    <a href="/Account/AdminStaff"><i class="fas fa-user-tie"></i><span>Staff</span></a>
+</li>
+</li>
                         <li class="@(Context.Request.Path.ToString().Contains("RentalHistory") ? "active" : "")">
                             <a href="/RentalHistory/Index"><i class="fas fa-calendar"></i><span>Rental History</span></a>
                         </li>
