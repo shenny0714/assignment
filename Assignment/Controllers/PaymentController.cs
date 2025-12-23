@@ -234,8 +234,8 @@ public class PaymentController : Controller
     {
         string? max = _db.Payments.Max(p => p.PaymentId);
         return max == null
-            ? "PM0001"
-            : $"PM{(int.Parse(max[2..]) + 1):D4}";
+            ? "PA0001"
+            : $"PA{(int.Parse(max[2..]) + 1):D4}";
     }
 
     private byte[] GenerateQRCode(string url)
